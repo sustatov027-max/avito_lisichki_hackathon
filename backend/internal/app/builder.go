@@ -1,11 +1,12 @@
 package app
 
 import (
-	"avito_lisichki_hackathon/backend/internal/platform/health"
 	"context"
 	"log/slog"
 	"net/http"
 	"os"
+
+	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/platform/health"
 )
 
 func New(_ context.Context) (*App, error) {

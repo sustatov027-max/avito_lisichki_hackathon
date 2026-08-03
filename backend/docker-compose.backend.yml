@@ -32,25 +32,25 @@ services:
       postgres:
         condition: service_healthy
 
-  # app:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   container_name: exchange_chain_app
-  #   ports:
-  #     - "8080:8080"
-  #   environment:
-  #     - DB_HOST=postgres
-  #     - DB_PORT=5432
-  #     - DB_USER=${DB_USER:-postgres}
-  #     - DB_PASSWORD=${DB_PASSWORD:-postgres}
-  #     - DB_NAME=${DB_NAME:-exchange_chain}
-  #     - DB_SSLMODE=${DB_SSLMODE:-disable}
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
-  #     migrations:
-  #       condition: service_completed_successfully
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: exchange_chain_app
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
+      - DB_NAME=${DB_NAME:-exchange_chain}
+      - DB_SSLMODE=${DB_SSLMODE:-disable}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
 
 volumes:
   pgdata:
