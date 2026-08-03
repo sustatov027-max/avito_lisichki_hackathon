@@ -1,0 +1,28 @@
+:root[data-theme='light-forest'] {
+	--background: #f7fcf8;
+	--background-gradient: linear-gradient(180deg, #ffffff 0%, #eef8f1 100%);
+
+	--surface: #ffffff;
+	--surface-secondary: #f6fbf7;
+	--surface-hover: #edf7ef;
+
+	--border-color: #d8e7dc;
+	--border-color-secondary: #c2d7c7;
+
+	--text-primary: #183228;
+	--text-secondary: #456356;
+	--text-tertiary: #6c8b7d;
+	--text-placeholder: #9ab3a6;
+	--text-on-primary: #ffffff;
+
+	--primary: #3e8b63;
+	--primary-hover: #347653;
+	--primary-active: #2b6346;
+	--primary-soft: rgba(62, 139, 99, 0.12);
+	--primary-border: rgba(62, 139, 99, 0.24);
+
+	--success: #43b06d;
+	--warning: #dca13d;
+	--danger: #e25b5b;
+	--info: #5b93ff;
+}

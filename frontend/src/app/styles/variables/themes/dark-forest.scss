@@ -1,0 +1,22 @@
+:root[data-theme='dark-forest'] {
+	--background: #051f20;
+	--background-gradient: linear-gradient(180deg, #051f20, #163832);
+	--surface: #0b2b26;
+	--surface-secondary: #163832;
+	--surface-hover: #20443d;
+
+	--border-color: #295147;
+	--border-color-secondary: #38655a;
+
+	--text-primary: #f5f7f6;
+	--text-secondary: #daf1de;
+	--text-tertiary: #8eb69b;
+	--text-placeholder: #6f9383;
+	--text-on-primary: #ffffff;
+
+	--primary: #235347;
+	--primary-hover: #2f6b5c;
+	--primary-active: #1c453a;
+	--primary-soft: rgb(35 83 71 / 0.15);
+	--primary-border: rgb(35 83 71 / 0.45);
+}

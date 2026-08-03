@@ -1,0 +1,27 @@
+:root[data-theme='light-sunset'] {
+	/* Backgrounds */
+	--background: #fff8f6;
+	--background-gradient: linear-gradient(180deg, #fffdfc 0%, #fff2ec 100%);
+
+	--surface: #ffffff;
+	--surface-secondary: #fff8f5;
+	--surface-hover: #fff2ed;
+
+	/* Borders */
+	--border-color: #f1ddd6;
+	--border-color-secondary: #e8cbc1;
+
+	/* Text */
+	--text-primary: #2b1d1b;
+	--text-secondary: #5c4945;
+	--text-tertiary: #88716d;
+	--text-placeholder: #b29f9b;
+	--text-on-primary: #ffffff;
+
+	/* Primary */
+	--primary: #f58f67;
+	--primary-hover: #ef7f52;
+	--primary-active: #e26e42;
+	--primary-soft: rgba(245, 143, 103, 0.12);
+	--primary-border: rgba(245, 143, 103, 0.25);
+}
