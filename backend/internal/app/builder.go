@@ -1,7 +1,7 @@
 package app
 
 import (
-	"avito_lisichki_hackathon/avito_lisichki_hackathon/backend/internal/platform/health"
+	"avito_lisichki_hackathon/backend/internal/platform/health"
 	"context"
 	"log/slog"
 	"net/http"

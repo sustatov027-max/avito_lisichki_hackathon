@@ -1,7 +1,7 @@
 package main
 
 import (
-	"avito_lisichki_hackathon/avito_lisichki_hackathon/backend/internal/app"
+	"avito_lisichki_hackathon/backend/internal/app"
 	"log"
 )
 
