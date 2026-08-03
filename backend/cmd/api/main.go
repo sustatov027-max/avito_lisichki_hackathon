@@ -1,8 +1,9 @@
 package main
 
 import (
-	"avito_lisichki_hackathon/backend/internal/app"
 	"log"
+
+	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/app"
 )
 
 func main() {
