@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS category_attributes (
     category_id UUID NOT NULL REFERENCES categories(id) ON DELETE CASCADE,
     code VARCHAR(100) NOT NULL,
     name VARCHAR(255) NOT NULL,
-    value_type VARCHAR(20) NOT NULL CHECK (value_type IN ('string', 'int', 'enum', 'float', 'bool')),
+    value_type VARCHAR(20) NOT NULL CHECK (value_type IN ('string', 'number','boolean')),
     required BOOLEAN NOT NULL DEFAULT false,
     filterable BOOLEAN NOT NULL DEFAULT false,
     unit VARCHAR(50),
