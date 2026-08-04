@@ -2,8 +2,10 @@ package app
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/repository/stub"
+	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/service"
 	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/platform/health"
-	// "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/transport"
+	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/transport"
 )
 
 func (a *App) registerRoutes() *gin.Engine {
@@ -11,12 +13,14 @@ func (a *App) registerRoutes() *gin.Engine {
 
 	router.Use(gin.Recovery())
 
-	// exchangeHandler := transport.NewExchangeHandler(/* передайте ваш exchangeService */)
+	exchangeRepository := stub.NewTradeOfferStubRepository()
+	exchangeService := service.NewExchangeService(exchangeRepository)
+	exchangeHandler := transport.NewExchangeHandler(exchangeService)
 
-	// api := router.Group("/api/v1")
-	// {
-	// 	api.POST("/offers", exchangeHandler.PostExchangeHandler)
-	// }
+	api := router.Group("/api/v1")
+	{
+		api.POST("/offers", exchangeHandler.PostExchangeHandler)
+	}
 
 	router.GET("/health", health.HealthHandler)
 
