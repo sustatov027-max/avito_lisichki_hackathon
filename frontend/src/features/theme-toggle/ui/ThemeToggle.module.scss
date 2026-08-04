@@ -1,0 +1,82 @@
+.toggle {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	padding: 0;
+	border: var(--border);
+	border-radius: var(--radius-full);
+	background-color: var(--surface);
+	color: var(--text-primary);
+	box-shadow: var(--shadow-xs);
+	cursor: pointer;
+	transition-duration: var(--duration);
+
+	@include hover {
+		background-color: var(--surface-hover);
+		box-shadow: var(--shadow-sm);
+	}
+
+	&:active {
+		transform: scale(0.96);
+	}
+
+	&:disabled {
+		background-color: var(--disabled-bg);
+		border-color: var(--disabled-border);
+		color: var(--disabled-text);
+		cursor: not-allowed;
+		box-shadow: none;
+		transform: none;
+	}
+}
+
+:global(::view-transition-old(root)),
+:global(::view-transition-new(root)) {
+	animation-duration: 450ms;
+	animation-timing-function: ease-out;
+	pointer-events: none;
+}
+
+:global(::view-transition-old(root)) {
+	animation: none;
+}
+
+:global(html[data-theme-transition='circle']::view-transition-new(root)) {
+	animation-name: theme-reveal-circle;
+}
+
+:global(html[data-theme-transition='slide']::view-transition-new(root)) {
+	animation-name: theme-reveal-slide;
+}
+
+@keyframes theme-reveal-circle {
+	from {
+		clip-path: circle(0 at var(--theme-transition-x) var(--theme-transition-y));
+	}
+
+	to {
+		clip-path: circle(
+			var(--theme-transition-radius) at var(--theme-transition-x)
+				var(--theme-transition-y)
+		);
+	}
+}
+
+@keyframes theme-reveal-slide {
+	from {
+		clip-path: inset(0 0 0 100%);
+	}
+
+	to {
+		clip-path: inset(0 0 0 0);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	:global(::view-transition-old(root)),
+	:global(::view-transition-new(root)) {
+		animation: none;
+	}
+}

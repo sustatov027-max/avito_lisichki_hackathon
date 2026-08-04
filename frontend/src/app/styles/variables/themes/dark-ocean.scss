@@ -1,0 +1,22 @@
+:root[data-theme='dark-ocean'] {
+	--background: #0d1d25;
+	--background-gradient: linear-gradient(180deg, #0d1d25, #16313d);
+	--surface: #152933;
+	--surface-secondary: #1a313d;
+	--surface-hover: #203947;
+
+	--border-color: #285062;
+	--border-color-secondary: #34667d;
+
+	--text-primary: #f5f7fa;
+	--text-secondary: #c6c6d0;
+	--text-tertiary: #a6b2bc;
+	--text-placeholder: #7b8b95;
+	--text-on-primary: #ffffff;
+
+	--primary: #104c64;
+	--primary-hover: #15627f;
+	--primary-active: #0d4257;
+	--primary-soft: rgb(16 76 100 / 0.15);
+	--primary-border: rgb(16 76 100 / 0.4);
+}

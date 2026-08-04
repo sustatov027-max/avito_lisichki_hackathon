@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<script>
+			;(() => {
+				const modes = ['light', 'dark', 'system']
+				const themes = ['default', 'forest', 'sunset', 'ocean']
+				const backgrounds = {
+					'light-default': '#f8f7f6',
+					'light-forest': '#f7fcf8',
+					'light-sunset': '#fff8f6',
+					'light-ocean': '#f6fbfd',
+					'dark-default': '#111113',
+					'dark-forest': '#051f20',
+					'dark-sunset': '#181a2f',
+					'dark-ocean': '#0d1d25'
+				}
+
+				try {
+					const savedTheme = JSON.parse(localStorage.getItem('theme') || '{}')
+					const state = savedTheme.state || {}
+					const mode = modes.includes(state.mode) ? state.mode : 'light'
+					const theme = themes.includes(state.theme) ? state.theme : 'forest'
+					const resolvedMode =
+						mode === 'system' &&
+						matchMedia('(prefers-color-scheme: dark)').matches
+							? 'dark'
+							: mode === 'system'
+								? 'light'
+								: mode
+					const themeName = `${resolvedMode}-${theme}`
+
+					document.documentElement.dataset.theme = themeName
+					document.documentElement.style.setProperty(
+						'--initial-background',
+						backgrounds[themeName]
+					)
+				} catch {
+					document.documentElement.dataset.theme = 'light-forest'
+					document.documentElement.style.setProperty(
+						'--initial-background',
+						'#f7fcf8'
+					)
+				}
+			})()
+		</script>
+		<style>
+			html,
+			body {
+				background-color: var(--initial-background, #f7fcf8);
+			}
+		</style>
+		<title>Обмен товарами</title>
+	</head>
+
+	<body>
+		<div id="root"></div>
+		<script type="module" src="/src/app/entrypoint/main.tsx"></script>
+	</body>
+</html>

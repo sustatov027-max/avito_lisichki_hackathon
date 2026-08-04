@@ -1,0 +1,22 @@
+:root[data-theme='dark-sunset'] {
+	--background: #181a2f;
+	--background-gradient: linear-gradient(180deg, #181a2f, #2b3553);
+	--surface: #242e49;
+	--surface-secondary: #303958;
+	--surface-hover: #3b4567;
+
+	--border-color: #37415c;
+	--border-color-secondary: #4b5673;
+
+	--text-primary: #f5f7fa;
+	--text-secondary: #d6d9e2;
+	--text-tertiary: #aab1bf;
+	--text-placeholder: #7d8798;
+	--text-on-primary: #ffffff;
+
+	--primary: #b4182d;
+	--primary-hover: #cf2138;
+	--primary-active: #991325;
+	--primary-soft: rgb(180 24 45 / 0.15);
+	--primary-border: rgb(180 24 45 / 0.4);
+}
