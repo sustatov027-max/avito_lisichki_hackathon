@@ -1,0 +1,28 @@
+:root[data-theme='light-ocean'] {
+	--background: #f6fbfd;
+	--background-gradient: linear-gradient(180deg, #ffffff 0%, #edf7fb 100%);
+
+	--surface: #ffffff;
+	--surface-secondary: #f6fbfd;
+	--surface-hover: #eef8fc;
+
+	--border-color: #dcebf2;
+	--border-color-secondary: #c5dce8;
+
+	--text-primary: #16232d;
+	--text-secondary: #415866;
+	--text-tertiary: #6f8795;
+	--text-placeholder: #9cb0bc;
+	--text-on-primary: #ffffff;
+
+	--primary: #2f8cbf;
+	--primary-hover: #267cab;
+	--primary-active: #1e6892;
+	--primary-soft: rgba(47, 140, 191, 0.12);
+	--primary-border: rgba(47, 140, 191, 0.24);
+
+	--success: #3eb57d;
+	--warning: #e7a53d;
+	--danger: #e55c5c;
+	--info: #4d95ff;
+}
