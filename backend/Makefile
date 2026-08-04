@@ -10,6 +10,10 @@ DB_NAME ?= exchange_chain
 up:
 	docker-compose --env-file .env -f $(COMPOSE_FILE) up -d
 
+.PHONY: build
+build:
+	docker-compose --env-file .env -f $(COMPOSE_FILE) build
+
 .PHONY: down
 down:
 	docker-compose --env-file .env -f $(COMPOSE_FILE) down
