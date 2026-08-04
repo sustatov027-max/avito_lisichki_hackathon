@@ -1,31 +1,14 @@
 import { motion } from 'framer-motion'
-import { useState } from 'react'
-import { NavLink, Outlet } from 'react-router'
+import { Outlet } from 'react-router'
 
-import { BurgerButton, Header } from '@shared/ui'
+import { ThemeSelect } from '@features/theme-select'
+import { ThemeToggle } from '@features/theme-toggle'
+
+import styles from './HomeLayout.module.scss'
 
 const HomeLayout = () => {
-	const [isMenuOpen, setIsMenuOpen] = useState(false)
-
 	return (
 		<>
-			<Header
-				logo='UI Kit'
-				navigation={
-					<>
-						<NavLink to='/'>Home</NavLink>
-						<NavLink to='/admin'>Admin</NavLink>
-					</>
-				}
-				mobileMenu={
-					<BurgerButton
-						isOpen={isMenuOpen}
-						onClick={() => setIsMenuOpen(value => !value)}
-					/>
-				}
-				isMenuOpen={isMenuOpen}
-				onMenuOpenChange={setIsMenuOpen}
-			/>
 			<motion.main
 				initial={{ opacity: 0 }}
 				animate={{ opacity: 1 }}
@@ -33,7 +16,9 @@ const HomeLayout = () => {
 				transition={{ duration: 0.5 }}
 			>
 				<Outlet />
+				<ThemeToggle className={styles.themeToggle} />
 			</motion.main>
+			<ThemeSelect />
 		</>
 	)
 }

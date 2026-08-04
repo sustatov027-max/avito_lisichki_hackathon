@@ -29,7 +29,7 @@ const Form = <
 			<FormProvider {...form}>
 				<form
 					className={clsx(styles.form, styles[align], className)}
-					onSubmit={form.handleSubmit(onSubmit)}
+					onSubmit={onSubmit}
 					{...rest}
 				>
 					{title && <FormTitle>{title}</FormTitle>}
@@ -44,7 +44,7 @@ const Form = <
 			<Card className={styles.container}>
 				<form
 					className={clsx(styles.form, styles[align], className)}
-					onSubmit={form.handleSubmit(onSubmit)}
+					onSubmit={onSubmit}
 					{...rest}
 				>
 					{title && <FormTitle>{title}</FormTitle>}

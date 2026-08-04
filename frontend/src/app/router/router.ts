@@ -1,6 +1,10 @@
 import { createBrowserRouter } from 'react-router'
 
+import { Exchange } from '@pages/exchange'
+
 import { HomeLayout, RootLayout } from '../layouts'
+
+import { ROUTES } from './routes'
 
 export const router = createBrowserRouter([
 	{
@@ -8,7 +12,13 @@ export const router = createBrowserRouter([
 		children: [
 			{
 				path: '/',
-				Component: HomeLayout
+				Component: HomeLayout,
+				children: [
+					{
+						path: ROUTES.EXCHANGE,
+						Component: Exchange
+					}
+				]
 			}
 		]
 	}

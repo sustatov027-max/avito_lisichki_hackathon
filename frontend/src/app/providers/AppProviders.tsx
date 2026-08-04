@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import { ToastProvider } from '@shared/ui/toast'
 import { TooltipProvider } from '@shared/ui/tooltip'
 
+import { QueryProvider } from './query-provider'
 import { ThemeProvider } from './theme-provider/ThemeProvider'
 
 type AppProvidersProps = {
@@ -14,10 +15,12 @@ const AppProviders = (props: AppProvidersProps) => {
 
 	return (
 		<ThemeProvider>
-			<TooltipProvider>
-				{children}
-				<ToastProvider />
-			</TooltipProvider>
+			<QueryProvider>
+				<TooltipProvider>
+					{children}
+					<ToastProvider />
+				</TooltipProvider>
+			</QueryProvider>
 		</ThemeProvider>
 	)
 }

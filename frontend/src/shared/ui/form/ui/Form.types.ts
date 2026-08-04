@@ -2,7 +2,7 @@ import type { FormHTMLAttributes, HTMLAttributes, ReactNode } from 'react'
 import type {
 	FieldPath,
 	FieldValues,
-	SubmitHandler,
+	UseFormHandleSubmit,
 	UseFormReturn
 } from 'react-hook-form'
 
@@ -15,7 +15,9 @@ export type FormProps<
 	title?: ReactNode
 	align?: FormAlign
 	form: UseFormReturn<TFieldValues, unknown, TTransformedValues>
-	onSubmit: SubmitHandler<TTransformedValues>
+	onSubmit: ReturnType<
+		UseFormHandleSubmit<TFieldValues, TTransformedValues>
+	>
 	isCustom?: boolean
 }
 
