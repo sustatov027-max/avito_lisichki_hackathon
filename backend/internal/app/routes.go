@@ -2,10 +2,10 @@ package app
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/repository/stub"
+	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/repository/postgres"
 	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/service"
-	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/platform/health"
 	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/transport"
+	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/platform/health"
 )
 
 func (a *App) registerRoutes() *gin.Engine {
@@ -13,7 +13,7 @@ func (a *App) registerRoutes() *gin.Engine {
 
 	router.Use(gin.Recovery())
 
-	exchangeRepository := stub.NewTradeOfferStubRepository()
+	exchangeRepository := postgres.NewTradeOfferRepository(a.db)
 	exchangeService := service.NewExchangeService(exchangeRepository)
 	exchangeHandler := transport.NewExchangeHandler(exchangeService)
 
