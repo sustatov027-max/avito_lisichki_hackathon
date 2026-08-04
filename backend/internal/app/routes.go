@@ -1,15 +1,24 @@
 package app
 
 import (
-	"net/http"
-
+	"github.com/gin-gonic/gin"
 	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/platform/health"
+	// "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/transport"
 )
 
-func (a *App) registerRoutes() http.Handler {
-	mux := http.NewServeMux()
+func (a *App) registerRoutes() *gin.Engine {
+	router := gin.New()
 
-	mux.HandleFunc("/health", health.HealthHandler)
+	router.Use(gin.Recovery())
 
-	return mux
+	// exchangeHandler := transport.NewExchangeHandler(/* передайте ваш exchangeService */)
+
+	// api := router.Group("/api/v1")
+	// {
+	// 	api.POST("/offers", exchangeHandler.PostExchangeHandler)
+	// }
+
+	router.GET("/health", health.HealthHandler)
+
+	return router
 }

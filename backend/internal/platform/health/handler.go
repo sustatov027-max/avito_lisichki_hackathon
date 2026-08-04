@@ -1,19 +1,17 @@
 package health
 
 import (
-	"encoding/json"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type HealthResponse struct {
 	Status string `json:"status"`
 }
 
-func HealthHandler(w http.ResponseWriter, _ *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-
-	_ = json.NewEncoder(w).Encode(HealthResponse{
+func HealthHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, HealthResponse{
 		Status: "ok",
 	})
 }
