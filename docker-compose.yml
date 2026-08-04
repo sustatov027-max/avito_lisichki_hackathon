@@ -7,12 +7,12 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
       POSTGRES_DB: ${DB_NAME:-exchange_chain}
     ports:
-      - "${DB_PORT:-5432}:5432"
+      - '${DB_PORT:-5432}:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./seeds:/seeds
+      - ./backend/seeds:/seeds
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
       interval: 2s
       timeout: 3s
       retries: 5
@@ -23,10 +23,10 @@ services:
     image: migrate/migrate
     container_name: exchange_chain_migrations
     volumes:
-      - ./migrations:/migrations
+      - ./backend/migrations:/migrations
     command:
       - -path=/migrations
-      - -database=postgres://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}?sslmode=${DB_SSLMODE:-disable}
+      - -database=postgres://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@postgres:5432/${DB_NAME:-exchange_chain}?sslmode=${DB_SSLMODE:-disable}
       - up
     depends_on:
       postgres:
@@ -34,11 +34,11 @@ services:
 
   app:
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
     container_name: exchange_chain_app
     ports:
-      - "8080:8080"
+      - '8080:8080'
     environment:
       - DB_HOST=postgres
       - DB_PORT=5432
@@ -51,6 +51,17 @@ services:
         condition: service_healthy
       migrations:
         condition: service_completed_successfully
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: exchange_chain_frontend
+    ports:
+      - '80:80'
+    depends_on:
+      app:
+        condition: service_started
 
 volumes:
   pgdata:
