@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-type HeatlhResponse struct {
+type HealthResponse struct {
 	Status string `json:"status"`
 }
 
@@ -13,7 +13,7 @@ func HealthHandler(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
-	_ = json.NewEncoder(w).Encode(HeatlhResponse{
+	_ = json.NewEncoder(w).Encode(HealthResponse{
 		Status: "ok",
 	})
 }

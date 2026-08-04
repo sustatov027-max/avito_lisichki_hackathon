@@ -5,12 +5,12 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/platform/health"
 )
 
 func New(_ context.Context) (*App, error) {
-
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	mux := http.NewServeMux()
 
@@ -18,6 +18,7 @@ func New(_ context.Context) (*App, error) {
 	server := &http.Server{
 		Addr:    ":8080",
 		Handler: mux,
+		ReadHeaderTimeout: 5 * time.Second,
 	}
 
 	app := &App{
