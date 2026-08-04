@@ -2,7 +2,7 @@ export const ATTRIBUTES = [
 	// Смартфоны
 	{
 		id: 1,
-		categoryId: 101,
+		categoryId: '00000000-0000-0000-0000-000000000101',
 		name: 'color',
 		label: 'Цвет',
 		type: 'multiple-select',
@@ -16,7 +16,7 @@ export const ATTRIBUTES = [
 	},
 	{
 		id: 2,
-		categoryId: 101,
+		categoryId: '00000000-0000-0000-0000-000000000101',
 		name: 'storage',
 		label: 'Память',
 		type: 'range',
@@ -25,7 +25,7 @@ export const ATTRIBUTES = [
 	},
 	{
 		id: 3,
-		categoryId: 101,
+		categoryId: '00000000-0000-0000-0000-000000000101',
 		name: 'condition',
 		label: 'Состояние',
 		type: 'select',
@@ -40,7 +40,7 @@ export const ATTRIBUTES = [
 	// Ноутбуки
 	{
 		id: 10,
-		categoryId: 102,
+		categoryId: '00000000-0000-0000-0000-000000000102',
 		name: 'ram',
 		label: 'Оперативная память',
 		type: 'range',
@@ -49,7 +49,7 @@ export const ATTRIBUTES = [
 	},
 	{
 		id: 11,
-		categoryId: 102,
+		categoryId: '00000000-0000-0000-0000-000000000102',
 		name: 'storage',
 		label: 'SSD',
 		type: 'range',
@@ -58,7 +58,7 @@ export const ATTRIBUTES = [
 	},
 	{
 		id: 12,
-		categoryId: 102,
+		categoryId: '00000000-0000-0000-0000-000000000102',
 		name: 'brand',
 		label: 'Бренд',
 		type: 'select',
@@ -71,7 +71,7 @@ export const ATTRIBUTES = [
 	},
 	{
 		id: 13,
-		categoryId: 102,
+		categoryId: '00000000-0000-0000-0000-000000000102',
 		name: 'color',
 		label: 'Цвет',
 		type: 'multiple-select',
@@ -85,7 +85,7 @@ export const ATTRIBUTES = [
 	// Автомобили
 	{
 		id: 20,
-		categoryId: 201,
+		categoryId: '00000000-0000-0000-0000-000000000201',
 		name: 'year',
 		label: 'Год выпуска',
 		type: 'range',
@@ -94,7 +94,7 @@ export const ATTRIBUTES = [
 	},
 	{
 		id: 21,
-		categoryId: 201,
+		categoryId: '00000000-0000-0000-0000-000000000201',
 		name: 'transmission',
 		label: 'Коробка',
 		type: 'select',
@@ -105,7 +105,7 @@ export const ATTRIBUTES = [
 	},
 	{
 		id: 22,
-		categoryId: 201,
+		categoryId: '00000000-0000-0000-0000-000000000201',
 		name: 'fuel',
 		label: 'Топливо',
 		type: 'multiple-select',
