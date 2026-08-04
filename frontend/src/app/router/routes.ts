@@ -1,3 +1,3 @@
 export const ROUTES = {
-  EXCHANGE: 'exchange'
+	EXCHANGE: 'exchange'
 }

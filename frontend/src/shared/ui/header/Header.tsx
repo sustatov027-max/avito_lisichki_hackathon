@@ -35,7 +35,11 @@ const Header = (props: HeaderProps) => {
 	}, [isClickOutside, onMenuOpenChange])
 
 	return (
-		<header ref={headerRef} className={clsx(styles.header, className)} {...rest}>
+		<header
+			ref={headerRef}
+			className={clsx(styles.header, className)}
+			{...rest}
+		>
 			<div className={clsx(styles.inner, 'container')}>
 				{logo && <div className={styles.logo}>{logo}</div>}
 				{navigation && <nav className={styles.navigation}>{navigation}</nav>}

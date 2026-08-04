@@ -6,7 +6,13 @@ export const ATTRIBUTES = [
 		name: 'color',
 		label: 'Цвет',
 		type: 'multiple-select',
-		options: ['black', 'white', 'blue', 'gray', 'gold']
+		options: [
+			{ name: 'black', label: 'Черный' },
+			{ name: 'white', label: 'Белый' },
+			{ name: 'blue', label: 'Синий' },
+			{ name: 'gray', label: 'Серый' },
+			{ name: 'gold', label: 'Золотой' }
+		]
 	},
 	{
 		id: 2,
@@ -23,7 +29,12 @@ export const ATTRIBUTES = [
 		name: 'condition',
 		label: 'Состояние',
 		type: 'select',
-		options: ['new', 'like_new', 'good', 'used']
+		options: [
+			{ name: 'new', label: 'Новое' },
+			{ name: 'like_new', label: 'Как новое' },
+			{ name: 'good', label: 'Хорошее' },
+			{ name: 'used', label: 'Б/у' }
+		]
 	},
 
 	// Ноутбуки
@@ -51,7 +62,12 @@ export const ATTRIBUTES = [
 		name: 'brand',
 		label: 'Бренд',
 		type: 'select',
-		options: ['Apple', 'ASUS', 'Lenovo', 'Dell']
+		options: [
+			{ name: 'Apple', label: 'Apple' },
+			{ name: 'ASUS', label: 'ASUS' },
+			{ name: 'Lenovo', label: 'Lenovo' },
+			{ name: 'Dell', label: 'Dell' }
+		]
 	},
 	{
 		id: 13,
@@ -59,7 +75,11 @@ export const ATTRIBUTES = [
 		name: 'color',
 		label: 'Цвет',
 		type: 'multiple-select',
-		options: ['black', 'silver', 'gray']
+		options: [
+			{ name: 'black', label: 'Черный' },
+			{ name: 'silver', label: 'Серебристый' },
+			{ name: 'gray', label: 'Серый' }
+		]
 	},
 
 	// Автомобили
@@ -78,7 +98,10 @@ export const ATTRIBUTES = [
 		name: 'transmission',
 		label: 'Коробка',
 		type: 'select',
-		options: ['automatic', 'manual']
+		options: [
+			{ name: 'automatic', label: 'Автомат' },
+			{ name: 'manual', label: 'Механика' }
+		]
 	},
 	{
 		id: 22,
@@ -86,6 +109,11 @@ export const ATTRIBUTES = [
 		name: 'fuel',
 		label: 'Топливо',
 		type: 'multiple-select',
-		options: ['gasoline', 'diesel', 'hybrid', 'electric']
+		options: [
+			{ name: 'gasoline', label: 'Бензин' },
+			{ name: 'diesel', label: 'Дизель' },
+			{ name: 'hybrid', label: 'Гибрид' },
+			{ name: 'electric', label: 'Электро' }
+		]
 	}
 ] as const

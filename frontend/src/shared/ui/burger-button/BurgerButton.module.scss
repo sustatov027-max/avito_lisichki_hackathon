@@ -30,7 +30,9 @@
 	height: 2px;
 	border-radius: var(--radius-full);
 	background-color: currentColor;
-	transition: transform var(--duration), opacity var(--duration);
+	transition:
+		transform var(--duration),
+		opacity var(--duration);
 
 	& + & {
 		margin-top: 5px;

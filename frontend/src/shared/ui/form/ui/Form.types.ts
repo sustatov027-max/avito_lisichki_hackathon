@@ -15,9 +15,7 @@ export type FormProps<
 	title?: ReactNode
 	align?: FormAlign
 	form: UseFormReturn<TFieldValues, unknown, TTransformedValues>
-	onSubmit: ReturnType<
-		UseFormHandleSubmit<TFieldValues, TTransformedValues>
-	>
+	onSubmit: ReturnType<UseFormHandleSubmit<TFieldValues, TTransformedValues>>
 	isCustom?: boolean
 }
 
