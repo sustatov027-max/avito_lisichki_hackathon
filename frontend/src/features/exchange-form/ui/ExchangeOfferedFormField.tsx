@@ -19,6 +19,8 @@ import {
 
 import type { ExchangeFormComponentsProps } from '../model/ExchangeFormComponents.types'
 
+import styles from './ExchangeForm.module.scss'
+
 const ExchangeOfferedFormField = (props: ExchangeFormComponentsProps) => {
 	const { form } = props
 
@@ -32,7 +34,10 @@ const ExchangeOfferedFormField = (props: ExchangeFormComponentsProps) => {
 	)
 
 	return (
-		<FormSection title='Предлагаемый товар'>
+		<FormSection
+			title='Предлагаемый товар'
+			description='Товар который вы можете предложить'
+		>
 			<FormField label='Название товара' name='offered_item.title' isRequired>
 				<Input
 					id='offered_item.title'
@@ -81,7 +86,7 @@ const ExchangeOfferedFormField = (props: ExchangeFormComponentsProps) => {
 			{offeredAttributes.map((attribute, index) => {
 				if (attribute.type === 'range') {
 					return (
-						<>
+						<div className={styles.smFieldsGroup}>
 							<Input
 								type='hidden'
 								{...form.register(
@@ -115,16 +120,12 @@ const ExchangeOfferedFormField = (props: ExchangeFormComponentsProps) => {
 									)}
 								/>
 							</FormField>
-						</>
+						</div>
 					)
 				}
 				if (attribute.type === 'select') {
 					return (
-						<FormField
-							name='offered_item.attributes.${index}.value'
-							label='Категория'
-							isRequired
-						>
+						<>
 							<Input
 								type='hidden'
 								{...form.register(
@@ -165,13 +166,13 @@ const ExchangeOfferedFormField = (props: ExchangeFormComponentsProps) => {
 									)
 								}}
 							/>
-						</FormField>
+						</>
 					)
 				}
 
 				if (attribute.type === 'multiple-select') {
 					return (
-						<FormField name='offered_item.' label='Категория' isRequired>
+						<>
 							<Input
 								type='hidden'
 								{...form.register(
@@ -216,7 +217,7 @@ const ExchangeOfferedFormField = (props: ExchangeFormComponentsProps) => {
 									)
 								}}
 							/>
-						</FormField>
+						</>
 					)
 				}
 			})}

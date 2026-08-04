@@ -17,6 +17,8 @@ import {
 
 import type { ExchangeFormComponentsProps } from '../model/ExchangeFormComponents.types'
 
+import styles from './ExchangeForm.module.scss'
+
 const ExchangeWantedFormFields = (props: ExchangeFormComponentsProps) => {
 	const { form } = props
 
@@ -30,7 +32,7 @@ const ExchangeWantedFormFields = (props: ExchangeFormComponentsProps) => {
 	)
 
 	return (
-		<FormSection title='Нужный товар'>
+		<FormSection title='Нужный товар' description='Товар который нужем вам'>
 			<FormField
 				label='Название желаймого товара'
 				name='wanted_item.title_query'
@@ -83,7 +85,7 @@ const ExchangeWantedFormFields = (props: ExchangeFormComponentsProps) => {
 			{wantedAttributes.map((attribute, index) => {
 				if (attribute.type === 'range') {
 					return (
-						<>
+						<div className={styles.smFieldsGroup}>
 							<Input
 								type='hidden'
 								{...form.register(
@@ -117,16 +119,12 @@ const ExchangeWantedFormFields = (props: ExchangeFormComponentsProps) => {
 									)}
 								/>
 							</FormField>
-						</>
+						</div>
 					)
 				}
 				if (attribute.type === 'select') {
 					return (
-						<FormField
-							name='wanted_item.attributes.${index}.value'
-							label='Категория'
-							isRequired
-						>
+						<>
 							<Input
 								type='hidden'
 								{...form.register(
@@ -167,13 +165,13 @@ const ExchangeWantedFormFields = (props: ExchangeFormComponentsProps) => {
 									)
 								}}
 							/>
-						</FormField>
+						</>
 					)
 				}
 
 				if (attribute.type === 'multiple-select') {
 					return (
-						<FormField name='offered_item.' label='Категория' isRequired>
+						<>
 							<Input
 								type='hidden'
 								{...form.register(
@@ -218,26 +216,28 @@ const ExchangeWantedFormFields = (props: ExchangeFormComponentsProps) => {
 									)
 								}}
 							/>
-						</FormField>
+						</>
 					)
 				}
 			})}
-			<FormField name='wanted_item.min_price' label='Минимальная цена'>
-				<Input
-					type='number'
-					id='wanted_item.min_price'
-					placeholder='30000'
-					{...form.register('wanted_item.min_price')}
-				/>
-			</FormField>
-			<FormField name='wanted_item.max_price' label='Максимальная цена'>
-				<Input
-					type='number'
-					id='wanted_item.max_price'
-					placeholder='90000'
-					{...form.register('wanted_item.max_price')}
-				/>
-			</FormField>
+			<div className={styles.smFieldsGroup}>
+				<FormField name='wanted_item.min_price' label='Минимальная цена'>
+					<Input
+						type='number'
+						id='wanted_item.min_price'
+						placeholder='30000'
+						{...form.register('wanted_item.min_price')}
+					/>
+				</FormField>
+				<FormField name='wanted_item.max_price' label='Максимальная цена'>
+					<Input
+						type='number'
+						id='wanted_item.max_price'
+						placeholder='90000'
+						{...form.register('wanted_item.max_price')}
+					/>
+				</FormField>
+			</div>
 		</FormSection>
 	)
 }

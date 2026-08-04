@@ -1,6 +1,6 @@
 import { Checkbox, FormField, Input } from '@shared/ui'
 
-import type { ExchangeFormComponentsProps } from '../model/ExchangeFormComponents.types'
+import type { ExchangeFormComponentsProps } from '../model/ExchangeFormComponents.types'  
 
 const ExchangeFormFields = (props: ExchangeFormComponentsProps) => {
 	const { form } = props
@@ -21,13 +21,11 @@ const ExchangeFormFields = (props: ExchangeFormComponentsProps) => {
 					{...form.register('city_name')}
 				/>
 			</FormField>
-			<FormField label='' name='delivery_enabled' isRequired>
-				<Checkbox
-					id='delivery_enabled'
-					{...form.register('delivery_enabled')}
-					label='Возможна доставка'
-				/>
-			</FormField>
+			<Checkbox
+				id='delivery_enabled'
+				{...form.register('delivery_enabled')}
+				label='Возможна доставка'
+			/>
 		</>
 	)
 }
