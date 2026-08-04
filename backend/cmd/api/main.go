@@ -7,6 +7,7 @@ import (
 )
 
 func main() {
+	log.Println("=== APPLICATION STARTING ===")
 	if err := app.Run(); err != nil {
 		log.Fatal(err)
 	}
