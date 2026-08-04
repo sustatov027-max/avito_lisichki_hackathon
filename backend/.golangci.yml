@@ -1,0 +1,63 @@
+version: '2'
+
+run:
+  timeout: 5m
+
+linters:
+  default: none
+
+  enable:
+    # Анализ кода
+    - govet
+    - staticcheck
+    - unused
+    - ineffassign
+    - errcheck
+
+    # Стиль
+    - revive
+    - gocritic
+    - misspell
+    - whitespace
+
+    # Безопасность
+    - gosec
+
+    # Ошибки
+    - errorlint
+
+    # HTTP
+    - bodyclose
+
+    # Go loop
+    - copyloopvar
+
+    # Метрики
+    - gocyclo
+    - funlen
+
+  settings:
+    revive:
+      rules:
+        - name: package-comments
+          disabled: true
+        - name: exported
+          disabled: true
+
+    gocyclo:
+      min-complexity: 15
+
+    funlen:
+      lines: 80
+      statements: 50
+
+formatters:
+  enable:
+    - gofmt
+    - gofumpt
+    - goimports
+    - gci
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0

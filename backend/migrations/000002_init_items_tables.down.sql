@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS desired_items CASCADE;
+DROP TABLE IF EXISTS offered_items CASCADE;
