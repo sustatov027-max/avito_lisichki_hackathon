@@ -7,13 +7,13 @@ import { useExchangeFormStore } from '@features/exchange-form/model/exchange.sto
 
 export const useCreatExchange = () => {
 	const createKey = useExchangeFormStore(s => s.createIdempotencyKey)
-	const key = useExchangeFormStore(s => s.idempotencyKey)
 
 	const { mutate: createExchange, isPending } = useMutation({
 		mutationKey: ['create-exchange'],
 		mutationFn: (data: ExchangeFormDataOutput) => {
-			createKey()
-			return exchangeServices.createExchange(data, key as string)
+			const idempotencyKey = createKey()
+
+			return exchangeServices.createExchange(data, idempotencyKey)
 		},
 		onSuccess() {
 			toast.success('Обмен создан')

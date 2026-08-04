@@ -109,7 +109,7 @@ const attributeSchema = attributeValueSchema.superRefine((attribute, ctx) => {
 })
 
 const validateCategoryAttributes = (
-	categoryId: number,
+	categoryId: string,
 	attribute: z.infer<typeof attributeValueSchema>
 ) => {
 	const allowedAttributes = ATTRIBUTES.filter(
