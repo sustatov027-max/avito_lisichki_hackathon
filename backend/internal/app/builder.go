@@ -16,8 +16,8 @@ func New(_ context.Context) (*App, error) {
 
 	mux.HandleFunc("GET /health", health.HealthHandler)
 	server := &http.Server{
-		Addr:              "localhost:8080",
-		Handler:           mux,
+		Addr:    ":8080",
+		Handler: mux,
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 
