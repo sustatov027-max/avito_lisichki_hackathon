@@ -3,11 +3,14 @@ import type { ExchangeFormDataOutput } from '@features/exchange-form/model/excha
 import { axiosWithAuth } from '@shared/api'
 
 class ExchangeServices {
-	async createExchange(data: ExchangeFormDataOutput) {
+	async createExchange(data: ExchangeFormDataOutput, idenpotentKey: string) {
 		const response = await axiosWithAuth({
 			url: '/offers',
 			method: 'POST',
-			data
+			data,
+			headers: {
+				'Idempotency-Key': idenpotentKey
+			}
 		})
 
 		return response.data
