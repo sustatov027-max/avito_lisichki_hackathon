@@ -29,14 +29,15 @@ type WantedItem struct {
 
 type Attribute struct {
 	AttributeID string   `json:"attribute_id" binding:"required"`
-	Value       *string  `json:"value,omitempty"`                 // Добавлено для одиночных значений ("value": "like_new")
-	Values      []string `json:"values,omitempty"`                // Для массивов ("values": ["white"])
-	MinValue    *int     `json:"min_value,omitempty"`             // Для диапазонных фильтров ("min_value": 65)
-	MaxValue    *int     `json:"max_value,omitempty"`             // Для диапазонных фильтров ("max_value": 345)
+	Value       *string  `json:"value,omitempty"`     // Добавлено для одиночных значений ("value": "like_new")
+	Values      []string `json:"values,omitempty"`    // Для массивов ("values": ["white"])
+	MinValue    *int     `json:"min_value,omitempty"` // Для диапазонных фильтров ("min_value": 65)
+	MaxValue    *int     `json:"max_value,omitempty"` // Для диапазонных фильтров ("max_value": 345)
 }
 
 type PostExchangeResponse struct {
 	ID        string    `json:"id"`
 	Status    string    `json:"status"`
 	CreatedAt time.Time `json:"created_at"`
+	Replayed  bool      `json:"-"`
 }
