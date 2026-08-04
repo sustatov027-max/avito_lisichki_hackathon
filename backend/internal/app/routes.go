@@ -4,8 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/repository/stub"
 	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/service"
-	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/platform/health"
 	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/transport"
+	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/platform/health"
 )
 
 func (a *App) registerRoutes() *gin.Engine {

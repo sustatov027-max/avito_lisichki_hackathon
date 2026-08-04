@@ -2,10 +2,20 @@ package dto
 
 import (
 	"encoding/json"
+	"errors"
 	"time"
 
 	"github.com/google/uuid"
 )
+
+// ErrIdempotencyConflict indicates that a key is bound to another request payload.
+var ErrIdempotencyConflict = errors.New("idempotency key was already used with a different request")
+
+// IdempotencyParams contains the client key and a canonical request fingerprint.
+type IdempotencyParams struct {
+	Key         string
+	RequestHash string
+}
 
 // CreateOfferParams содержит свалидированные и подготовленные данные для записи в БД
 type CreateOfferParams struct {
@@ -31,8 +41,8 @@ type OfferedItemParams struct {
 type DesiredItemParams struct {
 	TitlePattern  string
 	CategoryID    uuid.UUID
-	MinPrice      *float64        
-	MaxPrice      *float64        
+	MinPrice      *float64
+	MaxPrice      *float64
 	AllowDelivery bool
 	Attributes    json.RawMessage // Подготовленный JSONB ([]byte) для колонки attributes
 }
@@ -43,4 +53,5 @@ type CreateOfferResult struct {
 	DesiredItemID uuid.UUID
 	Status        string
 	CreatedAt     time.Time
+	Replayed      bool
 }

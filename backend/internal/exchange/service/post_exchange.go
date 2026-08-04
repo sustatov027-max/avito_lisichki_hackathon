@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 
@@ -11,7 +12,7 @@ import (
 )
 
 type TradeOfferRepository interface {
-	CreateOffer(ctx context.Context, params repoDTO.CreateOfferParams) (*repoDTO.CreateOfferResult, error)
+	CreateOffer(ctx context.Context, params repoDTO.CreateOfferParams, idempotency repoDTO.IdempotencyParams) (*repoDTO.CreateOfferResult, error)
 }
 
 type ExchangeService struct {
@@ -24,7 +25,7 @@ func NewExchangeService(repo TradeOfferRepository) *ExchangeService {
 	}
 }
 
-func (s *ExchangeService) PostExchange(ctx context.Context, req dto.PostExchangeRequest) (*dto.PostExchangeResponse, error) {
+func (s *ExchangeService) PostExchange(ctx context.Context, idempotencyKey string, req dto.PostExchangeRequest) (*dto.PostExchangeResponse, error) {
 	userID, err := uuid.Parse(req.UserID)
 	if err != nil {
 		return nil, fmt.Errorf("invalid user_id UUID: %w", err)
@@ -86,7 +87,16 @@ func (s *ExchangeService) PostExchange(ctx context.Context, req dto.PostExchange
 		},
 	}
 
-	res, err := s.repo.CreateOffer(ctx, params)
+	requestPayload, err := json.Marshal(req)
+	if err != nil {
+		return nil, fmt.Errorf("marshal request for idempotency: %w", err)
+	}
+	requestHash := fmt.Sprintf("%x", sha256.Sum256(requestPayload))
+
+	res, err := s.repo.CreateOffer(ctx, params, repoDTO.IdempotencyParams{
+		Key:         idempotencyKey,
+		RequestHash: requestHash,
+	})
 	if err != nil {
 		return nil, fmt.Errorf("repository create offer: %w", err)
 	}
@@ -95,5 +105,6 @@ func (s *ExchangeService) PostExchange(ctx context.Context, req dto.PostExchange
 		ID:        res.OfferedItemID.String(),
 		Status:    res.Status,
 		CreatedAt: res.CreatedAt,
+		Replayed:  res.Replayed,
 	}, nil
 }

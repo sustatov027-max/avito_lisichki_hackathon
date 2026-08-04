@@ -10,19 +10,53 @@ import (
 )
 
 type TradeOfferStubRepository struct {
-	mu     sync.RWMutex
-	offers map[uuid.UUID]repoDTO.CreateOfferParams
+	mu              sync.RWMutex
+	offers          map[uuid.UUID]repoDTO.CreateOfferParams
+	idempotencyKeys map[idempotencyScope]idempotencyRecord
+}
+
+type idempotencyScope struct {
+	userID uuid.UUID
+	key    string
+}
+
+type idempotencyRecord struct {
+	requestHash string
+	result      repoDTO.CreateOfferResult
 }
 
 func NewTradeOfferStubRepository() *TradeOfferStubRepository {
 	return &TradeOfferStubRepository{
-		offers: make(map[uuid.UUID]repoDTO.CreateOfferParams),
+		offers:          make(map[uuid.UUID]repoDTO.CreateOfferParams),
+		idempotencyKeys: make(map[idempotencyScope]idempotencyRecord),
 	}
 }
 
-func (r *TradeOfferStubRepository) CreateOffer(ctx context.Context, params repoDTO.CreateOfferParams) (*repoDTO.CreateOfferResult, error) {
+func (r *TradeOfferStubRepository) CreateOffer(
+	ctx context.Context,
+	params repoDTO.CreateOfferParams,
+	idempotency repoDTO.IdempotencyParams,
+) (*repoDTO.CreateOfferResult, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
+
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+
+	scope := idempotencyScope{userID: params.UserID, key: idempotency.Key}
+	if idempotency.Key != "" {
+		if record, ok := r.idempotencyKeys[scope]; ok {
+			if record.requestHash != idempotency.RequestHash {
+				return nil, repoDTO.ErrIdempotencyConflict
+			}
+
+			result := record.result
+			result.Replayed = true
+
+			return &result, nil
+		}
+	}
 
 	offeredItemID := uuid.New()
 	desiredItemID := uuid.New()
@@ -30,10 +64,19 @@ func (r *TradeOfferStubRepository) CreateOffer(ctx context.Context, params repoD
 	// Сохраняем в память для проверки
 	r.offers[offeredItemID] = params
 
-	return &repoDTO.CreateOfferResult{
+	result := repoDTO.CreateOfferResult{
 		OfferedItemID: offeredItemID,
 		DesiredItemID: desiredItemID,
 		Status:        "active",
 		CreatedAt:     time.Now(),
-	}, nil
+	}
+
+	if idempotency.Key != "" {
+		r.idempotencyKeys[scope] = idempotencyRecord{
+			requestHash: idempotency.RequestHash,
+			result:      result,
+		}
+	}
+
+	return &result, nil
 }
