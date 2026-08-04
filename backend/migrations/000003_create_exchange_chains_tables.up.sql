@@ -1,7 +1,7 @@
 -- Таблица цепочек обмена (до 5 человек)
 CREATE TABLE IF NOT EXISTS exchange_chains (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    status VARCHAR(50) NOT NULL DEFAULT 'proposed',
+    status VARCHAR(50) NOT NULL DEFAULT 'proposed', -- 'proposed', 'accepted', 'rejected', 'completed'
     chain_length INT NOT NULL CHECK (chain_length >= 2 AND chain_length <= 5),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
@@ -15,7 +15,8 @@ CREATE TABLE IF NOT EXISTS exchange_chain_steps (
     from_user_id UUID NOT NULL REFERENCES users(id),
     to_user_id UUID NOT NULL REFERENCES users(id),
     offered_item_id UUID NOT NULL REFERENCES offered_items(id),
-    is_accepted BOOLEAN DEFAULT FALSE,
+    received_item_id UUID NOT NULL REFERENCES offered_items(id),
+    is_accepted BOOLEAN DEFAULT NULL,
     UNIQUE(chain_id, step_order)
 );
 

@@ -16,7 +16,7 @@ func New(_ context.Context) (*App, error) {
 
 	mux.HandleFunc("GET /health", health.HealthHandler)
 	server := &http.Server{
-		Addr:    "localhost:8080",
+		Addr:    ":8080",
 		Handler: mux,
 	}
 
