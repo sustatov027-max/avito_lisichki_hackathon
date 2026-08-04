@@ -15,7 +15,7 @@ import {
 	Input
 } from '@shared/ui'
 
-import type { ExchangeFormComponentsProps } from '../model/ExchangeFormComponents.types'
+import type { ExchangeFormComponentsProps } from '../model/exchange.types'
 
 import styles from './ExchangeForm.module.scss'
 
