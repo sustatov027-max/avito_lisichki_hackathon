@@ -10,10 +10,11 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 func Run() error {
-
 	ctx, stop := signal.NotifyContext(
 		context.Background(),
 		os.Interrupt,
@@ -30,9 +31,9 @@ func Run() error {
 }
 
 type App struct {
-	logger *slog.Logger
-	server *http.Server
-
+	logger         *slog.Logger
+	server         *http.Server
+	router         *gin.Engine
 	closeResources func() error
 }
 

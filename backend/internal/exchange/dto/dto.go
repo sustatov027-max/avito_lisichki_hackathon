@@ -3,17 +3,17 @@ package dto
 import "time"
 
 type PostExchangeRequest struct {
-	UserID          string      `json:"user_id"`
-	CityName        string      `json:"city_name"`
+	UserID          string      `json:"user_id" binding:"required"`
+	CityName        string      `json:"city_name" binding:"required"`
 	DeliveryEnabled bool        `json:"delivery_enabled"`
-	OfferedItem     OfferedItem `json:"offered_item"`
-	WantedItem      WantedItem  `json:"wanted_item"`
+	OfferedItem     OfferedItem `json:"offered_item" binding:"required"`
+	WantedItem      WantedItem  `json:"wanted_item" binding:"required"`
 }
 
 type OfferedItem struct {
-	Title          string      `json:"title"`
+	Title          string      `json:"title" binding:"required"`
 	Description    string      `json:"description"`
-	CategoryID     string      `json:"category_id"`
+	CategoryID     string      `json:"category_id" binding:"required"`
 	EstimatedPrice int         `json:"estimated_price"`
 	Photos         []string    `json:"photos"`
 	Attributes     []Attribute `json:"attributes,omitempty"`
@@ -28,7 +28,7 @@ type WantedItem struct {
 }
 
 type Attribute struct {
-	AttributeID string   `json:"attribute_id"`
+	AttributeID string   `json:"attribute_id" binding:"required"`
 	Values      []string `json:"values,omitempty"`
 	MinValue    *int     `json:"min_value,omitempty"`
 	MaxValue    *int     `json:"max_value,omitempty"`
