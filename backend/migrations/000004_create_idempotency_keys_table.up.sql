@@ -4,7 +4,6 @@ CREATE TABLE IF NOT EXISTS idempotency_keys (
     request_hash CHAR(64) NOT NULL,
     response_status SMALLINT,
     response_body JSONB,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     offered_item_id UUID NOT NULL REFERENCES offered_items(id) ON DELETE CASCADE,
     desired_item_id UUID NOT NULL REFERENCES desired_items(id) ON DELETE CASCADE,
     status VARCHAR(50) NOT NULL,

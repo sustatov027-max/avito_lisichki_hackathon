@@ -10,11 +10,9 @@ import (
 )
 
 func (a *App) registerRoutes() *gin.Engine {
-	router := gin.New()
+	router := gin.Default()
 
 	router.Use(cors.Default())
-
-	router.Use(gin.Recovery())
 
 	exchangeRepository := postgres.NewTradeOfferRepository(a.db)
 	exchangeService := service.NewExchangeService(exchangeRepository)
