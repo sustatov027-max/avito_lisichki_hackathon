@@ -5,7 +5,7 @@ import { categoryIdSchema } from '@entities/categories/model/categories.schemas'
 
 const attributeIdLiterals = ATTRIBUTES.map(attribute =>
 	z.literal(attribute.id)
-) as [z.ZodLiteral<number>, ...z.ZodLiteral<number>[]]
+) as [z.ZodLiteral<string>, ...z.ZodLiteral<string>[]]
 
 const attributeValueSchema = z.union([
 	z.object({

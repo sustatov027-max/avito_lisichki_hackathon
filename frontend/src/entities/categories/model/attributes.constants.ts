@@ -1,7 +1,7 @@
 export const ATTRIBUTES = [
 	// Смартфоны
 	{
-		id: 1,
+		id: '1',
 		categoryId: '00000000-0000-0000-0000-000000000101',
 		name: 'color',
 		label: 'Цвет',
@@ -15,7 +15,7 @@ export const ATTRIBUTES = [
 		]
 	},
 	{
-		id: 2,
+		id: '2',
 		categoryId: '00000000-0000-0000-0000-000000000101',
 		name: 'storage',
 		label: 'Память',
@@ -24,7 +24,7 @@ export const ATTRIBUTES = [
 		max: 1024
 	},
 	{
-		id: 3,
+		id: '3',
 		categoryId: '00000000-0000-0000-0000-000000000101',
 		name: 'condition',
 		label: 'Состояние',
@@ -39,7 +39,7 @@ export const ATTRIBUTES = [
 
 	// Ноутбуки
 	{
-		id: 10,
+		id: '10',
 		categoryId: '00000000-0000-0000-0000-000000000102',
 		name: 'ram',
 		label: 'Оперативная память',
@@ -48,7 +48,7 @@ export const ATTRIBUTES = [
 		max: 128
 	},
 	{
-		id: 11,
+		id: '11',
 		categoryId: '00000000-0000-0000-0000-000000000102',
 		name: 'storage',
 		label: 'SSD',
@@ -57,7 +57,7 @@ export const ATTRIBUTES = [
 		max: 4096
 	},
 	{
-		id: 12,
+		id: '12',
 		categoryId: '00000000-0000-0000-0000-000000000102',
 		name: 'brand',
 		label: 'Бренд',
@@ -70,7 +70,7 @@ export const ATTRIBUTES = [
 		]
 	},
 	{
-		id: 13,
+		id: '13',
 		categoryId: '00000000-0000-0000-0000-000000000102',
 		name: 'color',
 		label: 'Цвет',
@@ -84,7 +84,7 @@ export const ATTRIBUTES = [
 
 	// Автомобили
 	{
-		id: 20,
+		id: '20',
 		categoryId: '00000000-0000-0000-0000-000000000201',
 		name: 'year',
 		label: 'Год выпуска',
@@ -93,7 +93,7 @@ export const ATTRIBUTES = [
 		max: 2026
 	},
 	{
-		id: 21,
+		id: '21',
 		categoryId: '00000000-0000-0000-0000-000000000201',
 		name: 'transmission',
 		label: 'Коробка',
@@ -104,7 +104,7 @@ export const ATTRIBUTES = [
 		]
 	},
 	{
-		id: 22,
+		id: '22',
 		categoryId: '00000000-0000-0000-0000-000000000201',
 		name: 'fuel',
 		label: 'Топливо',

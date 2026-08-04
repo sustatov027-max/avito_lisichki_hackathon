@@ -62,7 +62,7 @@ const ExchangeWantedFormFields = (props: ExchangeFormComponentsProps) => {
 								<DropdownContent>
 									<DropdownRadioGroup
 										value={String(field.value ?? '')}
-										onValueChange={value => field.onChange(Number(value))}
+										onValueChange={field.onChange}
 									>
 										{CATEGORIES.filter(
 											category => category.parentId !== null
