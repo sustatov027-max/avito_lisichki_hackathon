@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 func Run() error {
@@ -34,6 +35,7 @@ type App struct {
 	logger         *slog.Logger
 	server         *http.Server
 	router         *gin.Engine
+	db             *pgxpool.Pool
 	closeResources func() error
 }
 
