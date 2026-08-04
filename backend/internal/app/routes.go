@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/repository/postgres"
 	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/service"
@@ -10,6 +11,8 @@ import (
 
 func (a *App) registerRoutes() *gin.Engine {
 	router := gin.New()
+
+	router.Use(cors.Default())
 
 	router.Use(gin.Recovery())
 

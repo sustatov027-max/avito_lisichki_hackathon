@@ -97,6 +97,9 @@ func (s *ExchangeService) PostExchange(ctx context.Context, idempotencyKey strin
 		Key:         idempotencyKey,
 		RequestHash: requestHash,
 	})
+	if err != nil {
+		return nil, err
+	}
 
 	return &dto.PostExchangeResponse{
 		ID:        res.OfferedItemID.String(),

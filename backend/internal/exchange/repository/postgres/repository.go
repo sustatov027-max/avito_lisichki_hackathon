@@ -39,6 +39,12 @@ func (r *TradeOfferRepository) CreateOffer(
 
 	// 1. Проверка идемпотентности
 	if idempotency.Key != "" {
+		if _, err := tx.Exec(ctx, `
+			SELECT pg_advisory_xact_lock(hashtextextended($1::text || ':' || $2, 0))
+		`, params.UserID, idempotency.Key); err != nil {
+			return nil, fmt.Errorf("lock idempotency key: %w", err)
+		}
+		
 		var (
 			existingHash          string
 			existingOfferedItemID uuid.UUID
