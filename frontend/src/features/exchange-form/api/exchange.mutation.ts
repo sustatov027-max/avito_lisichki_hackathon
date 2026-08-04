@@ -3,12 +3,18 @@ import toast from 'react-hot-toast'
 
 import { exchangeServices } from '@features/exchange-form/api/exchange.services'
 import type { ExchangeFormDataOutput } from '@features/exchange-form/model/exchange-form-schema'
+import { useExchangeFormStore } from '@features/exchange-form/model/exchange.store'
 
 export const useCreatExchange = () => {
+	const createKey = useExchangeFormStore(s => s.createIdempotencyKey)
+	const key = useExchangeFormStore(s => s.idempotencyKey)
+
 	const { mutate: createExchange, isPending } = useMutation({
 		mutationKey: ['create-exchange'],
-		mutationFn: (data: ExchangeFormDataOutput) =>
-			exchangeServices.createExchange(data),
+		mutationFn: (data: ExchangeFormDataOutput) => {
+			createKey()
+			return exchangeServices.createExchange(data, key as string)
+		},
 		onSuccess() {
 			toast.success('Обмен создан')
 		},

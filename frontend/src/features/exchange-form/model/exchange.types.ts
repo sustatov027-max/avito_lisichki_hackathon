@@ -8,3 +8,10 @@ import type {
 export type ExchangeFormComponentsProps = {
 	form: UseFormReturn<ExchangeFormDataInput, unknown, ExchangeFormDataOutput>
 }
+
+export type ExchangeFormState = {
+	idempotencyKey: string | null
+
+	createIdempotencyKey: () => string
+	clearIdempotencyKey: () => void
+}
