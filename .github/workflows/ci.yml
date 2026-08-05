@@ -51,12 +51,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Setup Go
-        uses: actions/setup-go@v6
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v8
         with:
-          go-version-file: backend/go.mod
-          cache-dependency-path: backend/go.sum
-          cache: true
+          version: latest
+          working-directory: backend
 
       - name: Download dependencies
         run: go mod download
