@@ -23,7 +23,12 @@ export const useExchangeForm = () => {
 		onSubmit: async data => {
 			console.log(data)
 
-			createExchange(data)
+			createExchange(data, {
+				onSuccess: () => {
+					form.reset()
+					clearKey()
+				}
+			})
 		}
 	})
 

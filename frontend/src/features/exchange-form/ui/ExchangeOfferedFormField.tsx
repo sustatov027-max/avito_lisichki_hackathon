@@ -1,5 +1,3 @@
-'use client'
-
 import { Controller, useWatch } from 'react-hook-form'
 
 import { ATTRIBUTES } from '@entities/categories/model/attributes.constants'
@@ -86,7 +84,10 @@ const ExchangeOfferedFormField = (props: ExchangeFormComponentsProps) => {
 			{offeredAttributes.map((attribute, index) => {
 				if (attribute.type === 'range') {
 					return (
-						<div className={styles.smFieldsGroup}>
+						<div
+							className={styles.smFieldsGroup}
+							key={`${offeredCategoryId}-${attribute.id}`}
+						>
 							<Input
 								type='hidden'
 								{...form.register(
@@ -96,7 +97,6 @@ const ExchangeOfferedFormField = (props: ExchangeFormComponentsProps) => {
 							/>
 							<FormField
 								label={`${attribute.label} минимум`}
-								key={attribute.id}
 								name={`offered_item.attributes.${index}.min_value`}
 							>
 								<Input
@@ -109,7 +109,6 @@ const ExchangeOfferedFormField = (props: ExchangeFormComponentsProps) => {
 							</FormField>
 							<FormField
 								label={`${attribute.label} максимум`}
-								key={attribute.id}
 								name={`offered_item.attributes.${index}.max_value`}
 							>
 								<Input
@@ -125,7 +124,11 @@ const ExchangeOfferedFormField = (props: ExchangeFormComponentsProps) => {
 				}
 				if (attribute.type === 'select') {
 					return (
-						<>
+						<FormField
+							name={`offered_item.attributes.${index}.value`}
+							label={attribute.label}
+							key={`${offeredCategoryId}-${attribute.id}`}
+						>
 							<Input
 								type='hidden'
 								{...form.register(
@@ -166,13 +169,17 @@ const ExchangeOfferedFormField = (props: ExchangeFormComponentsProps) => {
 									)
 								}}
 							/>
-						</>
+						</FormField>
 					)
 				}
 
 				if (attribute.type === 'multiple-select') {
 					return (
-						<>
+						<FormField
+							name={`offered_item.attributes.${index}.value`}
+							label={attribute.label}
+							key={`${offeredCategoryId}-${attribute.id}`}
+						>
 							<Input
 								type='hidden'
 								{...form.register(
@@ -217,7 +224,7 @@ const ExchangeOfferedFormField = (props: ExchangeFormComponentsProps) => {
 									)
 								}}
 							/>
-						</>
+						</FormField>
 					)
 				}
 			})}
