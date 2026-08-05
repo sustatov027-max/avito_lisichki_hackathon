@@ -28,6 +28,7 @@ func (a *App) registerRoutes() *gin.Engine {
 			"Accept",
 			"Authorization",
 			"Idempotency-Key",
+			"X-User-ID",
 			"X-Requested-With",
 		},
 
@@ -46,7 +47,7 @@ func (a *App) registerRoutes() *gin.Engine {
 	api := router.Group("/api/v1")
 	{
 		api.POST("/offers", exchangeHandler.PostExchangeHandler)
-		api.GET("/chains/:chain_id", chainHandler.GetChainHandler)
+		api.GET("/chains", chainHandler.GetChainsHandler)
 	}
 
 	router.GET("/health", health.HealthHandler)

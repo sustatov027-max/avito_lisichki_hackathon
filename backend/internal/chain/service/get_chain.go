@@ -11,7 +11,7 @@ import (
 )
 
 type ChainRepository interface {
-	GetByID(ctx context.Context, chainID uuid.UUID, userID uuid.UUID) (*chains.Chain, error)
+	GetByUserID(ctx context.Context, userID uuid.UUID) ([]chains.Chain, error)
 }
 
 type ChainService struct {
@@ -22,36 +22,37 @@ func NewChainService(repository ChainRepository) *ChainService {
 	return &ChainService{repository: repository}
 }
 
-func (s *ChainService) GetChain(
+func (s *ChainService) GetChains(
 	ctx context.Context,
-	rawChainID string,
 	rawUserID string,
 ) (*dto.GetChainsResponse, error) {
-	chainID, err := parseID(rawChainID, chains.ErrInvalidChainID)
-	if err != nil {
-		return nil, err
-	}
-	userID, err := parseID(rawUserID, chains.ErrInvalidUserID)
+	userID, err := parseUserID(rawUserID)
 	if err != nil {
 		return nil, err
 	}
 
-	chain, err := s.repository.GetByID(ctx, chainID, userID)
+	userChains, err := s.repository.GetByUserID(ctx, userID)
 	if err != nil {
-		return nil, fmt.Errorf("get chain: %w", err)
-	}
-	response, err := mapChainToResponse(chain, userID, time.Now())
-	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get user chains: %w", err)
 	}
 
-	return &dto.GetChainsResponse{Chains: []dto.ChainResponse{*response}}, nil
+	responses := make([]dto.ChainResponse, 0, len(userChains))
+	now := time.Now()
+	for index := range userChains {
+		response, err := mapChainToResponse(&userChains[index], userID, now)
+		if err != nil {
+			return nil, fmt.Errorf("map chain %s: %w", userChains[index].ID, err)
+		}
+		responses = append(responses, *response)
+	}
+
+	return &dto.GetChainsResponse{Chains: responses}, nil
 }
 
-func parseID(rawID string, target error) (uuid.UUID, error) {
+func parseUserID(rawID string) (uuid.UUID, error) {
 	id, err := uuid.Parse(rawID)
 	if err != nil {
-		return uuid.Nil, fmt.Errorf("%w: %s", target, rawID)
+		return uuid.Nil, fmt.Errorf("%w: %s", chains.ErrInvalidUserID, rawID)
 	}
 
 	return id, nil
