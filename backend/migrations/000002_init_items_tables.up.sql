@@ -41,3 +41,7 @@ CREATE INDEX idx_desired_items_offered ON desired_items(offered_item_id);
 CREATE INDEX idx_desired_items_category ON desired_items(category_id);
 CREATE INDEX idx_desired_items_price ON desired_items(min_price, max_price);
 CREATE INDEX idx_desired_items_attributes ON desired_items USING GIN (attributes);
+
+CREATE UNIQUE INDEX idx_offered_items_prevent_duplicates 
+ON offered_items (user_id, LOWER(title), city_name) 
+WHERE status = 'active';
