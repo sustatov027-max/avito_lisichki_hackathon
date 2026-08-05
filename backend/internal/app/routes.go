@@ -20,9 +20,7 @@ func (a *App) registerRoutes() *gin.Engine {
 
 	router.Use(cors.New(cors.Config{
 		AllowAllOrigins: true,
-
-		AllowMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"},
-
+		AllowMethods:    []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"},
 		AllowHeaders: []string{
 			"Origin",
 			"Content-Type",
@@ -30,11 +28,10 @@ func (a *App) registerRoutes() *gin.Engine {
 			"Authorization",
 			"Idempotency-Key",
 			"X-Requested-With",
+			"X-User-ID",
 		},
-
 		ExposeHeaders: []string{"Content-Length", "Content-Type"},
-
-		MaxAge: 12 * time.Hour,
+		MaxAge:        12 * time.Hour,
 	}))
 
 	// Exchange layer initialization
@@ -51,10 +48,10 @@ func (a *App) registerRoutes() *gin.Engine {
 	{
 		api.Use(middleware.DummyAuthMiddleware())
 		{
+			api.GET("/chains/:chain_id", chainHandler.GetChainHandler)
 			api.POST("/chains/:chain_id/decision", chainHandler.ProcessDecisionHandler)
+			api.POST("/offers", exchangeHandler.PostExchangeHandler)
 		}
-		api.POST("/offers", exchangeHandler.PostExchangeHandler)
-		api.GET("/chains/:chain_id", chainHandler.GetChainHandler)
 	}
 
 	router.GET("/health", health.HealthHandler)
