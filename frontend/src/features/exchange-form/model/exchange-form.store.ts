@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-import type { ExchangeFormState } from './exchange.types'
+import type { ExchangeFormState } from './exchange-form.types'
 
 export const useExchangeFormStore = create<ExchangeFormState>(set => ({
 	idempotencyKey: null,

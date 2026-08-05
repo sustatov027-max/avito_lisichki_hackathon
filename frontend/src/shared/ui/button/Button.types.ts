@@ -5,7 +5,7 @@ type ButtonBaseProps = Omit<
 	'aria-label' | 'children' | 'type'
 > & {
 	type?: 'button' | 'submit'
-	variant?: 'primary' | 'secondary' | 'ghost'
+	variant?: 'primary' | 'secondary' | 'ghost' | 'green' | 'red'
 	isLoading?: boolean
 	size?: 'sm' | 'md' | 'lg'
 }
