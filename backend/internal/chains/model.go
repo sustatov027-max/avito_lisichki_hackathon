@@ -8,8 +8,10 @@ import (
 )
 
 var (
-	ErrInvalidID = errors.New("invalid chain id")
-	ErrNotFound  = errors.New("chain not found")
+	ErrInvalidChainID = errors.New("invalid chain id")
+	ErrInvalidUserID  = errors.New("invalid user id")
+	ErrNotFound       = errors.New("chain not found")
+	ErrIncomplete     = errors.New("chain does not contain both user directions")
 )
 
 type Chain struct {
@@ -17,16 +19,28 @@ type Chain struct {
 	Status      string
 	ChainLength int
 	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	ExpiresAt   time.Time
 	Steps       []Step
 }
 
 type Step struct {
+	Order      int
+	FromUser   User
+	ToUser     User
+	Item       Item
+	IsAccepted *bool
+}
+
+type User struct {
+	ID   uuid.UUID
+	Name string
+	City string
+}
+
+type Item struct {
 	ID             uuid.UUID
-	Order          int
-	FromUserID     uuid.UUID
-	ToUserID       uuid.UUID
-	OfferedItemID  uuid.UUID
-	ReceivedItemID uuid.UUID
-	IsAccepted     *bool
+	Title          string
+	CategoryID     uuid.UUID
+	Photo          string
+	EstimatedPrice float64
 }

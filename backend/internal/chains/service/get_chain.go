@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chains"
@@ -10,7 +11,7 @@ import (
 )
 
 type ChainRepository interface {
-	GetByID(ctx context.Context, chainID uuid.UUID) (*chains.Chain, error)
+	GetByID(ctx context.Context, chainID uuid.UUID, userID uuid.UUID) (*chains.Chain, error)
 }
 
 type ChainService struct {
@@ -21,40 +22,148 @@ func NewChainService(repository ChainRepository) *ChainService {
 	return &ChainService{repository: repository}
 }
 
-func (s *ChainService) GetChain(ctx context.Context, rawChainID string) (*dto.GetChainResponse, error) {
-	chainID, err := uuid.Parse(rawChainID)
+func (s *ChainService) GetChain(
+	ctx context.Context,
+	rawChainID string,
+	rawUserID string,
+) (*dto.GetChainsResponse, error) {
+	chainID, err := parseID(rawChainID, chains.ErrInvalidChainID)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %s", chains.ErrInvalidID, rawChainID)
+		return nil, err
+	}
+	userID, err := parseID(rawUserID, chains.ErrInvalidUserID)
+	if err != nil {
+		return nil, err
 	}
 
-	chain, err := s.repository.GetByID(ctx, chainID)
+	chain, err := s.repository.GetByID(ctx, chainID, userID)
 	if err != nil {
 		return nil, fmt.Errorf("get chain: %w", err)
 	}
-
-	return mapChainToResponse(chain), nil
-}
-
-func mapChainToResponse(chain *chains.Chain) *dto.GetChainResponse {
-	steps := make([]dto.StepResponse, 0, len(chain.Steps))
-	for _, step := range chain.Steps {
-		steps = append(steps, dto.StepResponse{
-			ID:             step.ID.String(),
-			Order:          step.Order,
-			FromUserID:     step.FromUserID.String(),
-			ToUserID:       step.ToUserID.String(),
-			OfferedItemID:  step.OfferedItemID.String(),
-			ReceivedItemID: step.ReceivedItemID.String(),
-			IsAccepted:     step.IsAccepted,
-		})
+	response, err := mapChainToResponse(chain, userID, time.Now())
+	if err != nil {
+		return nil, err
 	}
 
-	return &dto.GetChainResponse{
-		ID:          chain.ID.String(),
+	return &dto.GetChainsResponse{Chains: []dto.ChainResponse{*response}}, nil
+}
+
+func parseID(rawID string, target error) (uuid.UUID, error) {
+	id, err := uuid.Parse(rawID)
+	if err != nil {
+		return uuid.Nil, fmt.Errorf("%w: %s", target, rawID)
+	}
+
+	return id, nil
+}
+
+func mapChainToResponse(
+	chain *chains.Chain,
+	userID uuid.UUID,
+	now time.Time,
+) (*dto.ChainResponse, error) {
+	steps := make([]dto.StepResponse, 0, len(chain.Steps))
+	var givingStep, receivingStep *chains.Step
+	for index := range chain.Steps {
+		step := &chain.Steps[index]
+		steps = append(steps, mapStep(*step, userID))
+		if step.FromUser.ID == userID {
+			givingStep = step
+		}
+		if step.ToUser.ID == userID {
+			receivingStep = step
+		}
+	}
+	if givingStep == nil || receivingStep == nil {
+		return nil, chains.ErrIncomplete
+	}
+
+	timeLeft := max(int64(chain.ExpiresAt.Sub(now).Seconds()), 0)
+	decision := mapDecision(receivingStep.IsAccepted)
+
+	return &dto.ChainResponse{
+		ChainID:     chain.ID.String(),
 		Status:      chain.Status,
 		ChainLength: chain.ChainLength,
 		CreatedAt:   chain.CreatedAt,
-		UpdatedAt:   chain.UpdatedAt,
+		ExpiresAt:   chain.ExpiresAt,
+		TimeLeft:    timeLeft,
+		MySummary:   mapSummary(*givingStep, *receivingStep, decision, timeLeft),
 		Steps:       steps,
+	}, nil
+}
+
+func mapStep(step chains.Step, userID uuid.UUID) dto.StepResponse {
+	return dto.StepResponse{
+		Order:      step.Order,
+		FromUser:   mapUser(step.FromUser, userID),
+		ToUser:     mapUser(step.ToUser, userID),
+		Item:       mapItem(step.Item),
+		IsAccepted: step.IsAccepted,
 	}
+}
+
+func mapUser(user chains.User, currentUserID uuid.UUID) dto.UserResponse {
+	isMe := user.ID == currentUserID
+	name := user.Name
+	if isMe {
+		name = "Вы (" + name + ")"
+	}
+
+	return dto.UserResponse{
+		ID:   user.ID.String(),
+		Name: name,
+		City: user.City,
+		IsMe: isMe,
+	}
+}
+
+func mapItem(item chains.Item) dto.ItemResponse {
+	return dto.ItemResponse{
+		ID:         item.ID.String(),
+		Title:      item.Title,
+		CategoryID: item.CategoryID.String(),
+		Photo:      item.Photo,
+	}
+}
+
+func mapSummary(
+	givingStep chains.Step,
+	receivingStep chains.Step,
+	decision string,
+	timeLeft int64,
+) dto.MySummaryResponse {
+	return dto.MySummaryResponse{
+		UserActionRequired: decision == "pending" && timeLeft > 0,
+		MyDecision:         decision,
+		GivingItem:         mapItemSummary(givingStep.Item),
+		ReceivingItem: dto.ReceivedItem{
+			ItemSummary: mapItemSummary(receivingStep.Item),
+			FromUser: dto.UserSummary{
+				ID:   receivingStep.FromUser.ID.String(),
+				Name: receivingStep.FromUser.Name,
+				City: receivingStep.FromUser.City,
+			},
+		},
+	}
+}
+
+func mapItemSummary(item chains.Item) dto.ItemSummary {
+	return dto.ItemSummary{
+		ID:             item.ID.String(),
+		Title:          item.Title,
+		Photo:          item.Photo,
+		EstimatedPrice: item.EstimatedPrice,
+	}
+}
+
+func mapDecision(accepted *bool) string {
+	if accepted == nil {
+		return "pending"
+	}
+	if *accepted {
+		return "accepted"
+	}
+
+	return "rejected"
 }

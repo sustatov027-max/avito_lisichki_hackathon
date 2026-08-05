@@ -14,11 +14,15 @@ import (
 )
 
 type chainServiceStub struct {
-	response *dto.GetChainResponse
+	response *dto.GetChainsResponse
 	err      error
 }
 
-func (s chainServiceStub) GetChain(_ context.Context, _ string) (*dto.GetChainResponse, error) {
+func (s chainServiceStub) GetChain(
+	_ context.Context,
+	_ string,
+	_ string,
+) (*dto.GetChainsResponse, error) {
 	return s.response, s.err
 }
 
@@ -29,25 +33,16 @@ func TestGetChainHandler(t *testing.T) {
 		wantStatus int
 	}{
 		{
-			name:       "success",
-			service:    chainServiceStub{response: &dto.GetChainResponse{ID: "chain-id", Steps: []dto.StepResponse{}}},
+			name: "success",
+			service: chainServiceStub{response: &dto.GetChainsResponse{
+				Chains: []dto.ChainResponse{},
+			}},
 			wantStatus: http.StatusOK,
 		},
-		{
-			name:       "invalid id",
-			service:    chainServiceStub{err: chains.ErrInvalidID},
-			wantStatus: http.StatusBadRequest,
-		},
-		{
-			name:       "not found",
-			service:    chainServiceStub{err: chains.ErrNotFound},
-			wantStatus: http.StatusNotFound,
-		},
-		{
-			name:       "internal error",
-			service:    chainServiceStub{err: errors.New("database unavailable")},
-			wantStatus: http.StatusInternalServerError,
-		},
+		{name: "invalid chain id", service: chainServiceStub{err: chains.ErrInvalidChainID}, wantStatus: http.StatusBadRequest},
+		{name: "invalid user id", service: chainServiceStub{err: chains.ErrInvalidUserID}, wantStatus: http.StatusBadRequest},
+		{name: "not found", service: chainServiceStub{err: chains.ErrNotFound}, wantStatus: http.StatusNotFound},
+		{name: "internal error", service: chainServiceStub{err: errors.New("database unavailable")}, wantStatus: http.StatusInternalServerError},
 	}
 
 	for _, test := range tests {
@@ -56,7 +51,7 @@ func TestGetChainHandler(t *testing.T) {
 			handler := transport.NewChainHandler(test.service)
 			router := gin.New()
 			router.GET("/api/v1/chains/:chain_id", handler.GetChainHandler)
-			request := httptest.NewRequest(http.MethodGet, "/api/v1/chains/test-id", nil)
+			request := httptest.NewRequest(http.MethodGet, "/api/v1/chains/test-id?user_id=test-user", nil)
 			response := httptest.NewRecorder()
 
 			router.ServeHTTP(response, request)
