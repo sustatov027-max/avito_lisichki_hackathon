@@ -6,6 +6,7 @@ on:
       - dev_test
       - main
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
