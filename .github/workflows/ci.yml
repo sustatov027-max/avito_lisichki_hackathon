@@ -2,7 +2,9 @@ name: CI
 
 on:
   push:
-    branches: ['**']
+    branches:
+      - dev_test
+      - main
   pull_request:
 
 permissions:
