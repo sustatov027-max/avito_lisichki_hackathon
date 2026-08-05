@@ -6,6 +6,7 @@ on:
       - dev_test
       - main
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -42,9 +43,11 @@ jobs:
   backend:
     name: Backend
     runs-on: ubuntu-latest
+
     defaults:
       run:
         working-directory: backend
+
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -53,11 +56,17 @@ jobs:
         uses: actions/setup-go@v6
         with:
           go-version-file: backend/go.mod
-          cache-dependency-path: backend/go.sum
           cache: true
+          cache-dependency-path: backend/go.sum
 
       - name: Download dependencies
         run: go mod download
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: latest
+          working-directory: backend
 
       - name: Test
         run: go test ./...
