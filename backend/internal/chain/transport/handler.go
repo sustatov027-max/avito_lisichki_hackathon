@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain"
+	chains "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain"
 	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain/dto"
 )
 
