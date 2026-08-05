@@ -7,20 +7,25 @@ const attributeIdLiterals = ATTRIBUTES.map(attribute =>
 	z.literal(attribute.id)
 ) as [z.ZodLiteral<string>, ...z.ZodLiteral<string>[]]
 
+const optionalNumber = z.preprocess(
+	value => (value === '' || value === null || value === undefined ? undefined : value),
+	z.coerce.number().optional()
+)
+
 const attributeValueSchema = z.union([
 	z.object({
 		attribute_id: z.union(attributeIdLiterals),
-		value: z.string().min(1, 'Укажите значение')
-	}),
+		value: z.string().min(1, 'Укажите значение').optional()
+	}).strict(),
 	z.object({
 		attribute_id: z.union(attributeIdLiterals),
-		values: z.array(z.string().min(1)).min(1, 'Укажите хотя бы одно значение')
-	}),
+		values: z.array(z.string().min(1)).min(1, 'Укажите хотя бы одно значение').optional()
+	}).strict(),
 	z.object({
 		attribute_id: z.union(attributeIdLiterals),
-		min_value: z.coerce.number(),
-		max_value: z.coerce.number()
-	})
+		min_value: optionalNumber,
+		max_value: optionalNumber
+	}).strict()
 ])
 
 const attributeSchema = attributeValueSchema.superRefine((attribute, ctx) => {
@@ -29,10 +34,12 @@ const attributeSchema = attributeValueSchema.superRefine((attribute, ctx) => {
 	)
 
 	if ('value' in attribute || 'values' in attribute) {
-		const values = 'value' in attribute ? [attribute.value] : attribute.values
+		const values = 'value' in attribute ? [attribute.value] : 'values' in attribute ? attribute.values : undefined
 		const definition = definitions[0]
 
-		for (const value of values) {
+		if (!values) return
+
+		for (const value of values.filter((value): value is string => value !== undefined)) {
 			if (
 				!definitions.some(
 					definition =>
@@ -92,14 +99,21 @@ const attributeSchema = attributeValueSchema.superRefine((attribute, ctx) => {
 	}
 
 	const range = rangeDefinitions[0]
-	if (attribute.min_value > attribute.max_value) {
+	const rangeAttribute = attribute as {
+		min_value?: number
+		max_value?: number
+	}
+	if (rangeAttribute.min_value === undefined || rangeAttribute.max_value === undefined) {
+		return
+	}
+	if (rangeAttribute.min_value > rangeAttribute.max_value) {
 		ctx.addIssue({
 			code: 'custom',
 			message: 'Минимальное значение не может быть больше максимального',
 			path: ['min_value']
 		})
 	}
-	if (attribute.min_value < range.min || attribute.max_value > range.max) {
+	if (rangeAttribute.min_value < range.min || rangeAttribute.max_value > range.max) {
 		ctx.addIssue({
 			code: 'custom',
 			message: `Значение должно быть в диапазоне от ${range.min} до ${range.max}`,
