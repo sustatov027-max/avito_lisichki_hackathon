@@ -11,6 +11,7 @@ import {
 	exchangeFormSchema
 } from '../model/exchange-form-schema'
 import { useExchangeStepFormStore } from '../model/exchange-form-step.store'
+import { DEFAULT_FORM_VALUES } from '../model/exchange-form.constants'
 import { useExchangeFormStore } from '../model/exchange-form.store'
 
 export const useExchangeForm = () => {
@@ -19,26 +20,20 @@ export const useExchangeForm = () => {
 	const clearKey = useExchangeFormStore(s => s.clearIdempotencyKey)
 
 	const formData = useExchangeStepFormStore(state => state.data)
+	const resetStorage = useExchangeStepFormStore(state => state.reset)
 
 	const form = useFormsBase<ExchangeFormDataInput, ExchangeFormDataOutput>({
 		schema: exchangeFormSchema,
-		defaultValues: formData ?? {
-			user_id: '',
-			city_name: '',
-			delivery_enabled: false,
-
+		defaultValues: {
+			...DEFAULT_FORM_VALUES,
+			...formData,
 			offered_item: {
-				title: '',
-				category_id: undefined,
-				attributes: []
+				...DEFAULT_FORM_VALUES.offered_item,
+				...formData.offered_item
 			},
-
 			wanted_item: {
-				title_query: '',
-				category_id: undefined,
-				attributes: [],
-				min_price: '',
-				max_price: ''
+				...DEFAULT_FORM_VALUES.wanted_item,
+				...formData.wanted_item
 			}
 		},
 		onSubmit: async data => {
@@ -46,7 +41,8 @@ export const useExchangeForm = () => {
 
 			createExchange(data, {
 				onSuccess: () => {
-					form.reset()
+					resetStorage()
+					form.reset(DEFAULT_FORM_VALUES)
 					clearKey()
 				}
 			})

@@ -5,10 +5,14 @@ import type {
 	ExchangeFormDataInput,
 	ExchangeFormDataOutput
 } from '@features/exchange-form/model/exchange-form-schema'
+import { useExchangeStepFormStore } from '@features/exchange-form/model/exchange-form-step.store'
 import { ExchangeOfferedFormField } from '@features/exchange-form/ui/ExchangeOfferedFormField'
 import { ExchangeWantedFormFields } from '@features/exchange-form/ui/ExchangeWantedFormFields'
+import { StepsNavigation } from '@features/exchange-form/ui/StepsNavigation'
 
-import { Button, Form } from '@shared/ui'
+import { Form } from '@shared/ui'
+
+import { EXCHANGE_STEPS } from '../model/exchange-from-steps.constants'
 
 import { ExchangeFormFields } from './ExchangeFormFields'
 
@@ -19,19 +23,23 @@ const ExchangeForm = () => {
 
 	console.log(formState.errors)
 
+	const step = useExchangeStepFormStore(state => state.step)
+
 	return (
 		<Form<ExchangeFormDataInput, ExchangeFormDataOutput>
 			form={form}
 			onSubmit={form.onSubmit}
 			title='Создать обмен'
 		>
-			<ExchangeFormFields form={form} />
+			{step === EXCHANGE_STEPS.ONBOARD && <ExchangeFormFields form={form} />}
+			{step === EXCHANGE_STEPS.OFFERED && (
+				<ExchangeOfferedFormField form={form} />
+			)}
+			{step === EXCHANGE_STEPS.WANTED && (
+				<ExchangeWantedFormFields form={form} />
+			)}
 
-			<ExchangeOfferedFormField form={form} />
-
-			<ExchangeWantedFormFields form={form} />
-
-			<Button type='submit'>Отправить</Button>
+			<StepsNavigation form={form} />
 		</Form>
 	)
 }

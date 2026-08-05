@@ -9,3 +9,16 @@
 .dropdown {
 	width: 100%;
 }
+
+.buttons {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+  width: 100%;
+
+	.navigation {
+		display: flex;
+		align-items: center;
+		column-gap: 8px;
+	}
+}
