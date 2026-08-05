@@ -86,4 +86,26 @@
 			background-color: var(--button-ghost-hover, var(--primary-soft));
 		}
 	}
+
+	&.green,
+	&.red {
+		color: #fff;
+		box-shadow: var(--shadow-xs);
+	}
+
+	&.green {
+		background-color: #16a34a;
+
+		@include hover {
+			background-color: #15803d;
+		}
+	}
+
+	&.red {
+		background-color: #dc2626;
+
+		@include hover {
+			background-color: #b91c1c;
+		}
+	}
 }

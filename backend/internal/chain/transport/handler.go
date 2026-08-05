@@ -6,12 +6,12 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chains"
-	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chains/dto"
+	chains "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain"
+	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain/dto"
 )
 
 type ChainService interface {
-	GetChain(ctx context.Context, chainID string) (*dto.GetChainResponse, error)
+	GetChain(ctx context.Context, chainID string, userID string) (*dto.GetChainsResponse, error)
 }
 
 type ChainHandler struct {
@@ -23,11 +23,17 @@ func NewChainHandler(service ChainService) *ChainHandler {
 }
 
 func (h *ChainHandler) GetChainHandler(c *gin.Context) {
-	response, err := h.service.GetChain(c.Request.Context(), c.Param("chain_id"))
+	response, err := h.service.GetChain(
+		c.Request.Context(),
+		c.Param("chain_id"),
+		c.Query("user_id"),
+	)
 	if err != nil {
 		switch {
-		case errors.Is(err, chains.ErrInvalidID):
+		case errors.Is(err, chains.ErrInvalidChainID):
 			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid chain id"})
+		case errors.Is(err, chains.ErrInvalidUserID):
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid or missing user_id"})
 		case errors.Is(err, chains.ErrNotFound):
 			c.JSON(http.StatusNotFound, gin.H{"error": "chain not found"})
 		default:

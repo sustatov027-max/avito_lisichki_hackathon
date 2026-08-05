@@ -2,8 +2,9 @@ import z from 'zod'
 
 import { CATEGORIES } from './categories.constants'
 
-const categoryIdLiterals = CATEGORIES.map(category =>
-	z.literal(category.id)
-) as [z.ZodLiteral<string>, ...z.ZodLiteral<string>[]]
+const categoryIds: readonly string[] = CATEGORIES.map(category => category.id)
 
-export const categoryIdSchema = z.union(categoryIdLiterals)
+export const categoryIdSchema = z
+	.string({ error: 'Выберите категорию' })
+	.min(1, 'Выберите категорию')
+	.refine(value => categoryIds.includes(value), 'Выберите категорию')
