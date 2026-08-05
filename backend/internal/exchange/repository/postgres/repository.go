@@ -44,7 +44,7 @@ func (r *TradeOfferRepository) CreateOffer(
 		`, params.UserID, idempotency.Key); err != nil {
 			return nil, fmt.Errorf("lock idempotency key: %w", err)
 		}
-		
+
 		var (
 			existingHash          string
 			existingOfferedItemID uuid.UUID
@@ -158,6 +158,15 @@ func (r *TradeOfferRepository) CreateOffer(
 
 	if err != nil {
 		return nil, fmt.Errorf("insert desired_item: %w", err)
+	}
+
+	// 3.5. Ищем и создаем цепочки обмена
+	_, err = tx.Exec(ctx, `
+    SELECT find_and_create_exchange_chains($1)
+`, offeredItemID)
+
+	if err != nil {
+		return nil, fmt.Errorf("find exchange chains: %w", err)
 	}
 
 	// 4. Фиксация ключа идемпотентности при наличии

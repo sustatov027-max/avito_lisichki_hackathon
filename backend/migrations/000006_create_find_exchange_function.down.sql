@@ -1,0 +1,1 @@
+DROP FUNCTION IF EXISTS find_and_create_exchange_chains(UUID);
