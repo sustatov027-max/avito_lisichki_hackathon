@@ -15,7 +15,7 @@ import {
 	Input
 } from '@shared/ui'
 
-import type { ExchangeFormComponentsProps } from '../model/exchange.types'
+import type { ExchangeFormComponentsProps } from '../model/exchange-form.types'
 
 import styles from './ExchangeForm.module.scss'
 
@@ -85,7 +85,10 @@ const ExchangeWantedFormFields = (props: ExchangeFormComponentsProps) => {
 			{wantedAttributes.map((attribute, index) => {
 				if (attribute.type === 'range') {
 					return (
-						<div className={styles.smFieldsGroup}>
+						<div
+							className={styles.smFieldsGroup}
+							key={`${wantedCategoryId}-${attribute.id}`}
+						>
 							<Input
 								type='hidden'
 								{...form.register(
@@ -95,7 +98,6 @@ const ExchangeWantedFormFields = (props: ExchangeFormComponentsProps) => {
 							/>
 							<FormField
 								label={`${attribute.label} минимум`}
-								key={attribute.id}
 								name={`wanted_item.attributes.${index}.min_value`}
 							>
 								<Input
@@ -108,7 +110,6 @@ const ExchangeWantedFormFields = (props: ExchangeFormComponentsProps) => {
 							</FormField>
 							<FormField
 								label={`${attribute.label} максимум`}
-								key={attribute.id}
 								name={`wanted_item.attributes.${index}.max_value`}
 							>
 								<Input
@@ -124,7 +125,11 @@ const ExchangeWantedFormFields = (props: ExchangeFormComponentsProps) => {
 				}
 				if (attribute.type === 'select') {
 					return (
-						<>
+						<FormField
+							name={`offered_item.attributes.${index}.value`}
+							label={attribute.label}
+							key={`${wantedCategoryId}-${attribute.id}`}
+						>
 							<Input
 								type='hidden'
 								{...form.register(
@@ -165,13 +170,17 @@ const ExchangeWantedFormFields = (props: ExchangeFormComponentsProps) => {
 									)
 								}}
 							/>
-						</>
+						</FormField>
 					)
 				}
 
 				if (attribute.type === 'multiple-select') {
 					return (
-						<>
+						<FormField
+							name={`offered_item.attributes.${index}.value`}
+							label={attribute.label}
+							key={`${wantedCategoryId}-${attribute.id}`}
+						>
 							<Input
 								type='hidden'
 								{...form.register(
@@ -216,7 +225,7 @@ const ExchangeWantedFormFields = (props: ExchangeFormComponentsProps) => {
 									)
 								}}
 							/>
-						</>
+						</FormField>
 					)
 				}
 			})}

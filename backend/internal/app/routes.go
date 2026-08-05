@@ -54,6 +54,7 @@ func (a *App) registerRoutes() *gin.Engine {
 			api.POST("/chains/:chain_id/decision", chainHandler.ProcessDecisionHandler)
 		}
 		api.POST("/offers", exchangeHandler.PostExchangeHandler)
+		api.GET("/chains/:chain_id", chainHandler.GetChainHandler)
 	}
 
 	router.GET("/health", health.HealthHandler)
