@@ -161,12 +161,27 @@ func (r *TradeOfferRepository) CreateOffer(
 	}
 
 	// 3.5. Ищем и создаем цепочки обмена
-	_, err = tx.Exec(ctx, `
-    SELECT find_and_create_exchange_chains($1)
-`, offeredItemID)
-
+	rows, err := tx.Query(ctx,
+		`SELECT find_and_create_exchange_chains($1)`,
+		offeredItemID,
+	)
 	if err != nil {
 		return nil, fmt.Errorf("find exchange chains: %w", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var chainID uuid.UUID
+		if err := rows.Scan(&chainID); err != nil {
+			return nil, fmt.Errorf("scan chain id: %w", err)
+		}
+
+		// можно потом отправлять уведомления
+		// log.Printf("created chain %s", chainID)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate chains: %w", err)
 	}
 
 	// 4. Фиксация ключа идемпотентности при наличии
