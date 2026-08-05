@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chains"
-	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chains/dto"
+	chains "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain"
+	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain/dto"
 )
 
 type ChainRepository interface {

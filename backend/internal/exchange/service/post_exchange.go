@@ -26,6 +26,35 @@ func NewExchangeService(repo TradeOfferRepository) *ExchangeService {
 }
 
 func (s *ExchangeService) PostExchange(ctx context.Context, idempotencyKey string, req dto.PostExchangeRequest) (*dto.PostExchangeResponse, error) {
+	params, err := parseOfferParams(req)
+	if err != nil {
+		return nil, err
+	}
+
+	reqHash, err := calculateRequestHash(req)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := s.repo.CreateOffer(ctx, *params, repoDTO.IdempotencyParams{
+		Key:         idempotencyKey,
+		RequestHash: reqHash,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &dto.PostExchangeResponse{
+		ID:        res.OfferedItemID.String(),
+		Status:    res.Status,
+		CreatedAt: res.CreatedAt,
+		Replayed:  res.Replayed,
+	}, nil
+}
+
+// --- Helper Functions ---
+
+func parseOfferParams(req dto.PostExchangeRequest) (*repoDTO.CreateOfferParams, error) {
 	userID, err := uuid.Parse(req.UserID)
 	if err != nil {
 		return nil, fmt.Errorf("invalid user_id UUID: %w", err)
@@ -54,17 +83,7 @@ func (s *ExchangeService) PostExchange(ctx context.Context, idempotencyKey strin
 		return nil, fmt.Errorf("marshal wanted attributes to JSON: %w", err)
 	}
 
-	var minPrice, maxPrice *float64
-	if req.WantedItem.MinPrice != nil {
-		val := float64(*req.WantedItem.MinPrice)
-		minPrice = &val
-	}
-	if req.WantedItem.MaxPrice != nil {
-		val := float64(*req.WantedItem.MaxPrice)
-		maxPrice = &val
-	}
-
-	params := repoDTO.CreateOfferParams{
+	return &repoDTO.CreateOfferParams{
 		UserID:          userID,
 		CityName:        req.CityName,
 		DeliveryEnabled: req.DeliveryEnabled,
@@ -80,31 +99,26 @@ func (s *ExchangeService) PostExchange(ctx context.Context, idempotencyKey strin
 		DesiredItem: repoDTO.DesiredItemParams{
 			TitlePattern:  req.WantedItem.TitleQuery,
 			CategoryID:    wantedCategoryID,
-			MinPrice:      minPrice,
-			MaxPrice:      maxPrice,
+			MinPrice:      mapPricePtr(req.WantedItem.MinPrice),
+			MaxPrice:      mapPricePtr(req.WantedItem.MaxPrice),
 			AllowDelivery: req.DeliveryEnabled,
 			Attributes:    wantedAttrJSON,
 		},
-	}
+	}, nil
+}
 
+func mapPricePtr(price *int) *float64 {
+	if price == nil {
+		return nil
+	}
+	val := float64(*price)
+	return &val
+}
+
+func calculateRequestHash(req dto.PostExchangeRequest) (string, error) {
 	requestPayload, err := json.Marshal(req)
 	if err != nil {
-		return nil, fmt.Errorf("marshal request for idempotency: %w", err)
+		return "", fmt.Errorf("marshal request for idempotency: %w", err)
 	}
-	requestHash := fmt.Sprintf("%x", sha256.Sum256(requestPayload))
-
-	res, err := s.repo.CreateOffer(ctx, params, repoDTO.IdempotencyParams{
-		Key:         idempotencyKey,
-		RequestHash: requestHash,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &dto.PostExchangeResponse{
-		ID:        res.OfferedItemID.String(),
-		Status:    res.Status,
-		CreatedAt: res.CreatedAt,
-		Replayed:  res.Replayed,
-	}, nil
+	return fmt.Sprintf("%x", sha256.Sum256(requestPayload)), nil
 }
