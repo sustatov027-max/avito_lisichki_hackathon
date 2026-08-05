@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { useWatch } from 'react-hook-form'
 
 import { useCreatExchange } from '@features/exchange-form/api/exchange.mutation'
 import { useExchangeFormStore } from '@features/exchange-form/model/exchange.store'
@@ -26,11 +27,15 @@ export const useExchangeForm = () => {
 		}
 	})
 
+	const formValues = useWatch({
+		control: form.control
+	})
+
 	useEffect(() => {
 		console.log('key')
 
 		clearKey()
-	}, [form.watch, clearKey])
+	}, [formValues, clearKey])
 
 	return form
 }
