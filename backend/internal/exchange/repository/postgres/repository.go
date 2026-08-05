@@ -58,6 +58,11 @@ func (r *TradeOfferRepository) CreateOffer(
 		return nil, fmt.Errorf("insert desired_item: %w", err)
 	}
 
+	// 3.5. Ищем и создаем цепочки обмена
+	if err := r.findExchangeChains(ctx, tx, offeredItemID); err != nil {
+		return nil, fmt.Errorf("find exchange chains: %w", err)
+	}
+
 	result := &repoDTO.CreateOfferResult{
 		OfferedItemID: offeredItemID,
 		DesiredItemID: desiredItemID,
@@ -66,7 +71,6 @@ func (r *TradeOfferRepository) CreateOffer(
 		Replayed:      false,
 	}
 
-	// 4. Фиксация ключа идемпотентности
 	if idempotency.Key != "" {
 		if err := r.saveIdempotency(ctx, tx, params.UserID, idempotency, result); err != nil {
 			return nil, fmt.Errorf("save idempotency key: %w", err)
@@ -177,6 +181,33 @@ func (r *TradeOfferRepository) insertDesiredItem(
 	).Scan(&desiredItemID)
 
 	return desiredItemID, err
+}
+
+func (r *TradeOfferRepository) findExchangeChains(
+	ctx context.Context,
+	tx pgx.Tx,
+	offeredItemID uuid.UUID,
+) error {
+	rows, err := tx.Query(
+		ctx,
+		`SELECT find_and_create_exchange_chains($1)`,
+		offeredItemID,
+	)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var chainID uuid.UUID
+		if err := rows.Scan(&chainID); err != nil {
+			return err
+		}
+
+		// TODO: использовать chainID для уведомлений
+	}
+
+	return rows.Err()
 }
 
 func (r *TradeOfferRepository) saveIdempotency(
