@@ -15,3 +15,17 @@ export type ExchangeFormState = {
 	createIdempotencyKey: () => string
 	clearIdempotencyKey: () => void
 }
+
+export type ExchangeStep = 'amount' | 'currency' | 'confirm'
+
+export interface ExchangeFormStepState {
+	step: ExchangeStep
+
+	data: Partial<ExchangeFormDataInput>
+
+	setStep: (step: ExchangeStep) => void
+
+	updateData: (data: Partial<ExchangeFormDataInput>) => void
+
+	reset: () => void
+}
