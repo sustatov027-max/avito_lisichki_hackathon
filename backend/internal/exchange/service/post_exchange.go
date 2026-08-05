@@ -26,32 +26,61 @@ func NewExchangeService(repo TradeOfferRepository) *ExchangeService {
 }
 
 func (s *ExchangeService) PostExchange(ctx context.Context, idempotencyKey string, req dto.PostExchangeRequest) (*dto.PostExchangeResponse, error) {
+	params, err := buildCreateOfferParams(req)
+	if err != nil {
+		return nil, fmt.Errorf("build offer params: %w", err)
+	}
+
+	requestHash, err := hashRequest(req)
+	if err != nil {
+		return nil, fmt.Errorf("hash request for idempotency: %w", err)
+	}
+
+	res, err := s.repo.CreateOffer(ctx, params, repoDTO.IdempotencyParams{
+		Key:         idempotencyKey,
+		RequestHash: requestHash,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &dto.PostExchangeResponse{
+		ID:        res.OfferedItemID.String(),
+		Status:    res.Status,
+		CreatedAt: res.CreatedAt,
+		Replayed:  res.Replayed,
+	}, nil
+}
+
+// --- Helper Functions ---
+
+func buildCreateOfferParams(req dto.PostExchangeRequest) (repoDTO.CreateOfferParams, error) {
 	userID, err := uuid.Parse(req.UserID)
 	if err != nil {
-		return nil, fmt.Errorf("invalid user_id UUID: %w", err)
+		return repoDTO.CreateOfferParams{}, fmt.Errorf("invalid user_id UUID: %w", err)
 	}
 
 	offeredCategoryID, err := uuid.Parse(req.OfferedItem.CategoryID)
 	if err != nil {
-		return nil, fmt.Errorf("invalid offered_item.category_id UUID: %w", err)
+		return repoDTO.CreateOfferParams{}, fmt.Errorf("invalid offered_item.category_id UUID: %w", err)
 	}
 
 	var wantedCategoryID uuid.UUID
 	if req.WantedItem.CategoryID != "" {
 		wantedCategoryID, err = uuid.Parse(req.WantedItem.CategoryID)
 		if err != nil {
-			return nil, fmt.Errorf("invalid wanted_item.category_id UUID: %w", err)
+			return repoDTO.CreateOfferParams{}, fmt.Errorf("invalid wanted_item.category_id UUID: %w", err)
 		}
 	}
 
 	offeredAttrJSON, err := json.Marshal(req.OfferedItem.Attributes)
 	if err != nil {
-		return nil, fmt.Errorf("marshal offered attributes to JSON: %w", err)
+		return repoDTO.CreateOfferParams{}, fmt.Errorf("marshal offered attributes: %w", err)
 	}
 
 	wantedAttrJSON, err := json.Marshal(req.WantedItem.Attributes)
 	if err != nil {
-		return nil, fmt.Errorf("marshal wanted attributes to JSON: %w", err)
+		return repoDTO.CreateOfferParams{}, fmt.Errorf("marshal wanted attributes: %w", err)
 	}
 
 	var minPrice, maxPrice *float64
@@ -64,7 +93,7 @@ func (s *ExchangeService) PostExchange(ctx context.Context, idempotencyKey strin
 		maxPrice = &val
 	}
 
-	params := repoDTO.CreateOfferParams{
+	return repoDTO.CreateOfferParams{
 		UserID:          userID,
 		CityName:        req.CityName,
 		DeliveryEnabled: req.DeliveryEnabled,
@@ -85,26 +114,13 @@ func (s *ExchangeService) PostExchange(ctx context.Context, idempotencyKey strin
 			AllowDelivery: req.DeliveryEnabled,
 			Attributes:    wantedAttrJSON,
 		},
-	}
-
-	requestPayload, err := json.Marshal(req)
-	if err != nil {
-		return nil, fmt.Errorf("marshal request for idempotency: %w", err)
-	}
-	requestHash := fmt.Sprintf("%x", sha256.Sum256(requestPayload))
-
-	res, err := s.repo.CreateOffer(ctx, params, repoDTO.IdempotencyParams{
-		Key:         idempotencyKey,
-		RequestHash: requestHash,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &dto.PostExchangeResponse{
-		ID:        res.OfferedItemID.String(),
-		Status:    res.Status,
-		CreatedAt: res.CreatedAt,
-		Replayed:  res.Replayed,
 	}, nil
+}
+
+func hashRequest(v interface{}) (string, error) {
+	requestPayload, err := json.Marshal(v)
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("%x", sha256.Sum256(requestPayload)), nil
 }
