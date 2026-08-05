@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chains"
-	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chains/service"
+	chains "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain"
+	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain/service"
 )
 
 type chainRepositoryStub struct {

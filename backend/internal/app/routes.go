@@ -5,9 +5,9 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	chainPostgres "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chains/repository/postgres"
-	chainService "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chains/service"
-	chainTransport "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chains/transport"
+	chainPostgres "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain/repository/postgres"
+	chainService "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain/service"
+	chainTransport "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain/transport"
 	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/repository/postgres"
 	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/service"
 	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/transport"
