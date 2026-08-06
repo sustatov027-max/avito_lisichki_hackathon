@@ -27,6 +27,16 @@ export default defineConfig(({ mode }) => {
 			}
 		},
 
+		test: {
+			environment: 'jsdom',
+			setupFiles: './src/test/setup.ts',
+			globals: true,
+			coverage: {
+				provider: 'v8',
+				reporter: ['text', 'html']
+			}
+		},
+
 		server: {
 			proxy: {
 				'/api': {
