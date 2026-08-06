@@ -1,3 +1,5 @@
+import { useFormState } from 'react-hook-form'
+
 import { EXCHANGE_STEPS } from '@features/exchange-form'
 import { useExchangeStepFormStore } from '@features/exchange-form/model/exchange-form-step.store'
 import type {
@@ -18,6 +20,10 @@ const ExchangeForm = () => {
 	const form = useExchangeForm()
 
 	const step = useExchangeStepFormStore(state => state.step)
+
+	const fields = useFormState({ control: form.control })
+
+	console.log(fields.errors)
 
 	return (
 		<Form<ExchangeFormDataInput, ExchangeFormDataOutput>

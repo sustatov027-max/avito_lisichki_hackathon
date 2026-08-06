@@ -56,8 +56,15 @@ const useThemeTransition = () => {
 		const prefersReducedMotion = window.matchMedia(
 			'(prefers-reduced-motion: reduce)'
 		).matches
+		const isTouchDevice = window.matchMedia(
+			'(hover: none) and (pointer: coarse)'
+		).matches
 
-		if (prefersReducedMotion || !supportsViewTransition(document)) {
+		if (
+			prefersReducedMotion ||
+			isTouchDevice ||
+			!supportsViewTransition(document)
+		) {
 			setThemeMode(nextMode)
 			return
 		}

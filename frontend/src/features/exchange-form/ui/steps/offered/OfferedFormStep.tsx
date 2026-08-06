@@ -4,6 +4,7 @@ import type { ExchangeFormComponentsProps } from '@features/exchange-form'
 
 import { ATTRIBUTES } from '@entities/categories/model/attributes.constants'
 import { CATEGORIES } from '@entities/categories/model/categories.constants'
+import { getCategoryDefaultAttributes } from '@features/exchange-form/model/exchange-form.helpers'
 
 import {
 	Dropdown,
@@ -75,7 +76,11 @@ const OfferedFormStep = (props: ExchangeFormComponentsProps) => {
 										value={String(field.value ?? '')}
 										onValueChange={categoryId => {
 											field.onChange(categoryId)
-											form.setValue('offered_item.attributes', [])
+											form.setValue(
+												'offered_item.attributes',
+												getCategoryDefaultAttributes(categoryId),
+												{ shouldDirty: true }
+											)
 											form.clearErrors('offered_item.attributes')
 										}}
 									>
