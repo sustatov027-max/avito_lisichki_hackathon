@@ -214,10 +214,11 @@ const OfferedFormStep = (props: ExchangeFormComponentsProps) => {
 
 											<DropdownContent>
 												{attribute.options.map(option => (
-													<DropdownCheckboxItem
-														key={option.name}
-														checked={selectedValues.includes(option.name)}
-														onCheckedChange={checked => {
+											<DropdownCheckboxItem
+												key={option.name}
+												checked={selectedValues.includes(option.name)}
+												closeOnSelect={false}
+												onCheckedChange={checked => {
 															field.onChange(
 																checked
 																	? [...selectedValues, option.name]
