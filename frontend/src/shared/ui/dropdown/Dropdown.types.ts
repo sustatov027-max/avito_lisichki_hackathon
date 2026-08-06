@@ -14,7 +14,9 @@ export type DropdownItemProps = React.ComponentPropsWithoutRef<
 >
 export type DropdownCheckboxItemProps = React.ComponentPropsWithoutRef<
 	typeof DropdownMenuPrimitive.CheckboxItem
->
+> & {
+	closeOnSelect?: boolean
+}
 export type DropdownRadioGroupProps = React.ComponentPropsWithoutRef<
 	typeof DropdownMenuPrimitive.RadioGroup
 >

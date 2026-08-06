@@ -1,5 +1,11 @@
-.themeToggle {
-	position: fixed;
-	right: 10%;
-	bottom: 10%;
+.header {
+	width: 100%;
+	padding-block: 16px;
+	padding-inline: 32px;
+	display: flex;
+	justify-content: flex-end;
+
+	@include mobile {
+		justify-content: center;
+	}
 }

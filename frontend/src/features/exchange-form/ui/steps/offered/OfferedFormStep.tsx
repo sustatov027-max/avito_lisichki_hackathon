@@ -4,6 +4,7 @@ import type { ExchangeFormComponentsProps } from '@features/exchange-form'
 
 import { ATTRIBUTES } from '@entities/categories/model/attributes.constants'
 import { CATEGORIES } from '@entities/categories/model/categories.constants'
+import { getCategoryDefaultAttributes } from '@features/exchange-form/model/exchange-form.helpers'
 
 import {
 	Dropdown,
@@ -73,7 +74,15 @@ const OfferedFormStep = (props: ExchangeFormComponentsProps) => {
 								<DropdownContent>
 									<DropdownRadioGroup
 										value={String(field.value ?? '')}
-										onValueChange={field.onChange}
+										onValueChange={categoryId => {
+											field.onChange(categoryId)
+											form.setValue(
+												'offered_item.attributes',
+												getCategoryDefaultAttributes(categoryId),
+												{ shouldDirty: true }
+											)
+											form.clearErrors('offered_item.attributes')
+										}}
 									>
 										{CATEGORIES.filter(
 											category => category.parentId !== null
@@ -217,6 +226,7 @@ const OfferedFormStep = (props: ExchangeFormComponentsProps) => {
 													<DropdownCheckboxItem
 														key={option.name}
 														checked={selectedValues.includes(option.name)}
+														closeOnSelect={false}
 														onCheckedChange={checked => {
 															field.onChange(
 																checked

@@ -1,8 +1,8 @@
-
+import clsx from 'clsx'
 
 import { ExchangeForm } from '@features/exchange-form/ui/form/ExchangeForm'
+
 import styles from './Exchange.module.scss'
-import clsx from 'clsx'
 
 const Exchange = () => {
 	const titleId = 'exchange-title'

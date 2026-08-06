@@ -1,12 +1,15 @@
 import { ArrowLeft, ArrowRight, Trash2 } from 'lucide-react'
 import { useWatch } from 'react-hook-form'
 
-import { EXCHANGE_STEPS, FIELDS_BY_STEPS, type ExchangeFormComponentsProps } from '@features/exchange-form'
+import {
+	EXCHANGE_STEPS,
+	type ExchangeFormComponentsProps,
+	FIELDS_BY_STEPS
+} from '@features/exchange-form'
 
 import { Button, Tooltip, TooltipContent, TooltipTrigger } from '@shared/ui'
 
 import { useExchangeStepFormStore } from '../../model/exchange-form-step.store'
-
 import styles from '../ExchangeForm.module.scss'
 
 const StepsNavigation = (props: ExchangeFormComponentsProps) => {
@@ -65,7 +68,7 @@ const StepsNavigation = (props: ExchangeFormComponentsProps) => {
 					offered_item: {
 						title: '',
 						estimated_price: '',
-						category_id: '',
+						category_id: undefined,
 						attributes: []
 					}
 				})
@@ -76,7 +79,7 @@ const StepsNavigation = (props: ExchangeFormComponentsProps) => {
 					...values,
 					wanted_item: {
 						title_query: '',
-						category_id: '',
+						category_id: undefined,
 						attributes: [],
 						min_price: '',
 						max_price: ''

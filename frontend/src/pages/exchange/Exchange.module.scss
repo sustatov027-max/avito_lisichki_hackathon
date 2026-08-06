@@ -2,6 +2,6 @@
 	@include flex-center;
 
 	width: 100%;
-	min-height: 100vh;
-  padding-block: 16px;
+	min-height: calc(90vh - 72px);
+	padding-block: 16px;
 }
