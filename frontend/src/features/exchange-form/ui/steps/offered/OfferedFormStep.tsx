@@ -17,7 +17,7 @@ import {
 	Input
 } from '@shared/ui'
 
-import styles from './ExchangeForm.module.scss'
+import styles from '../../ExchangeForm.module.scss'
 
 const OfferedFormStep = (props: ExchangeFormComponentsProps) => {
 	const { form } = props

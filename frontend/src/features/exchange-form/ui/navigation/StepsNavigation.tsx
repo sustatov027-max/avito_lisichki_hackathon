@@ -7,7 +7,7 @@ import { Button, Tooltip, TooltipContent, TooltipTrigger } from '@shared/ui'
 
 import { useExchangeStepFormStore } from '../../model/exchange-form-step.store'
 
-import styles from './ExchangeForm.module.scss'
+import styles from '../ExchangeForm.module.scss'
 
 const StepsNavigation = (props: ExchangeFormComponentsProps) => {
 	const { form } = props

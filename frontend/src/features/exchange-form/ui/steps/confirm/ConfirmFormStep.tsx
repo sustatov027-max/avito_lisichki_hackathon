@@ -14,7 +14,7 @@ import { Button, FormSection, Modal } from '@shared/ui'
 import { useExchangeStepFormStore } from '../../../model/exchange-form-step.store'
 
 import { ConfirmItemCard } from './ConfirmItemCard'
-import styles from './ExchangeForm.module.scss'
+import styles from '../../ExchangeForm.module.scss'
 
 type ItemType = 'offered' | 'wanted'
 

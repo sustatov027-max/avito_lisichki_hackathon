@@ -1,5 +1,6 @@
-import { ExchangeForm } from '@features/exchange-form/ui/ExchangeForm'
 
+
+import { ExchangeForm } from '@features/exchange-form/ui/form/ExchangeForm'
 import styles from './Exchange.module.scss'
 import clsx from 'clsx'
 
