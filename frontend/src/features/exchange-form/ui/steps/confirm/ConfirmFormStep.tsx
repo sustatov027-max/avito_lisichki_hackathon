@@ -1,56 +1,24 @@
-import { motion } from 'framer-motion'
-import { ChevronRight, PackageOpen, Pencil } from 'lucide-react'
+import { Pencil } from 'lucide-react'
 import { useState } from 'react'
+
+import {
+	EXCHANGE_STEPS,
+	type ExchangeFormComponentsProps
+} from '@features/exchange-form'
 
 import { getAttributeDataFromUUID } from '@entities/categories/model/attributes.helpers'
 import { getCategoryDataFromUUID } from '@entities/categories/model/categories.helpers'
 
-import { Button, Card, FormSection, Modal } from '@shared/ui'
+import { Button, FormSection, Modal } from '@shared/ui'
 
-import { useExchangeStepFormStore } from '../model/exchange-form-step.store'
-import type { ExchangeFormComponentsProps } from '../model/exchange-form.types'
-import { EXCHANGE_STEPS } from '../model/exchange-from-steps.constants'
+import { useExchangeStepFormStore } from '../../../model/exchange-form-step.store'
 
+import { ConfirmItemCard } from './ConfirmItemCard'
 import styles from './ExchangeForm.module.scss'
 
 type ItemType = 'offered' | 'wanted'
 
-type ConfirmItemCardProps = {
-	caption: string
-	title: string
-	category?: string
-	onClick: () => void
-}
-
-const ConfirmItemCard = (props: ConfirmItemCardProps) => {
-	const { caption, title, category, onClick } = props
-
-	return (
-		<motion.button
-			type='button'
-			className={styles.cardButton}
-			onClick={onClick}
-			whileHover={{ y: -2 }}
-			whileTap={{ scale: 0.99 }}
-		>
-			<Card className={styles.card}>
-				<span className={styles.cardIcon}>
-					<PackageOpen size={22} aria-hidden='true' />
-				</span>
-				<span className={styles.cardContent}>
-					<span className={styles.cardCaption}>{caption}</span>
-					<strong>{title || 'Товар не указан'}</strong>
-					<span className={styles.cardCategory}>
-						{category || 'Категория не выбрана'}
-					</span>
-				</span>
-				<ChevronRight className={styles.cardArrow} aria-hidden='true' />
-			</Card>
-		</motion.button>
-	)
-}
-
-const ExchangeConfirmFormStep = (props: ExchangeFormComponentsProps) => {
+const ConfirmFormStep = (props: ExchangeFormComponentsProps) => {
 	const { form } = props
 
 	const data = form.getValues()
@@ -158,4 +126,4 @@ const ExchangeConfirmFormStep = (props: ExchangeFormComponentsProps) => {
 	)
 }
 
-export { ExchangeConfirmFormStep }
+export { ConfirmFormStep }

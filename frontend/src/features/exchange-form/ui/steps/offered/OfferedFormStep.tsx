@@ -1,5 +1,7 @@
 import { Controller, useWatch } from 'react-hook-form'
 
+import type { ExchangeFormComponentsProps } from '@features/exchange-form'
+
 import { ATTRIBUTES } from '@entities/categories/model/attributes.constants'
 import { CATEGORIES } from '@entities/categories/model/categories.constants'
 
@@ -15,39 +17,48 @@ import {
 	Input
 } from '@shared/ui'
 
-import type { ExchangeFormComponentsProps } from '../model/exchange-form.types'
-
 import styles from './ExchangeForm.module.scss'
 
-const ExchangeWantedFormStep = (props: ExchangeFormComponentsProps) => {
+const OfferedFormStep = (props: ExchangeFormComponentsProps) => {
 	const { form } = props
 
-	const wantedCategoryId = useWatch({
+	const offeredCategoryId = useWatch({
 		control: form.control,
-		name: 'wanted_item.category_id'
+		name: 'offered_item.category_id'
 	})
 
-	const wantedAttributes = ATTRIBUTES.filter(
-		attribute => attribute.categoryId === wantedCategoryId
+	const offeredAttributes = ATTRIBUTES.filter(
+		attribute => attribute.categoryId === offeredCategoryId
 	)
 
 	return (
-		<FormSection title='Нужный товар' description='Товар который нужем вам'>
+		<FormSection
+			title='Предлагаемый товар'
+			description='Товар который вы можете предложить'
+		>
+			<FormField label='Название товара' name='offered_item.title' isRequired>
+				<Input
+					id='offered_item.title'
+					placeholder='iPhone 16 Pro'
+					{...form.register('offered_item.title')}
+				/>
+			</FormField>
 			<FormField
-				label='Название желаймого товара'
-				name='wanted_item.title_query'
+				label='Оценочная стоимость ₽'
+				name='offered_item.estimated_price'
 				isRequired
 			>
 				<Input
-					id='wanted_item.title_query'
-					placeholder='iPhone 16 Pro'
-					{...form.register('wanted_item.title_query')}
+					type='number'
+					id='offered_item.estimated_price'
+					placeholder='50000'
+					{...form.register('offered_item.estimated_price')}
 				/>
 			</FormField>
-			<FormField name='wanted_item.category_id' label='Категория' isRequired>
+			<FormField name='offered_item.category_id' label='Категория' isRequired>
 				<Controller
 					control={form.control}
-					name='wanted_item.category_id'
+					name='offered_item.category_id'
 					render={({ field }) => {
 						const selectedCategory = CATEGORIES.find(
 							category => category.id === field.value
@@ -81,42 +92,41 @@ const ExchangeWantedFormStep = (props: ExchangeFormComponentsProps) => {
 					}}
 				/>
 			</FormField>
-
-			{wantedAttributes.map((attribute, index) => {
+			{offeredAttributes.map((attribute, index) => {
 				if (attribute.type === 'range') {
 					return (
 						<div
 							className={styles.smFieldsGroup}
-							key={`${wantedCategoryId}-${attribute.id}`}
+							key={`${offeredCategoryId}-${attribute.id}`}
 						>
 							<Input
 								type='hidden'
 								{...form.register(
-									`wanted_item.attributes.${index}.attribute_id` as const,
+									`offered_item.attributes.${index}.attribute_id` as const,
 									{ value: attribute.id }
 								)}
 							/>
 							<FormField
 								label={`${attribute.label} минимум`}
-								name={`wanted_item.attributes.${index}.min_value`}
+								name={`offered_item.attributes.${index}.min_value`}
 							>
 								<Input
 									type='number'
 									placeholder={`От ${attribute.min}`}
 									{...form.register(
-										`wanted_item.attributes.${index}.min_value`
+										`offered_item.attributes.${index}.min_value`
 									)}
 								/>
 							</FormField>
 							<FormField
 								label={`${attribute.label} максимум`}
-								name={`wanted_item.attributes.${index}.max_value`}
+								name={`offered_item.attributes.${index}.max_value`}
 							>
 								<Input
 									type='number'
 									placeholder={`До ${attribute.max}`}
 									{...form.register(
-										`wanted_item.attributes.${index}.max_value`
+										`offered_item.attributes.${index}.max_value`
 									)}
 								/>
 							</FormField>
@@ -128,18 +138,18 @@ const ExchangeWantedFormStep = (props: ExchangeFormComponentsProps) => {
 						<FormField
 							name={`offered_item.attributes.${index}.value`}
 							label={attribute.label}
-							key={`${wantedCategoryId}-${attribute.id}`}
+							key={`${offeredCategoryId}-${attribute.id}`}
 						>
 							<Input
 								type='hidden'
 								{...form.register(
-									`wanted_item.attributes.${index}.attribute_id` as const,
+									`offered_item.attributes.${index}.attribute_id` as const,
 									{ value: attribute.id }
 								)}
 							/>
 							<Controller
 								control={form.control}
-								name={`wanted_item.attributes.${index}.value`}
+								name={`offered_item.attributes.${index}.value`}
 								render={({ field }) => {
 									const selectedAttributeOption = attribute.options.find(
 										option => option.name === field.value
@@ -158,7 +168,7 @@ const ExchangeWantedFormStep = (props: ExchangeFormComponentsProps) => {
 												>
 													{attribute.options.map((option, index) => (
 														<DropdownRadioItem
-															key={`${option}-${index}-wanted`}
+															key={`${option}-${index}`}
 															value={option.name}
 														>
 															{option.label}
@@ -179,18 +189,18 @@ const ExchangeWantedFormStep = (props: ExchangeFormComponentsProps) => {
 						<FormField
 							name={`offered_item.attributes.${index}.value`}
 							label={attribute.label}
-							key={`${wantedCategoryId}-${attribute.id}`}
+							key={`${offeredCategoryId}-${attribute.id}`}
 						>
 							<Input
 								type='hidden'
 								{...form.register(
-									`wanted_item.attributes.${index}.attribute_id` as const,
+									`offered_item.attributes.${index}.attribute_id` as const,
 									{ value: attribute.id }
 								)}
 							/>
 							<Controller
 								control={form.control}
-								name={`wanted_item.attributes.${index}.values`}
+								name={`offered_item.attributes.${index}.values`}
 								render={({ field }) => {
 									const selectedValues = field.value ?? []
 
@@ -229,26 +239,8 @@ const ExchangeWantedFormStep = (props: ExchangeFormComponentsProps) => {
 					)
 				}
 			})}
-			<div className={styles.smFieldsGroup}>
-				<FormField name='wanted_item.min_price' label='Минимальная цена'>
-					<Input
-						type='number'
-						id='wanted_item.min_price'
-						placeholder='30000'
-						{...form.register('wanted_item.min_price')}
-					/>
-				</FormField>
-				<FormField name='wanted_item.max_price' label='Максимальная цена'>
-					<Input
-						type='number'
-						id='wanted_item.max_price'
-						placeholder='90000'
-						{...form.register('wanted_item.max_price')}
-					/>
-				</FormField>
-			</div>
 		</FormSection>
 	)
 }
 
-export { ExchangeWantedFormStep }
+export { OfferedFormStep }

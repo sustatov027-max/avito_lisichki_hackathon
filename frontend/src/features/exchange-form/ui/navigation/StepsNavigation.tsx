@@ -1,14 +1,11 @@
 import { ArrowLeft, ArrowRight, Trash2 } from 'lucide-react'
 import { useWatch } from 'react-hook-form'
 
+import { EXCHANGE_STEPS, FIELDS_BY_STEPS, type ExchangeFormComponentsProps } from '@features/exchange-form'
+
 import { Button, Tooltip, TooltipContent, TooltipTrigger } from '@shared/ui'
 
-import { useExchangeStepFormStore } from '../model/exchange-form-step.store'
-import type { ExchangeFormComponentsProps } from '../model/exchange-form.types'
-import {
-	EXCHANGE_STEPS,
-	FIELDS_BY_STEPS
-} from '../model/exchange-from-steps.constants'
+import { useExchangeStepFormStore } from '../../model/exchange-form-step.store'
 
 import styles from './ExchangeForm.module.scss'
 
