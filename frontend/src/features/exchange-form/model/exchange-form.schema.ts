@@ -8,25 +8,37 @@ const attributeIdLiterals = ATTRIBUTES.map(attribute =>
 ) as [z.ZodLiteral<string>, ...z.ZodLiteral<string>[]]
 
 const optionalNumber = z.preprocess(
-	value => (value === '' || value === null || value === undefined ? undefined : value),
+	value =>
+		value === '' || value === null || value === undefined ? undefined : value,
 	z.coerce.number().optional()
 )
 
 const attributeValueSchema = z.union([
-	z.object({
-		attribute_id: z.union(attributeIdLiterals),
-		value: z.string().min(1, 'Укажите значение').optional()
-	}).strict(),
-	z.object({
-		attribute_id: z.union(attributeIdLiterals),
-		values: z.array(z.string().min(1)).min(1, 'Укажите хотя бы одно значение').optional()
-	}).strict(),
-	z.object({
-		attribute_id: z.union(attributeIdLiterals),
-		min_value: optionalNumber,
-		max_value: optionalNumber
-	}).strict()
+	z
+		.object({
+			attribute_id: z.union(attributeIdLiterals),
+			value: z.string().min(1, 'Укажите значение').optional()
+		})
+		.strict(),
+	z
+		.object({
+			attribute_id: z.union(attributeIdLiterals),
+			values: z
+				.array(z.string().min(1))
+				.min(1, 'Укажите хотя бы одно значение')
+				.optional()
+		})
+		.strict(),
+	z
+		.object({
+			attribute_id: z.union(attributeIdLiterals),
+			min_value: optionalNumber,
+			max_value: optionalNumber
+		})
+		.strict()
 ])
+
+export type AttributeValue = z.output<typeof attributeValueSchema>
 
 const attributeSchema = attributeValueSchema.superRefine((attribute, ctx) => {
 	const definitions = ATTRIBUTES.filter(
@@ -34,12 +46,19 @@ const attributeSchema = attributeValueSchema.superRefine((attribute, ctx) => {
 	)
 
 	if ('value' in attribute || 'values' in attribute) {
-		const values = 'value' in attribute ? [attribute.value] : 'values' in attribute ? attribute.values : undefined
+		const values =
+			'value' in attribute
+				? [attribute.value]
+				: 'values' in attribute
+					? attribute.values
+					: undefined
 		const definition = definitions[0]
 
 		if (!values) return
 
-		for (const value of values.filter((value): value is string => value !== undefined)) {
+		for (const value of values.filter(
+			(value): value is string => value !== undefined
+		)) {
 			if (
 				!definitions.some(
 					definition =>
@@ -103,7 +122,10 @@ const attributeSchema = attributeValueSchema.superRefine((attribute, ctx) => {
 		min_value?: number
 		max_value?: number
 	}
-	if (rangeAttribute.min_value === undefined || rangeAttribute.max_value === undefined) {
+	if (
+		rangeAttribute.min_value === undefined ||
+		rangeAttribute.max_value === undefined
+	) {
 		return
 	}
 	if (rangeAttribute.min_value > rangeAttribute.max_value) {
@@ -113,7 +135,10 @@ const attributeSchema = attributeValueSchema.superRefine((attribute, ctx) => {
 			path: ['min_value']
 		})
 	}
-	if (rangeAttribute.min_value < range.min || rangeAttribute.max_value > range.max) {
+	if (
+		rangeAttribute.min_value < range.min ||
+		rangeAttribute.max_value > range.max
+	) {
 		ctx.addIssue({
 			code: 'custom',
 			message: `Значение должно быть в диапазоне от ${range.min} до ${range.max}`,

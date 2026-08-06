@@ -3,7 +3,7 @@ import type { UseFormReturn } from 'react-hook-form'
 import type {
 	ExchangeFormDataInput,
 	ExchangeFormDataOutput
-} from '@features/exchange-form/model/exchange-form-schema'
+} from '@features/exchange-form/model/exchange-form.schema'
 
 import type { EXCHANGE_STEPS } from './exchange-from-steps.constants'
 

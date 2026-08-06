@@ -1,4 +1,4 @@
-import type { ExchangeFormDataOutput } from '@features/exchange-form/model/exchange-form-schema'
+import type { ExchangeFormDataOutput } from '@features/exchange-form/model/exchange-form.schema'
 
 import { axiosWithAuth } from '@shared/api'
 

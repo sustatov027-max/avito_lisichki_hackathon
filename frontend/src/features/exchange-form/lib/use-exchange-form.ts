@@ -5,13 +5,13 @@ import { useCreatExchange } from '@features/exchange-form/api/exchange.mutation'
 
 import { useFormsBase } from '@shared/lib/forms'
 
+import { useExchangeStepFormStore } from '../model/exchange-form-step.store'
+import { DEFAULT_FORM_VALUES } from '../model/exchange-form.constants'
 import {
 	type ExchangeFormDataInput,
 	type ExchangeFormDataOutput,
 	exchangeFormSchema
-} from '../model/exchange-form-schema'
-import { useExchangeStepFormStore } from '../model/exchange-form-step.store'
-import { DEFAULT_FORM_VALUES } from '../model/exchange-form.constants'
+} from '../model/exchange-form.schema'
 import { useExchangeFormStore } from '../model/exchange-form.store'
 
 export const useExchangeForm = () => {

@@ -1,4 +1,4 @@
-import type { ExchangeFormDataInput } from './exchange-form-schema'
+import type { ExchangeFormDataInput } from './exchange-form.schema'
 
 export const DEFAULT_FORM_VALUES: ExchangeFormDataInput = {
 	user_id: '',

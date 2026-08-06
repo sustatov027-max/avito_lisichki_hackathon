@@ -1,29 +1,25 @@
-import { useFormState } from 'react-hook-form'
+import { Form } from '@shared/ui'
 
-import { useExchangeForm } from '@features/exchange-form/lib/use-exchange-form'
+import { useExchangeForm } from '../lib/use-exchange-form'
+import { useExchangeStepFormStore } from '../model/exchange-form-step.store'
 import type {
 	ExchangeFormDataInput,
 	ExchangeFormDataOutput
-} from '@features/exchange-form/model/exchange-form-schema'
-import { useExchangeStepFormStore } from '@features/exchange-form/model/exchange-form-step.store'
-import { ExchangeOfferedFormField } from '@features/exchange-form/ui/ExchangeOfferedFormField'
-import { ExchangeWantedFormFields } from '@features/exchange-form/ui/ExchangeWantedFormFields'
-import { StepsNavigation } from '@features/exchange-form/ui/StepsNavigation'
-
-import { Form } from '@shared/ui'
-
+} from '../model/exchange-form.schema'
 import { EXCHANGE_STEPS } from '../model/exchange-from-steps.constants'
 
-import { ExchangeFormFields } from './ExchangeFormFields'
+import { ExchangeConfirmFormStep } from './ExchangeConfirmFormStep'
+import { ExchangeOfferedFormStep } from './ExchangeOfferedFormStep'
+import { ExchangeOnboardFormStep } from './ExchangeOnboardFormStep'
+import { ExchangeWantedFormStep } from './ExchangeWantedFormStep'
+import { StepsNavigation } from './StepsNavigation'
 
 const ExchangeForm = () => {
 	const form = useExchangeForm()
 
-	const formState = useFormState(form)
-
-	console.log(formState.errors)
-
 	const step = useExchangeStepFormStore(state => state.step)
+
+	console.log(form.getValues())
 
 	return (
 		<Form<ExchangeFormDataInput, ExchangeFormDataOutput>
@@ -31,12 +27,15 @@ const ExchangeForm = () => {
 			onSubmit={form.onSubmit}
 			title='Создать обмен'
 		>
-			{step === EXCHANGE_STEPS.ONBOARD && <ExchangeFormFields form={form} />}
-			{step === EXCHANGE_STEPS.OFFERED && (
-				<ExchangeOfferedFormField form={form} />
+			{step === EXCHANGE_STEPS.ONBOARD && (
+				<ExchangeOnboardFormStep form={form} />
 			)}
-			{step === EXCHANGE_STEPS.WANTED && (
-				<ExchangeWantedFormFields form={form} />
+			{step === EXCHANGE_STEPS.OFFERED && (
+				<ExchangeOfferedFormStep form={form} />
+			)}
+			{step === EXCHANGE_STEPS.WANTED && <ExchangeWantedFormStep form={form} />}
+			{step === EXCHANGE_STEPS.CONFIRM && (
+				<ExchangeConfirmFormStep form={form} />
 			)}
 
 			<StepsNavigation form={form} />
