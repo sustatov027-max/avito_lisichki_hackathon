@@ -20,6 +20,7 @@ const ExchangeForm = () => {
 	const form = useExchangeForm()
 
 	const step = useExchangeStepFormStore(state => state.step)
+	const forwardStep = useExchangeStepFormStore(state => state.forwardStep)
 
 	const fields = useFormState({ control: form.control })
 
@@ -30,6 +31,11 @@ const ExchangeForm = () => {
 			form={form}
 			onSubmit={form.onSubmit}
 			title='Создать обмен'
+			onKeyDown={event => {
+				if (step !== EXCHANGE_STEPS.CONFIRM && event.key === 'Enter') {
+					forwardStep()
+				}
+			}}
 		>
 			{step === EXCHANGE_STEPS.ONBOARD && <OnboardFormStep form={form} />}
 			{step === EXCHANGE_STEPS.OFFERED && <OfferedFormStep form={form} />}
