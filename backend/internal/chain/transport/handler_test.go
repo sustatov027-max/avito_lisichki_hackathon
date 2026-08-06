@@ -18,15 +18,14 @@ type chainServiceStub struct {
 	err      error
 }
 
-func (s chainServiceStub) GetChain(
+func (s chainServiceStub) GetChains(
 	_ context.Context,
-	_ string,
 	_ string,
 ) (*dto.GetChainsResponse, error) {
 	return s.response, s.err
 }
 
-func TestGetChainHandler(t *testing.T) {
+func TestGetChainsHandler(t *testing.T) {
 	tests := []struct {
 		name       string
 		service    chainServiceStub
@@ -39,9 +38,7 @@ func TestGetChainHandler(t *testing.T) {
 			}},
 			wantStatus: http.StatusOK,
 		},
-		{name: "invalid chain id", service: chainServiceStub{err: chains.ErrInvalidChainID}, wantStatus: http.StatusBadRequest},
 		{name: "invalid user id", service: chainServiceStub{err: chains.ErrInvalidUserID}, wantStatus: http.StatusBadRequest},
-		{name: "not found", service: chainServiceStub{err: chains.ErrNotFound}, wantStatus: http.StatusNotFound},
 		{name: "internal error", service: chainServiceStub{err: errors.New("database unavailable")}, wantStatus: http.StatusInternalServerError},
 	}
 
@@ -50,8 +47,9 @@ func TestGetChainHandler(t *testing.T) {
 			gin.SetMode(gin.TestMode)
 			handler := transport.NewChainHandler(test.service)
 			router := gin.New()
-			router.GET("/api/v1/chains/:chain_id", handler.GetChainHandler)
-			request := httptest.NewRequest(http.MethodGet, "/api/v1/chains/test-id?user_id=test-user", nil)
+			router.GET("/api/v1/chains", handler.GetChainsHandler)
+			request := httptest.NewRequest(http.MethodGet, "/api/v1/chains", nil)
+			request.Header.Set("X-User-ID", "test-user")
 			response := httptest.NewRecorder()
 
 			router.ServeHTTP(response, request)

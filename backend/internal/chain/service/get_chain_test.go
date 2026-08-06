@@ -12,24 +12,23 @@ import (
 )
 
 type chainRepositoryStub struct {
-	chain *chains.Chain
-	err   error
+	chains []chains.Chain
+	err    error
 }
 
-func (r chainRepositoryStub) GetByID(
+func (r chainRepositoryStub) GetByUserID(
 	_ context.Context,
 	_ uuid.UUID,
-	_ uuid.UUID,
-) (*chains.Chain, error) {
-	return r.chain, r.err
+) ([]chains.Chain, error) {
+	return r.chains, r.err
 }
 
-func TestGetChainMapsExpectedContract(t *testing.T) {
+func TestGetChainsMapsExpectedContract(t *testing.T) {
 	currentUserID := uuid.New()
 	otherUserID := uuid.New()
 	chainID := uuid.New()
 	createdAt := time.Now().UTC()
-	svc := service.NewChainService(chainRepositoryStub{chain: &chains.Chain{
+	svc := service.NewChainService(chainRepositoryStub{chains: []chains.Chain{{
 		ID:          chainID,
 		Status:      "proposed",
 		ChainLength: 2,
@@ -53,11 +52,11 @@ func TestGetChainMapsExpectedContract(t *testing.T) {
 				Item:     chains.Item{ID: uuid.New(), Title: "Ноутбук", CategoryID: uuid.New(), EstimatedPrice: 80000},
 			},
 		},
-	}})
+	}}})
 
-	response, err := svc.GetChain(context.Background(), chainID.String(), currentUserID.String())
+	response, err := svc.GetChains(context.Background(), currentUserID.String())
 	if err != nil {
-		t.Fatalf("GetChain returned an error: %v", err)
+		t.Fatalf("GetChains returned an error: %v", err)
 	}
 	if len(response.Chains) != 1 || response.Chains[0].ChainID != chainID.String() {
 		t.Fatalf("unexpected response: %#v", response)
@@ -74,15 +73,10 @@ func TestGetChainMapsExpectedContract(t *testing.T) {
 	}
 }
 
-func TestGetChainRejectsInvalidIDs(t *testing.T) {
+func TestGetChainsRejectsInvalidUserID(t *testing.T) {
 	svc := service.NewChainService(chainRepositoryStub{})
-	validID := uuid.New().String()
 
-	_, err := svc.GetChain(context.Background(), "not-a-uuid", validID)
-	if !errors.Is(err, chains.ErrInvalidChainID) {
-		t.Fatalf("expected ErrInvalidChainID, got %v", err)
-	}
-	_, err = svc.GetChain(context.Background(), validID, "")
+	_, err := svc.GetChains(context.Background(), "")
 	if !errors.Is(err, chains.ErrInvalidUserID) {
 		t.Fatalf("expected ErrInvalidUserID, got %v", err)
 	}

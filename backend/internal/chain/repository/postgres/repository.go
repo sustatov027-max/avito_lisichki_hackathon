@@ -2,11 +2,9 @@ package postgres
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	chains "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain"
 )
@@ -19,56 +17,65 @@ func NewChainRepository(db *pgxpool.Pool) *ChainRepository {
 	return &ChainRepository{db: db}
 }
 
-func (r *ChainRepository) GetByID(
+func (r *ChainRepository) GetByUserID(
 	ctx context.Context,
-	chainID uuid.UUID,
 	userID uuid.UUID,
-) (*chains.Chain, error) {
-	chain, err := r.getChain(ctx, chainID, userID)
+) ([]chains.Chain, error) {
+	userChains, err := r.getChains(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
 
-	steps, err := r.getSteps(ctx, chainID)
-	if err != nil {
-		return nil, err
+	for index := range userChains {
+		steps, err := r.getSteps(ctx, userChains[index].ID)
+		if err != nil {
+			return nil, err
+		}
+		userChains[index].Steps = steps
 	}
-	chain.Steps = steps
 
-	return chain, nil
+	return userChains, nil
 }
 
-func (r *ChainRepository) getChain(
+func (r *ChainRepository) getChains(
 	ctx context.Context,
-	chainID uuid.UUID,
 	userID uuid.UUID,
-) (*chains.Chain, error) {
-	var chain chains.Chain
-	err := r.db.QueryRow(ctx, `
+) ([]chains.Chain, error) {
+	rows, err := r.db.Query(ctx, `
 		SELECT c.id, c.status, c.chain_length, c.created_at, c.expires_at
 		FROM exchange_chains c
-		WHERE c.id = $1
-		  AND EXISTS (
+		WHERE EXISTS (
 		      SELECT 1
 		      FROM exchange_chain_steps s
 		      WHERE s.chain_id = c.id
-		        AND (s.from_user_id = $2 OR s.to_user_id = $2)
+		        AND (s.from_user_id = $1 OR s.to_user_id = $1)
 		  )
-	`, chainID, userID).Scan(
-		&chain.ID,
-		&chain.Status,
-		&chain.ChainLength,
-		&chain.CreatedAt,
-		&chain.ExpiresAt,
-	)
-	if errors.Is(err, pgx.ErrNoRows) {
-		return nil, chains.ErrNotFound
-	}
+		ORDER BY c.created_at DESC
+	`, userID)
 	if err != nil {
-		return nil, fmt.Errorf("query exchange chain: %w", err)
+		return nil, fmt.Errorf("query user exchange chains: %w", err)
+	}
+	defer rows.Close()
+
+	userChains := make([]chains.Chain, 0)
+	for rows.Next() {
+		var chain chains.Chain
+		if err := rows.Scan(
+			&chain.ID,
+			&chain.Status,
+			&chain.ChainLength,
+			&chain.CreatedAt,
+			&chain.ExpiresAt,
+		); err != nil {
+			return nil, fmt.Errorf("scan user exchange chain: %w", err)
+		}
+		userChains = append(userChains, chain)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate user exchange chains: %w", err)
 	}
 
-	return &chain, nil
+	return userChains, nil
 }
 
 func (r *ChainRepository) getSteps(ctx context.Context, chainID uuid.UUID) ([]chains.Step, error) {

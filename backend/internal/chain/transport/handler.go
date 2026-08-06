@@ -11,7 +11,7 @@ import (
 )
 
 type ChainService interface {
-	GetChain(ctx context.Context, chainID string, userID string) (*dto.GetChainsResponse, error)
+	GetChains(ctx context.Context, userID string) (*dto.GetChainsResponse, error)
 }
 
 type ChainHandler struct {
@@ -22,20 +22,15 @@ func NewChainHandler(service ChainService) *ChainHandler {
 	return &ChainHandler{service: service}
 }
 
-func (h *ChainHandler) GetChainHandler(c *gin.Context) {
-	response, err := h.service.GetChain(
+func (h *ChainHandler) GetChainsHandler(c *gin.Context) {
+	response, err := h.service.GetChains(
 		c.Request.Context(),
-		c.Param("chain_id"),
-		c.Query("user_id"),
+		c.GetHeader("X-User-ID"),
 	)
 	if err != nil {
 		switch {
-		case errors.Is(err, chains.ErrInvalidChainID):
-			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid chain id"})
 		case errors.Is(err, chains.ErrInvalidUserID):
-			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid or missing user_id"})
-		case errors.Is(err, chains.ErrNotFound):
-			c.JSON(http.StatusNotFound, gin.H{"error": "chain not found"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid or missing X-User-ID header"})
 		default:
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get chain"})
 		}

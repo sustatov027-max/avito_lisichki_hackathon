@@ -8,10 +8,8 @@ import (
 )
 
 var (
-	ErrInvalidChainID = errors.New("invalid chain id")
-	ErrInvalidUserID  = errors.New("invalid user id")
-	ErrNotFound       = errors.New("chain not found")
-	ErrIncomplete     = errors.New("chain does not contain both user directions")
+	ErrInvalidUserID = errors.New("invalid user id")
+	ErrIncomplete    = errors.New("chain does not contain both user directions")
 )
 
 type Chain struct {
