@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-import { EXCHANGE_STEPS } from '@features/exchange-form/model/exchange-from-steps.constants'
+import { EXCHANGE_STEPS } from '@features/exchange-form'
 
 import type { ExchangeFormStepState } from './exchange-form.types'
 

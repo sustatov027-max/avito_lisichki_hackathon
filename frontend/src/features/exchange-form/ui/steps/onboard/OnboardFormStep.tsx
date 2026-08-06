@@ -1,8 +1,8 @@
+import type { ExchangeFormComponentsProps } from '@features/exchange-form'
+
 import { Checkbox, FormField, Input } from '@shared/ui'
 
-import type { ExchangeFormComponentsProps } from '../model/exchange-form.types'
-
-const ExchangeFormFields = (props: ExchangeFormComponentsProps) => {
+const OnboardFormStep = (props: ExchangeFormComponentsProps) => {
 	const { form } = props
 
 	return (
@@ -30,4 +30,4 @@ const ExchangeFormFields = (props: ExchangeFormComponentsProps) => {
 	)
 }
 
-export { ExchangeFormFields }
+export { OnboardFormStep }
