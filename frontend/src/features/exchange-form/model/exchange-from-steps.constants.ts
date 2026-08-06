@@ -9,6 +9,7 @@ export const FIELDS_BY_STEPS = {
 	[EXCHANGE_STEPS.ONBOARD]: ['user_id', 'city_name', 'delivery_enabled'],
 	[EXCHANGE_STEPS.OFFERED]: [
 		'offered_item.title',
+		'offered_item.estimated_price',
 		'offered_item.category_id',
 		'offered_item.attributes'
 	],

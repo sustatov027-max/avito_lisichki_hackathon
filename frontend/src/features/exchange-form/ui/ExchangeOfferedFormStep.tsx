@@ -43,6 +43,18 @@ const ExchangeOfferedFormStep = (props: ExchangeFormComponentsProps) => {
 					{...form.register('offered_item.title')}
 				/>
 			</FormField>
+			<FormField
+				label='Оценочная стоимость ₽'
+				name='offered_item.estimated_price'
+				isRequired
+			>
+				<Input
+					type='number'
+					id='offered_item.estimated_price'
+					placeholder='50000'
+					{...form.register('offered_item.estimated_price')}
+				/>
+			</FormField>
 			<FormField name='offered_item.category_id' label='Категория' isRequired>
 				<Controller
 					control={form.control}

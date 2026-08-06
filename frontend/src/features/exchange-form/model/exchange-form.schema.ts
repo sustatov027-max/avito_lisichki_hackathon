@@ -165,6 +165,10 @@ const itemAttributesSchema = z.array(attributeSchema)
 const offeredItemSchema = z
 	.object({
 		title: z.string().min(1, 'Укажите название предлагаемого товара'),
+		estimated_price: z.coerce
+			.number()
+			.nonnegative('Оценочная стоимость не может быть отрицательной')
+			.min(1, 'Укажите оценочную стоимость товара'),
 		category_id: categoryIdSchema,
 		attributes: itemAttributesSchema
 	})

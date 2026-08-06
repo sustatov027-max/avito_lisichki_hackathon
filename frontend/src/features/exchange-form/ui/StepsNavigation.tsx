@@ -67,7 +67,8 @@ const StepsNavigation = (props: ExchangeFormComponentsProps) => {
 					...values,
 					offered_item: {
 						title: '',
-						category_id: undefined,
+						estimated_price: '',
+						category_id: '',
 						attributes: []
 					}
 				})
@@ -78,7 +79,7 @@ const StepsNavigation = (props: ExchangeFormComponentsProps) => {
 					...values,
 					wanted_item: {
 						title_query: '',
-						category_id: undefined,
+						category_id: '',
 						attributes: [],
 						min_price: '',
 						max_price: ''

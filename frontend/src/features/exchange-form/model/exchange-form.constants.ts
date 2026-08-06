@@ -4,7 +4,12 @@ export const DEFAULT_FORM_VALUES: ExchangeFormDataInput = {
 	user_id: '',
 	city_name: '',
 	delivery_enabled: false,
-	offered_item: { title: '', category_id: '', attributes: [] },
+	offered_item: {
+		title: '',
+		estimated_price: '',
+		category_id: '',
+		attributes: []
+	},
 	wanted_item: {
 		title_query: '',
 		category_id: '',

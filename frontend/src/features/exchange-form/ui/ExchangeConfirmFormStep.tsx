@@ -114,7 +114,12 @@ const ExchangeConfirmFormStep = (props: ExchangeFormComponentsProps) => {
 							<dt>Категория</dt>
 							<dd>{category?.name || 'Не выбрана'}</dd>
 						</div>
-						{!isOffered && (
+						{isOffered ? (
+							<div>
+								<dt>Оценочная стоимость</dt>
+								<dd>{String(data.offered_item.estimated_price || '—')} ₽</dd>
+							</div>
+						) : (
 							<div>
 								<dt>Диапазон цены</dt>
 								<dd>
