@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react'
 
-export const useDebounce = (value: string, delay: number) => {
-	const [debouncedValue, setDebouncedValue] = useState(value)
+export const useDebounce = <T>(data: T, delay: number) => {
+	const [debouncedData, setDebouncedData] = useState(data)
 
 	useEffect(() => {
 		const timer = setTimeout(() => {
-			setDebouncedValue(value)
+			setDebouncedData(data)
 		}, delay)
 
 		return () => clearTimeout(timer)
-	}, [value, delay])
+	}, [data, delay])
 
-	return debouncedValue
+	return debouncedData
 }

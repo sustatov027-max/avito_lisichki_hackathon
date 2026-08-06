@@ -73,7 +73,11 @@ const OfferedFormStep = (props: ExchangeFormComponentsProps) => {
 								<DropdownContent>
 									<DropdownRadioGroup
 										value={String(field.value ?? '')}
-										onValueChange={field.onChange}
+										onValueChange={categoryId => {
+											field.onChange(categoryId)
+											form.setValue('offered_item.attributes', [])
+											form.clearErrors('offered_item.attributes')
+										}}
 									>
 										{CATEGORIES.filter(
 											category => category.parentId !== null
@@ -214,11 +218,11 @@ const OfferedFormStep = (props: ExchangeFormComponentsProps) => {
 
 											<DropdownContent>
 												{attribute.options.map(option => (
-											<DropdownCheckboxItem
-												key={option.name}
-												checked={selectedValues.includes(option.name)}
-												closeOnSelect={false}
-												onCheckedChange={checked => {
+													<DropdownCheckboxItem
+														key={option.name}
+														checked={selectedValues.includes(option.name)}
+														closeOnSelect={false}
+														onCheckedChange={checked => {
 															field.onChange(
 																checked
 																	? [...selectedValues, option.name]

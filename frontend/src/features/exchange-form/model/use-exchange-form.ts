@@ -4,7 +4,7 @@ import { useWatch } from 'react-hook-form'
 import { DEFAULT_FORM_VALUES } from '@features/exchange-form'
 import { useCreatExchange } from '@features/exchange-form/api/exchange.mutation'
 
-import { useFormsBase } from '@shared/lib/forms'
+import { useDebounce, useFormsBase } from '@shared/lib'
 
 import { useExchangeStepFormStore } from '../model/exchange-form-step.store'
 import {
@@ -21,6 +21,7 @@ export const useExchangeForm = () => {
 
 	const formData = useExchangeStepFormStore(state => state.data)
 	const resetStorage = useExchangeStepFormStore(state => state.reset)
+	const updateStorage = useExchangeStepFormStore(state => state.updateData)
 
 	const form = useFormsBase<ExchangeFormDataInput, ExchangeFormDataOutput>({
 		schema: exchangeFormSchema,
@@ -53,11 +54,16 @@ export const useExchangeForm = () => {
 		control: form.control
 	})
 
+	const debouncedFormValues = useDebounce<Partial<ExchangeFormDataInput>>(
+		formValues as Partial<ExchangeFormDataInput>,
+		500
+	)
+
 	useEffect(() => {
-		console.log('key')
+		updateStorage(debouncedFormValues)
 
 		clearKey()
-	}, [formValues, clearKey])
+	}, [formValues, clearKey, debouncedFormValues, updateStorage])
 
 	return form
 }

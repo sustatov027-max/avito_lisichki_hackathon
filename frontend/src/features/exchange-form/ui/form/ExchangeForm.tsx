@@ -19,8 +19,6 @@ const ExchangeForm = () => {
 
 	const step = useExchangeStepFormStore(state => state.step)
 
-	console.log(form.getValues())
-
 	return (
 		<Form<ExchangeFormDataInput, ExchangeFormDataOutput>
 			form={form}

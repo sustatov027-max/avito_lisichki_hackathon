@@ -14,8 +14,10 @@ const HomeLayout = () => {
 				exit={{ opacity: 0 }}
 				transition={{ duration: 0.5 }}
 			>
+				<header className={styles.header}>
+					<ThemeToggle className={styles.themeToggle} />
+				</header>
 				<Outlet />
-				<ThemeToggle className={styles.themeToggle} />
 			</motion.main>
 		</>
 	)
