@@ -13,12 +13,18 @@ AS $$
           AND di.category_id = to_oi.category_id
           AND to_oi.status = 'active'
           AND from_oi.status = 'active'
-          AND to_oi.user_id <> from_oi.user_id            -- нельзя матчить самого себя
+          AND to_oi.user_id <> from_oi.user_id
           AND (di.min_price IS NULL OR to_oi.estimated_price >= di.min_price)
           AND (di.max_price IS NULL OR to_oi.estimated_price <= di.max_price)
           AND (
                 to_oi.city_name = from_oi.city_name
                 OR (to_oi.delivery_enabled AND di.allow_delivery)
+              )
+          -- Сопоставление JSONB (если в desired_items заданы атрибуты, они проверяются на совпадение с offered_items)
+          AND (
+                di.attributes IS NULL 
+                OR jsonb_array_length(di.attributes) = 0
+                OR to_oi.attributes @> di.attributes
               )
     );
 $$;
@@ -29,35 +35,36 @@ RETURNS SETOF UUID
 LANGUAGE plpgsql
 AS $$
 DECLARE
-    v_path        RECORD;
-    v_chain_id    UUID;
-    v_step_no     INT;
-    v_from_item   UUID;
-    v_to_item     UUID;
-    v_from_user   UUID;
-    v_to_user     UUID;
+    v_path           RECORD;
+    v_chain_id       UUID;
+    v_step_no        INT;
+    v_from_item      UUID;
+    v_to_item        UUID;
+    v_from_user      UUID;
+    v_to_user        UUID;
     v_already_exists BOOLEAN;
 BEGIN
-    -- Запрещаем одновременно искать цепочки для одного товара
+    -- Блокируем товар от параллельного поиска
     PERFORM pg_advisory_xact_lock(
         hashtextextended(p_item_id::text, 0)
     );
+
     FOR v_path IN
         WITH RECURSIVE chain_search AS (
-            -- Анкер: стартуем от самой вещи
+            -- Анкер: стартуем с переданного товара
             SELECT
-                oi.id                    AS start_item_id,
-                oi.id                    AS current_item_id,
-                ARRAY[oi.id]::UUID[]     AS item_path,
+                oi.id                     AS start_item_id,
+                oi.id                     AS current_item_id,
+                ARRAY[oi.id]::UUID[]      AS item_path,
                 ARRAY[oi.user_id]::UUID[] AS user_path,
-                1                        AS depth
+                1                         AS depth
             FROM offered_items oi
             WHERE oi.id = p_item_id
               AND oi.status = 'active'
 
             UNION ALL
 
-            -- Рекурсивный шаг: расширяем путь на одно ребро графа матчинга
+            -- Рекурсивный шаг
             SELECT
                 cs.start_item_id,
                 nxt.id,
@@ -67,8 +74,8 @@ BEGIN
             FROM chain_search cs
             JOIN offered_items nxt
                 ON nxt.status = 'active'
-               AND nxt.id       <> ALL (cs.item_path)   -- вещь ещё не встречалась
-               AND nxt.user_id  <> ALL (cs.user_path)    -- пользователь ещё не встречался
+               AND nxt.id       <> ALL (cs.item_path)   -- уникальный товар
+               AND nxt.user_id  <> ALL (cs.user_path)  -- уникальный пользователь
                AND items_match(cs.current_item_id, nxt.id)
             WHERE cs.depth < 5
         )
@@ -76,11 +83,10 @@ BEGIN
                start_item_id, item_path, user_path, depth
         FROM chain_search
         WHERE depth BETWEEN 2 AND 5
-          AND items_match(current_item_id, start_item_id)   -- замыкающее ребро в начало
+          AND items_match(current_item_id, start_item_id)   -- замыкающее ребро
         ORDER BY item_path, depth
     LOOP
-        -- Защита от дублей: если уже есть "proposed"-цепочка с точно
-        -- таким же набором вещей — пропускаем.
+        -- Защита от дублей цепочек
         SELECT EXISTS (
             SELECT 1
             FROM exchange_chains ec
@@ -89,9 +95,7 @@ BEGIN
               AND (
                   SELECT array_agg(ecs.offered_item_id ORDER BY ecs.step_order)
                   FROM exchange_chain_steps ecs
-                  JOIN exchange_chains ec2 ON ec2.id = ecs.chain_id
                   WHERE ecs.chain_id = ec.id
-                  AND ec2.status = 'proposed'
               ) = v_path.item_path
         ) INTO v_already_exists;
 
@@ -99,11 +103,12 @@ BEGIN
             CONTINUE;
         END IF;
 
-        -- Создаём цепочку
-        INSERT INTO exchange_chains (status, chain_length)
-        VALUES ('proposed', v_path.depth)
+        -- Создаём цепочку с явным указанием expires_at (24 часа)
+        INSERT INTO exchange_chains (status, chain_length, expires_at)
+        VALUES ('proposed', v_path.depth, NOW() + INTERVAL '24 hours')
         RETURNING id INTO v_chain_id;
 
+        -- Заполняем шаги
         FOR v_step_no IN 1..v_path.depth LOOP
             v_from_item := v_path.item_path[v_step_no];
             v_from_user := v_path.user_path[v_step_no];
@@ -112,7 +117,6 @@ BEGIN
                 v_to_item := v_path.item_path[v_step_no + 1];
                 v_to_user := v_path.user_path[v_step_no + 1];
             ELSE
-                -- последнее звено замыкается на начало цепочки
                 v_to_item := v_path.item_path[1];
                 v_to_user := v_path.user_path[1];
             END IF;
