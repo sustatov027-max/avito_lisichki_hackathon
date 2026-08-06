@@ -8,27 +8,44 @@ import (
 
 	"github.com/google/uuid"
 	chains "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain"
+	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain/dto"
+	repoDTO "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain/repository"
 	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain/service"
 )
 
 type chainRepositoryStub struct {
 	chains []chains.Chain
 	err    error
+
+	// Поля для тестирования ProcessDecision
+	processDecisionResult *repoDTO.ProcessDecisionResult
+	processDecisionErr    error
+	lastDecisionParams    repoDTO.ProcessDecisionParams
 }
 
-func (r chainRepositoryStub) GetByUserID(
+func (r *chainRepositoryStub) GetByUserID(
 	_ context.Context,
 	_ uuid.UUID,
 ) ([]chains.Chain, error) {
 	return r.chains, r.err
 }
 
+func (r *chainRepositoryStub) ProcessDecision(
+	_ context.Context,
+	params repoDTO.ProcessDecisionParams,
+) (*repoDTO.ProcessDecisionResult, error) {
+	r.lastDecisionParams = params
+	return r.processDecisionResult, r.processDecisionErr
+}
+
+// --- Тесты GetChains ---
+
 func TestGetChainsMapsExpectedContract(t *testing.T) {
 	currentUserID := uuid.New()
 	otherUserID := uuid.New()
 	chainID := uuid.New()
 	createdAt := time.Now().UTC()
-	svc := service.NewChainService(chainRepositoryStub{chains: []chains.Chain{{
+	svc := service.NewChainService(&chainRepositoryStub{chains: []chains.Chain{{
 		ID:          chainID,
 		Status:      "proposed",
 		ChainLength: 2,
@@ -74,11 +91,62 @@ func TestGetChainsMapsExpectedContract(t *testing.T) {
 }
 
 func TestGetChainsRejectsInvalidUserID(t *testing.T) {
-	svc := service.NewChainService(chainRepositoryStub{})
+	svc := service.NewChainService(&chainRepositoryStub{})
 
 	_, err := svc.GetChains(context.Background(), "")
 	if !errors.Is(err, chains.ErrInvalidUserID) {
 		t.Fatalf("expected ErrInvalidUserID, got %v", err)
+	}
+}
+
+// --- Тесты ProcessDecision ---
+
+func TestProcessDecisionSuccess(t *testing.T) {
+	chainID := uuid.New()
+	userID := uuid.New()
+
+	stub := &chainRepositoryStub{
+		processDecisionResult: &repoDTO.ProcessDecisionResult{
+			ChainID: chainID,
+			Status:  "accepted",
+		},
+	}
+	svc := service.NewChainService(stub)
+
+	req := dto.DecisionRequest{Action: "accept"}
+	res, err := svc.ProcessDecision(context.Background(), chainID.String(), userID, req)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if res.ChainID != chainID.String() || res.Status != "accepted" {
+		t.Fatalf("unexpected response: %#v", res)
+	}
+
+	if stub.lastDecisionParams.ChainID != chainID || stub.lastDecisionParams.UserID != userID || stub.lastDecisionParams.Action != "accept" {
+		t.Fatalf("unexpected repo params: %#v", stub.lastDecisionParams)
+	}
+}
+
+func TestProcessDecisionInvalidChainID(t *testing.T) {
+	svc := service.NewChainService(&chainRepositoryStub{})
+
+	_, err := svc.ProcessDecision(context.Background(), "invalid-uuid", uuid.New(), dto.DecisionRequest{Action: "accept"})
+	if err == nil {
+		t.Fatal("expected error for invalid chain_id, got nil")
+	}
+}
+
+func TestProcessDecisionRepositoryError(t *testing.T) {
+	expectedErr := errors.New("database error")
+	stub := &chainRepositoryStub{
+		processDecisionErr: expectedErr,
+	}
+	svc := service.NewChainService(stub)
+
+	_, err := svc.ProcessDecision(context.Background(), uuid.New().String(), uuid.New(), dto.DecisionRequest{Action: "reject"})
+	if !errors.Is(err, expectedErr) {
+		t.Fatalf("expected %v, got %v", expectedErr, err)
 	}
 }
 
