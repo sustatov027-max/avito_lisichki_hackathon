@@ -1,0 +1,79 @@
+package transport
+
+import (
+	"errors"
+	"net/http"
+	"unicode"
+
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/dto"
+	repoDTO "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/repository"
+)
+
+func (h *ExchangeHandler) PostExchangeHandler(c *gin.Context) {
+	userIDValue, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized: missing user context"})
+		return
+	}
+
+	userID, ok := userIDValue.(uuid.UUID)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid user context type"})
+		return
+	}
+
+	idempotencyKey := c.GetHeader(idempotencyKeyHeader)
+	if !validIdempotencyKey(idempotencyKey) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Idempotency-Key must contain 1 to 255 non-whitespace printable ASCII characters",
+		})
+		return
+	}
+
+	var req dto.PostExchangeRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid request body: " + err.Error(),
+		})
+		return
+	}
+
+	resp, err := h.service.PostExchange(c.Request.Context(), userID, idempotencyKey, req)
+	if err != nil {
+		if errors.Is(err, repoDTO.ErrIdempotencyConflict) {
+			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "failed to create exchange offer: " + err.Error(),
+		})
+		return
+	}
+
+	if resp.Replayed {
+		c.Header("Idempotency-Replayed", "true")
+	}
+
+	c.JSON(http.StatusCreated, resp)
+}
+
+func validIdempotencyKey(key string) bool {
+	if key == "" {
+		return true
+	}
+	if len(key) > 255 {
+		return false
+	}
+
+	for _, char := range key {
+		if char > unicode.MaxASCII || !unicode.IsPrint(char) || unicode.IsSpace(char) {
+			return false
+		}
+	}
+
+	return true
+}
