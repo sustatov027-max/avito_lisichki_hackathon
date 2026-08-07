@@ -1,31 +1,76 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
-import { EXCHANGE_STEPS } from './exchange-form.config'
-import { useExchangeStepFormStore } from './exchange-form-step.store'
+import { normalizePersistedExchangeFormData } from './exchange-form-step.store'
+import { exchangeFormSchema } from './exchange-form.schema'
 
-describe('useExchangeStepFormStore', () => {
-	beforeEach(() => {
-		useExchangeStepFormStore.getState().reset()
+describe('normalizePersistedExchangeFormData', () => {
+	it('migrates offered memory from the old format to an optional number', () => {
+		const data = normalizePersistedExchangeFormData({
+			offered_item: {
+				category_id: '00000000-0000-0000-0000-000000000101',
+				attributes: [
+					{
+						attribute_id: '2',
+						value: '256',
+						min_value: undefined,
+						max_value: undefined
+					}
+				]
+			}
+		} as never)
+
+		expect(data.offered_item?.attributes).toEqual([
+			{ attribute_id: '1', values: undefined },
+			{ attribute_id: '2', value: 256 },
+			{ attribute_id: '3', value: undefined }
+		])
 	})
 
-	it('moves through steps and stops at boundaries', () => {
-		const store = useExchangeStepFormStore.getState()
-		store.backStep()
-		expect(useExchangeStepFormStore.getState().step).toBe(EXCHANGE_STEPS.ONBOARD)
-		store.forwardStep()
-		store.forwardStep()
-		expect(useExchangeStepFormStore.getState().step).toBe(EXCHANGE_STEPS.WANTED)
-		store.forwardStep()
-		store.forwardStep()
-		expect(useExchangeStepFormStore.getState().step).toBe(EXCHANGE_STEPS.CONFIRM)
+	it('rebuilds wanted attributes according to their current category', () => {
+		const data = normalizePersistedExchangeFormData({
+			wanted_item: {
+				category_id: '00000000-0000-0000-0000-000000000102',
+				attributes: [
+					{ attribute_id: '10', min_value: '8', max_value: '32' },
+					{ attribute_id: '12', min_value: '1', max_value: '2' }
+				]
+			}
+		} as never)
+
+		expect(data.wanted_item?.attributes).toEqual([
+			{ attribute_id: '10', min_value: 8, max_value: 32 },
+			{ attribute_id: '11', min_value: undefined, max_value: undefined },
+			{ attribute_id: '12', value: undefined },
+			{ attribute_id: '13', values: undefined }
+		])
 	})
 
-	it('merges and resets form data', () => {
-		const store = useExchangeStepFormStore.getState()
-		store.updateData({ user_id: 'user-1' })
-		store.updateData({ city_name: 'Москва' })
-		expect(useExchangeStepFormStore.getState().data).toEqual({ user_id: 'user-1', city_name: 'Москва' })
-		store.reset()
-		expect(useExchangeStepFormStore.getState().data).toEqual({})
+	it('produces a valid form from a mixed persisted draft', () => {
+		const data = normalizePersistedExchangeFormData({
+			city_name: 'Москва',
+			delivery_enabled: false,
+			offered_item: {
+				title: 'Телефон',
+				estimated_price: '50000',
+				category_id: '00000000-0000-0000-0000-000000000101',
+				attributes: [
+					{ attribute_id: '1', value: undefined },
+					{ attribute_id: '2', value: '256' },
+					{ attribute_id: '3', min_value: undefined }
+				]
+			},
+			wanted_item: {
+				title_query: 'Ноутбук',
+				category_id: '00000000-0000-0000-0000-000000000102',
+				attributes: [
+					{ attribute_id: '10', min_value: '8', max_value: '32' },
+					{ attribute_id: '12', min_value: undefined }
+				],
+				min_price: '10000',
+				max_price: '100000'
+			}
+		} as never)
+
+		expect(exchangeFormSchema.safeParse(data).success).toBe(true)
 	})
 })

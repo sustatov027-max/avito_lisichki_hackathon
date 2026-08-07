@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
+import axios from 'axios'
 import toast from 'react-hot-toast'
 
 import { exchangeServices } from '@features/exchange-form/api/exchange.services'
@@ -20,9 +21,11 @@ export const useCreatExchange = () => {
 			toast.success('Обмен создан')
 		},
 		onError(error) {
-			console.log(error)
-
-			toast.error(error.message)
+			if (axios.isAxiosError(error)) {
+				toast.error(error.response?.data.error)
+			} else {
+				toast.error(error.message)
+			}
 		}
 	})
 

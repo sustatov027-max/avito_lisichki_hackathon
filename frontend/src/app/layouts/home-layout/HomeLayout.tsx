@@ -3,6 +3,8 @@ import { Outlet } from 'react-router'
 
 import { ThemeToggle } from '@features/theme-toggle'
 
+import { UserSwitcher } from '@shared/ui/user-switcher/UserSwitcher'
+
 import styles from './HomeLayout.module.scss'
 
 const HomeLayout = () => {
@@ -15,7 +17,10 @@ const HomeLayout = () => {
 				transition={{ duration: 0.5 }}
 			>
 				<header className={styles.header}>
-					<ThemeToggle className={styles.themeToggle} />
+					<div>
+						<UserSwitcher />
+						<ThemeToggle className={styles.themeToggle} />
+					</div>
 				</header>
 				<Outlet />
 			</motion.main>

@@ -57,9 +57,9 @@ describe('exchangeFormSchema', () => {
 	it('rejects an invalid range', () => {
 		const result = exchangeFormSchema.safeParse({
 			...validData,
-			offered_item: {
-				...validData.offered_item,
-				attributes: [{ attribute_id: '2', min_value: 500, max_value: 100 }]
+			wanted_item: {
+				...validData.wanted_item,
+				attributes: [{ attribute_id: '10', min_value: 32, max_value: 8 }]
 			}
 		})
 
@@ -84,5 +84,39 @@ describe('exchangeFormSchema', () => {
 
 		expect(withMemory.success).toBe(true)
 		expect(withoutMemory.success).toBe(true)
+	})
+
+	it('strips stale fields left by a previous category', () => {
+		const result = exchangeFormSchema.safeParse({
+			...validData,
+			offered_item: {
+				...validData.offered_item,
+				attributes: [
+					{ attribute_id: '1', min_value: 64 },
+					{ attribute_id: '2', value: 256, min_value: 64 },
+					{ attribute_id: '3', min_value: 64 }
+				]
+			},
+			wanted_item: {
+				...validData.wanted_item,
+				attributes: [
+					{ attribute_id: '10', min_value: 8, value: 'old' },
+					{ attribute_id: '12', min_value: 1 }
+				]
+			}
+		})
+
+		expect(result.success).toBe(true)
+		if (!result.success) return
+
+		expect(result.data.offered_item.attributes).toEqual([
+			{ attribute_id: '1', values: undefined },
+			{ attribute_id: '2', value: 256 },
+			{ attribute_id: '3', value: undefined }
+		])
+		expect(result.data.wanted_item.attributes).toEqual([
+			{ attribute_id: '10', min_value: 8, max_value: undefined },
+			{ attribute_id: '12', value: undefined }
+		])
 	})
 })
