@@ -46,10 +46,8 @@ describe('StepsNavigation', () => {
 
 	it('advances after valid onboarding data', async () => {
 		render(<NavigationTest />)
-		const userId = screen.getByLabelText('ID')
 		const city = screen.getByLabelText('Город')
 
-		fireEvent.input(userId, { target: { value: 'user-123' } })
 		fireEvent.input(city, { target: { value: 'Москва' } })
 		fireEvent.click(screen.getByRole('button', { name: /далее/i }))
 

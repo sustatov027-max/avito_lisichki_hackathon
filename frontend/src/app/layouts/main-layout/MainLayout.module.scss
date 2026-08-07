@@ -1,0 +1,17 @@
+.header {
+	width: 100%;
+	padding-block: 16px;
+	padding-inline: 32px;
+	display: flex;
+	justify-content: flex-end;
+
+	@include mobile {
+		justify-content: center;
+	}
+
+	div {
+		display: flex;
+		align-items: center;
+		column-gap: 16px  ;
+	}
+}
