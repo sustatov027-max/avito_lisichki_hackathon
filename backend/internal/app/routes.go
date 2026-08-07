@@ -11,6 +11,9 @@ import (
 	exchangeRepo "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/repository/postgres"
 	exchangeService "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/service"
 	exchangeTransport "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/transport"
+	offerRepo "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/offer/repository/postgres"
+	offerService "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/offer/service"
+	offerTransport "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/offer/transport"
 	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/platform/health"
 	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/platform/middleware"
 )
@@ -48,11 +51,17 @@ func (a *App) registerRoutes() *gin.Engine {
 	chainSvc := chainService.NewChainService(chainRepository)
 	chainHandler := chainTransport.NewChainHandler(chainSvc)
 
+	// Offer layer initialization
+	offerRepository := offerRepo.NewOfferRepository(a.db)
+	offerSvc := offerService.NewOfferService(offerRepository)
+	offerHandler := offerTransport.NewOfferHandler(offerSvc)
+
 	api := router.Group("/api/v1")
 	{
 		api.Use(middleware.DummyAuthMiddleware())
 		{
 			api.GET("/chains", chainHandler.GetChainsHandler)
+			api.GET("/offers/my", offerHandler.GetMyOffersHandler)
 			api.POST("/chains/:chain_id/decision", chainHandler.ProcessDecisionHandler)
 		}
 		api.POST("/offers", exchangeHandler.PostExchangeHandler)
