@@ -7,9 +7,13 @@ import (
 	"github.com/google/uuid"
 )
 
+type DecisionAction string
+
 var (
-	ErrInvalidUserID = errors.New("invalid user id")
-	ErrIncomplete    = errors.New("chain does not contain both user directions")
+	ErrInvalidUserID                = errors.New("invalid user id")
+	ErrIncomplete                   = errors.New("chain does not contain both user directions")
+	ActionAccept     DecisionAction = "accept"
+	ActionReject     DecisionAction = "reject"
 )
 
 type Chain struct {
@@ -41,4 +45,20 @@ type Item struct {
 	CategoryID     uuid.UUID
 	Photo          string
 	EstimatedPrice float64
+}
+
+type DecisionRequest struct {
+	Action DecisionAction `json:"action" binding:"required,oneof=accept reject"`
+}
+
+type DecisionResponse struct {
+	ChainID uuid.UUID `json:"chain_id"`
+	Status  string    `json:"status"`
+	Message string    `json:"message"`
+}
+
+type DecisionResult struct {
+	ChainID uuid.UUID
+	Status  string
+	Message string
 }

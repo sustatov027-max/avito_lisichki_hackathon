@@ -90,7 +90,7 @@ BEGIN
         SELECT EXISTS (
             SELECT 1
             FROM exchange_chains ec
-            WHERE ec.status = 'proposed'
+            WHERE ec.status IN ('proposed', 'rejected', 'expired', 'invalidated')
               AND ec.chain_length = v_path.depth
               AND (
                   SELECT array_agg(ecs.offered_item_id ORDER BY ecs.step_order)
@@ -100,7 +100,7 @@ BEGIN
         ) INTO v_already_exists;
 
         IF v_already_exists THEN
-            CONTINUE;
+            CONTINUE; -- Пропускаем эту комбинацию, ищем другие доступные цепочки
         END IF;
 
         -- Создаём цепочку с явным указанием expires_at (24 часа)

@@ -5,13 +5,14 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	chainPostgres "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain/repository/postgres"
+	chainRepo "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain/repository/postgres"
 	chainService "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain/service"
 	chainTransport "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain/transport"
-	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/repository/postgres"
-	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/service"
-	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/transport"
+	exchangeRepo "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/repository/postgres"
+	exchangeService "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/service"
+	exchangeTransport "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/transport"
 	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/platform/health"
+	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/platform/middleware"
 )
 
 func (a *App) registerRoutes() *gin.Engine {
@@ -37,17 +38,24 @@ func (a *App) registerRoutes() *gin.Engine {
 		MaxAge: 12 * time.Hour,
 	}))
 
-	exchangeRepository := postgres.NewTradeOfferRepository(a.db)
-	exchangeService := service.NewExchangeService(exchangeRepository)
-	exchangeHandler := transport.NewExchangeHandler(exchangeService)
-	chainRepository := chainPostgres.NewChainRepository(a.db)
-	chainsService := chainService.NewChainService(chainRepository)
-	chainHandler := chainTransport.NewChainHandler(chainsService)
+	// Exchange layer initialization
+	exchangeRepository := exchangeRepo.NewTradeOfferRepository(a.db)
+	exchangeSvc := exchangeService.NewExchangeService(exchangeRepository)
+	exchangeHandler := exchangeTransport.NewExchangeHandler(exchangeSvc)
+
+	// Chain layer initialization
+	chainRepository := chainRepo.NewChainRepository(a.db)
+	chainSvc := chainService.NewChainService(chainRepository)
+	chainHandler := chainTransport.NewChainHandler(chainSvc)
 
 	api := router.Group("/api/v1")
 	{
+		api.Use(middleware.DummyAuthMiddleware())
+		{
+			api.GET("/chains", chainHandler.GetChainsHandler)
+			api.POST("/chains/:chain_id/decision", chainHandler.ProcessDecisionHandler)
+		}
 		api.POST("/offers", exchangeHandler.PostExchangeHandler)
-		api.GET("/chains", chainHandler.GetChainsHandler)
 	}
 
 	router.GET("/health", health.HealthHandler)

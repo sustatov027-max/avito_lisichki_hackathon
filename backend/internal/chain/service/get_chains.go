@@ -10,18 +10,6 @@ import (
 	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain/dto"
 )
 
-type ChainRepository interface {
-	GetByUserID(ctx context.Context, userID uuid.UUID) ([]chains.Chain, error)
-}
-
-type ChainService struct {
-	repository ChainRepository
-}
-
-func NewChainService(repository ChainRepository) *ChainService {
-	return &ChainService{repository: repository}
-}
-
 func (s *ChainService) GetChains(
 	ctx context.Context,
 	rawUserID string,
@@ -48,6 +36,8 @@ func (s *ChainService) GetChains(
 
 	return &dto.GetChainsResponse{Chains: responses}, nil
 }
+
+// --- Helper Functions ---
 
 func parseUserID(rawID string) (uuid.UUID, error) {
 	id, err := uuid.Parse(rawID)
