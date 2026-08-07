@@ -5,12 +5,12 @@ import { ATTRIBUTES } from './attributes.constants'
 type AttributeValue =
 	ExchangeFormDataInput['offered_item']['attributes'][number]
 
-const getOptionLabel = (attributeId: string, value: string) => {
+const getOptionLabel = (attributeId: string, value: string | number) => {
 	const attribute = ATTRIBUTES.find(item => item.id === attributeId)
 
-	if (!attribute || !('options' in attribute)) return value
+	if (!attribute || !('options' in attribute)) return String(value)
 
-	return attribute.options.find(option => option.name === value)?.label ?? value
+	return attribute.options.find(option => option.name === value)?.label ?? String(value)
 }
 
 const getAttributeDataFromUUID = (attributeValue: AttributeValue) => {

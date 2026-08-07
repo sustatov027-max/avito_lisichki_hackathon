@@ -13,143 +13,149 @@ const optionalNumber = z.preprocess(
 	z.coerce.number().optional()
 )
 
-const attributeValueSchema = z.union([
-	z
-		.object({
-			attribute_id: z.union(attributeIdLiterals),
-			value: z.string().min(1, 'Укажите значение').optional()
-		})
-		.strict(),
-	z
-		.object({
-			attribute_id: z.union(attributeIdLiterals),
-			values: z
-				.array(z.string().min(1))
-				.min(1, 'Укажите хотя бы одно значение')
-				.optional()
-		})
-		.strict(),
-	z
-		.object({
-			attribute_id: z.union(attributeIdLiterals),
-			min_value: optionalNumber,
-			max_value: optionalNumber
-		})
-		.strict()
-])
+const rawAttributeSchema = z.object({
+	attribute_id: z.union(attributeIdLiterals),
+	value: z.union([z.string(), z.number()]).optional(),
+	values: z.array(z.string()).optional(),
+	min_value: optionalNumber,
+	max_value: optionalNumber
+})
 
-export type AttributeValue = z.output<typeof attributeValueSchema>
+type ItemKind = 'offered' | 'wanted'
+export type AttributeValue = {
+	attribute_id: string
+	value?: string | number
+	values?: string[]
+	min_value?: number
+	max_value?: number
+}
 
-const attributeSchema = attributeValueSchema.superRefine((attribute, ctx) => {
-	const definitions = ATTRIBUTES.filter(
+const normalizeAttribute = (
+	attribute: z.output<typeof rawAttributeSchema>,
+	itemKind: ItemKind
+): AttributeValue => {
+	const definition = ATTRIBUTES.find(
 		definition => definition.id === attribute.attribute_id
 	)
 
-	if ('value' in attribute || 'values' in attribute) {
-		const values =
-			'value' in attribute
-				? [attribute.value]
-				: 'values' in attribute
-					? attribute.values
-					: undefined
-		const definition = definitions[0]
+	if (
+		itemKind === 'offered' &&
+		definition?.type === 'range' &&
+		definition.label === 'Память'
+	) {
+		const value = Number(attribute.value)
 
-		if (!values) return
+		return {
+			attribute_id: attribute.attribute_id,
+			value:
+				attribute.value === undefined || !Number.isFinite(value)
+					? undefined
+					: value
+		}
+	}
 
-		for (const value of values.filter(
-			(value): value is string => value !== undefined
-		)) {
+	if (definition?.type === 'range') {
+		return {
+			attribute_id: attribute.attribute_id,
+			min_value: attribute.min_value,
+			max_value: attribute.max_value
+		}
+	}
+
+	if (definition?.type === 'multiple-select') {
+		return {
+			attribute_id: attribute.attribute_id,
+			values: attribute.values?.length ? attribute.values : undefined
+		}
+	}
+
+	return {
+		attribute_id: attribute.attribute_id,
+		value: typeof attribute.value === 'string' ? attribute.value : undefined
+	}
+}
+
+const createAttributeSchema = (itemKind: ItemKind) =>
+	rawAttributeSchema
+		.transform(attribute => normalizeAttribute(attribute, itemKind))
+		.superRefine((attribute, ctx) => {
+			const definition = ATTRIBUTES.find(
+				definition => definition.id === attribute.attribute_id
+			)
+
+			if (!definition) return
 			if (
-				!definitions.some(
-					definition =>
-						'options' in definition &&
-						(
-							definition.options.map(option => option.name) as readonly string[]
-						).includes(value)
-				)
+				itemKind === 'offered' &&
+				definition.type === 'range' &&
+				definition.label === 'Память'
+			) {
+				return
+			}
+
+			if (definition.type === 'select' && typeof attribute.value === 'string') {
+				if (
+					!definition.options.some(option => option.name === attribute.value)
+				) {
+					ctx.addIssue({
+						code: 'custom',
+						message: `Недопустимое значение для атрибута «${attribute.attribute_id}»`,
+						path: ['value']
+					})
+				}
+				return
+			}
+
+			if (definition.type === 'multiple-select' && attribute.values) {
+				for (const value of attribute.values) {
+					if (!definition.options.some(option => option.name === value)) {
+						ctx.addIssue({
+							code: 'custom',
+							message: `Недопустимое значение для атрибута «${attribute.attribute_id}»`,
+							path: ['values']
+						})
+					}
+				}
+				return
+			}
+
+			if (definition.type !== 'range') return
+
+			if (
+				attribute.min_value !== undefined &&
+				attribute.min_value < definition.min
 			) {
 				ctx.addIssue({
 					code: 'custom',
-					message: `Недопустимое значение для атрибута «${attribute.attribute_id}»`,
-					path: ['values']
+					message: `Значение должно быть не меньше ${definition.min}`,
+					path: ['min_value']
 				})
 			}
-		}
-
-		if (definition?.type === 'select' && !('value' in attribute)) {
-			ctx.addIssue({
-				code: 'custom',
-				message: 'Для select нужно использовать поле value',
-				path: ['value']
-			})
-		}
-		if (definition?.type === 'multiple-select' && !('values' in attribute)) {
-			ctx.addIssue({
-				code: 'custom',
-				message: 'Для multiple-select нужно использовать поле values',
-				path: ['values']
-			})
-		}
-		if (definition?.type === 'range') {
-			ctx.addIssue({
-				code: 'custom',
-				message: 'Для range нужно использовать min_value и max_value',
-				path: ['min_value']
-			})
-		}
-
-		return
-	}
-
-	const rangeDefinitions = definitions.filter(
-		(
-			definition
-		): definition is Extract<(typeof ATTRIBUTES)[number], { type: 'range' }> =>
-			definition.type === 'range'
-	)
-
-	if (rangeDefinitions.length === 0) {
-		ctx.addIssue({
-			code: 'custom',
-			message: 'Для этого атрибута нельзя указывать диапазон',
-			path: ['min_value']
+			if (
+				attribute.max_value !== undefined &&
+				attribute.max_value > definition.max
+			) {
+				ctx.addIssue({
+					code: 'custom',
+					message: `Значение должно быть не больше ${definition.max}`,
+					path: ['max_value']
+				})
+			}
+			if (
+				attribute.min_value !== undefined &&
+				attribute.max_value !== undefined &&
+				attribute.min_value > attribute.max_value
+			) {
+				ctx.addIssue({
+					code: 'custom',
+					message: 'Минимальное значение не может быть больше максимального',
+					path: ['min_value']
+				})
+			}
 		})
-		return
-	}
-
-	const range = rangeDefinitions[0]
-	const rangeAttribute = attribute as {
-		min_value?: number
-		max_value?: number
-	}
-	if (
-		rangeAttribute.min_value === undefined ||
-		rangeAttribute.max_value === undefined
-	) {
-		return
-	}
-	if (rangeAttribute.min_value > rangeAttribute.max_value) {
-		ctx.addIssue({
-			code: 'custom',
-			message: 'Минимальное значение не может быть больше максимального',
-			path: ['min_value']
-		})
-	}
-	if (
-		rangeAttribute.min_value < range.min ||
-		rangeAttribute.max_value > range.max
-	) {
-		ctx.addIssue({
-			code: 'custom',
-			message: `Значение должно быть в диапазоне от ${range.min} до ${range.max}`,
-			path: ['min_value']
-		})
-	}
-})
 
 const validateCategoryAttributes = (
 	categoryId: string,
-	attribute: z.infer<typeof attributeValueSchema>
+	attribute: z.input<typeof rawAttributeSchema>
 ) => {
 	const allowedAttributes = ATTRIBUTES.filter(
 		attribute => attribute.categoryId === categoryId
@@ -160,7 +166,8 @@ const validateCategoryAttributes = (
 	)
 }
 
-const itemAttributesSchema = z.array(attributeSchema)
+const offeredAttributeSchema = createAttributeSchema('offered')
+const wantedAttributeSchema = createAttributeSchema('wanted')
 
 const offeredItemSchema = z
 	.object({
@@ -170,7 +177,7 @@ const offeredItemSchema = z
 			.nonnegative('Оценочная стоимость не может быть отрицательной')
 			.min(1, 'Укажите оценочную стоимость товара'),
 		category_id: categoryIdSchema,
-		attributes: itemAttributesSchema
+		attributes: z.array(offeredAttributeSchema)
 	})
 	.superRefine((item, ctx) => {
 		for (const [index, attribute] of item.attributes.entries()) {
@@ -188,7 +195,7 @@ const wantedItemSchema = z
 	.object({
 		title_query: z.string().min(1, 'Укажите название желаемого товара'),
 		category_id: categoryIdSchema,
-		attributes: itemAttributesSchema,
+		attributes: z.array(wantedAttributeSchema),
 		min_price: z.coerce
 			.number()
 			.nonnegative('Цена не может быть отрицательной'),
@@ -211,10 +218,6 @@ const wantedItemSchema = z
 	})
 
 export const exchangeFormSchema = z.object({
-	user_id: z
-		.string()
-		.min(3, 'Должно быть минимум три символа')
-		.max(150, 'Слишком длинный ID'),
 	city_name: z
 		.string()
 		.min(3, 'Короткое название города')

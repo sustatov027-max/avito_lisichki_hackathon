@@ -1,10 +1,10 @@
 import { Controller, useWatch } from 'react-hook-form'
 
 import type { ExchangeFormComponentsProps } from '@features/exchange-form'
+import { getCategoryDefaultAttributes } from '@features/exchange-form/model/exchange-form.helpers'
 
 import { ATTRIBUTES } from '@entities/categories/model/attributes.constants'
 import { CATEGORIES } from '@entities/categories/model/categories.constants'
-import { getCategoryDefaultAttributes } from '@features/exchange-form/model/exchange-form.helpers'
 
 import {
 	Dropdown,
@@ -75,10 +75,11 @@ const OfferedFormStep = (props: ExchangeFormComponentsProps) => {
 									<DropdownRadioGroup
 										value={String(field.value ?? '')}
 										onValueChange={categoryId => {
+											form.unregister('offered_item.attributes')
 											field.onChange(categoryId)
 											form.setValue(
 												'offered_item.attributes',
-												getCategoryDefaultAttributes(categoryId),
+												getCategoryDefaultAttributes(categoryId, 'offered'),
 												{ shouldDirty: true }
 											)
 											form.clearErrors('offered_item.attributes')
@@ -103,6 +104,33 @@ const OfferedFormStep = (props: ExchangeFormComponentsProps) => {
 			</FormField>
 			{offeredAttributes.map((attribute, index) => {
 				if (attribute.type === 'range') {
+					if (attribute.label === 'Память') {
+						return (
+							<FormField
+								label={attribute.label}
+								name={`offered_item.attributes.${index}.value`}
+								key={`${offeredCategoryId}-${attribute.id}`}
+							>
+								<Input
+									type='hidden'
+									{...form.register(
+										`offered_item.attributes.${index}.attribute_id` as const,
+										{ value: attribute.id }
+									)}
+								/>
+								<Input
+									type='number'
+									min={0}
+									placeholder='64'
+									{...form.register(`offered_item.attributes.${index}.value`, {
+										setValueAs: value =>
+											value === '' ? undefined : Number(value)
+									})}
+								/>
+							</FormField>
+						)
+					}
+
 					return (
 						<div
 							className={styles.smFieldsGroup}
@@ -172,7 +200,7 @@ const OfferedFormStep = (props: ExchangeFormComponentsProps) => {
 
 											<DropdownContent>
 												<DropdownRadioGroup
-													value={field.value ?? ''}
+													value={String(field.value ?? '')}
 													onValueChange={value => field.onChange(value)}
 												>
 													{attribute.options.map((option, index) => (
@@ -196,7 +224,7 @@ const OfferedFormStep = (props: ExchangeFormComponentsProps) => {
 				if (attribute.type === 'multiple-select') {
 					return (
 						<FormField
-							name={`offered_item.attributes.${index}.value`}
+							name={`offered_item.attributes.${index}.values`}
 							label={attribute.label}
 							key={`${offeredCategoryId}-${attribute.id}`}
 						>
