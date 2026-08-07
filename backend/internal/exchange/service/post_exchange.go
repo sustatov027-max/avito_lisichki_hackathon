@@ -73,12 +73,13 @@ func buildCreateOfferParams(req dto.PostExchangeRequest) (repoDTO.CreateOfferPar
 		}
 	}
 
-	offeredAttrJSON, err := json.Marshal(req.OfferedItem.Attributes)
+	// Приводим атрибуты к каноническому формату, в котором их ожидает SQL-функция items_match
+	offeredAttrJSON, err := json.Marshal(dto.NormalizeAttributes(req.OfferedItem.Attributes))
 	if err != nil {
 		return repoDTO.CreateOfferParams{}, fmt.Errorf("marshal offered attributes: %w", err)
 	}
 
-	wantedAttrJSON, err := json.Marshal(req.WantedItem.Attributes)
+	wantedAttrJSON, err := json.Marshal(dto.NormalizeAttributes(req.WantedItem.Attributes))
 	if err != nil {
 		return repoDTO.CreateOfferParams{}, fmt.Errorf("marshal wanted attributes: %w", err)
 	}
