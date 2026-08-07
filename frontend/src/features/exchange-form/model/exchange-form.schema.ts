@@ -162,6 +162,30 @@ const validateCategoryAttributes = (
 
 const itemAttributesSchema = z.array(attributeSchema)
 
+const offeredAttributeSchema = z.union([
+	z
+		.object({
+			attribute_id: z.union(attributeIdLiterals),
+			value: z.number().optional()
+		})
+		.strict()
+		.superRefine((attribute, ctx) => {
+			const definition = ATTRIBUTES.find(
+				definition => definition.id === attribute.attribute_id
+			)
+
+			if (definition?.type !== 'range' || definition.label !== 'Память') {
+				ctx.addIssue({
+					code: 'custom',
+					message: 'Числовое value допустимо только для атрибута «Память»',
+					path: ['value']
+				})
+				return
+			}
+		}),
+	attributeSchema
+])
+
 const offeredItemSchema = z
 	.object({
 		title: z.string().min(1, 'Укажите название предлагаемого товара'),
@@ -170,7 +194,7 @@ const offeredItemSchema = z
 			.nonnegative('Оценочная стоимость не может быть отрицательной')
 			.min(1, 'Укажите оценочную стоимость товара'),
 		category_id: categoryIdSchema,
-		attributes: itemAttributesSchema
+		attributes: z.array(offeredAttributeSchema)
 	})
 	.superRefine((item, ctx) => {
 		for (const [index, attribute] of item.attributes.entries()) {
@@ -211,10 +235,6 @@ const wantedItemSchema = z
 	})
 
 export const exchangeFormSchema = z.object({
-	user_id: z
-		.string()
-		.min(3, 'Должно быть минимум три символа')
-		.max(150, 'Слишком длинный ID'),
 	city_name: z
 		.string()
 		.min(3, 'Короткое название города')

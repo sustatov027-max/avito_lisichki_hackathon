@@ -7,13 +7,6 @@ const OnboardFormStep = (props: ExchangeFormComponentsProps) => {
 
 	return (
 		<>
-			<FormField label='ID' name='user_id' isRequired>
-				<Input
-					id='user_id'
-					placeholder='q345Zxsd'
-					{...form.register('user_id')}
-				/>
-			</FormField>
 			<FormField label='Город' name='city_name' isRequired>
 				<Input
 					id='city_name'

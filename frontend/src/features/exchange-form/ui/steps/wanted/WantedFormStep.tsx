@@ -1,10 +1,10 @@
 import { Controller, useWatch } from 'react-hook-form'
 
 import type { ExchangeFormComponentsProps } from '@features/exchange-form'
+import { getCategoryDefaultAttributes } from '@features/exchange-form/model/exchange-form.helpers'
 
 import { ATTRIBUTES } from '@entities/categories/model/attributes.constants'
 import { CATEGORIES } from '@entities/categories/model/categories.constants'
-import { getCategoryDefaultAttributes } from '@features/exchange-form/model/exchange-form.helpers'
 
 import {
 	Dropdown,
@@ -64,15 +64,16 @@ const WantedFormStep = (props: ExchangeFormComponentsProps) => {
 									<DropdownRadioGroup
 										value={String(field.value ?? '')}
 
-						 onValueChange={categoryId => {
-							field.onChange(categoryId)
-							form.setValue(
-								'wanted_item.attributes',
-								getCategoryDefaultAttributes(categoryId),
-								{ shouldDirty: true }
-							)
-							form.clearErrors('wanted_item.attributes')
-						}}
+										onValueChange={categoryId => {
+											form.unregister('wanted_item.attributes')
+											field.onChange(categoryId)
+											form.setValue(
+												'wanted_item.attributes',
+												getCategoryDefaultAttributes(categoryId, 'wanted'),
+												{ shouldDirty: true }
+											)
+											form.clearErrors('wanted_item.attributes')
+										}}
 									>
 										{CATEGORIES.filter(
 											category => category.parentId !== null
@@ -136,7 +137,7 @@ const WantedFormStep = (props: ExchangeFormComponentsProps) => {
 				if (attribute.type === 'select') {
 					return (
 						<FormField
-							name={`offered_item.attributes.${index}.value`}
+							name={`wanted_item.attributes.${index}.value`}
 							label={attribute.label}
 							key={`${wantedCategoryId}-${attribute.id}`}
 						>
@@ -163,7 +164,7 @@ const WantedFormStep = (props: ExchangeFormComponentsProps) => {
 
 											<DropdownContent>
 												<DropdownRadioGroup
-													value={field.value ?? ''}
+													value={String(field.value ?? '')}
 													onValueChange={value => field.onChange(value)}
 												>
 													{attribute.options.map((option, index) => (
@@ -187,7 +188,7 @@ const WantedFormStep = (props: ExchangeFormComponentsProps) => {
 				if (attribute.type === 'multiple-select') {
 					return (
 						<FormField
-							name={`offered_item.attributes.${index}.value`}
+							name={`wanted_item.attributes.${index}.values`}
 							label={attribute.label}
 							key={`${wantedCategoryId}-${attribute.id}`}
 						>

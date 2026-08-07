@@ -1,10 +1,10 @@
 import { Controller, useWatch } from 'react-hook-form'
 
 import type { ExchangeFormComponentsProps } from '@features/exchange-form'
+import { getCategoryDefaultAttributes } from '@features/exchange-form/model/exchange-form.helpers'
 
 import { ATTRIBUTES } from '@entities/categories/model/attributes.constants'
 import { CATEGORIES } from '@entities/categories/model/categories.constants'
-import { getCategoryDefaultAttributes } from '@features/exchange-form/model/exchange-form.helpers'
 
 import {
 	Dropdown,
@@ -75,10 +75,11 @@ const OfferedFormStep = (props: ExchangeFormComponentsProps) => {
 									<DropdownRadioGroup
 										value={String(field.value ?? '')}
 										onValueChange={categoryId => {
+											form.unregister('offered_item.attributes')
 											field.onChange(categoryId)
 											form.setValue(
 												'offered_item.attributes',
-												getCategoryDefaultAttributes(categoryId),
+												getCategoryDefaultAttributes(categoryId, 'offered'),
 												{ shouldDirty: true }
 											)
 											form.clearErrors('offered_item.attributes')
@@ -101,154 +102,183 @@ const OfferedFormStep = (props: ExchangeFormComponentsProps) => {
 					}}
 				/>
 			</FormField>
-			{offeredAttributes.map((attribute, index) => {
-				if (attribute.type === 'range') {
-					return (
-						<div
-							className={styles.smFieldsGroup}
-							key={`${offeredCategoryId}-${attribute.id}`}
-						>
-							<Input
-								type='hidden'
-								{...form.register(
-									`offered_item.attributes.${index}.attribute_id` as const,
-									{ value: attribute.id }
-								)}
-							/>
-							<FormField
-								label={`${attribute.label} минимум`}
-								name={`offered_item.attributes.${index}.min_value`}
-							>
+			<div className={styles.attributesList}>
+				{offeredAttributes.map((attribute, index) => {
+					if (attribute.type === 'range') {
+						if (attribute.label === 'Память') {
+							return (
+								<FormField
+									label={attribute.label}
+									name={`offered_item.attributes.${index}.value`}
+									key={`${offeredCategoryId}-${attribute.id}`}
+								>
+									<Input
+										type='hidden'
+										{...form.register(
+											`offered_item.attributes.${index}.attribute_id` as const,
+											{ value: attribute.id }
+										)}
+									/>
+									<Input
+										type='number'
+										min={0}
+										placeholder='64'
+										{...form.register(
+											`offered_item.attributes.${index}.value`,
+											{
+												setValueAs: value =>
+													value === '' ? undefined : Number(value)
+											}
+										)}
+									/>
+								</FormField>
+							)
+						}
+
+						return (
+							<>
 								<Input
-									type='number'
-									placeholder={`От ${attribute.min}`}
+									type='hidden'
 									{...form.register(
-										`offered_item.attributes.${index}.min_value`
+										`offered_item.attributes.${index}.attribute_id` as const,
+										{ value: attribute.id }
 									)}
 								/>
-							</FormField>
+								<FormField
+									label={`${attribute.label} минимум`}
+									name={`offered_item.attributes.${index}.min_value`}
+								>
+									<Input
+										type='number'
+										placeholder={`От ${attribute.min}`}
+										{...form.register(
+											`offered_item.attributes.${index}.min_value`
+										)}
+									/>
+								</FormField>
+								<FormField
+									label={`${attribute.label} максимум`}
+									name={`offered_item.attributes.${index}.max_value`}
+								>
+									<Input
+										type='number'
+										placeholder={`До ${attribute.max}`}
+										{...form.register(
+											`offered_item.attributes.${index}.max_value`
+										)}
+									/>
+								</FormField>
+							</>
+						)
+					}
+					if (attribute.type === 'select') {
+						return (
 							<FormField
-								label={`${attribute.label} максимум`}
-								name={`offered_item.attributes.${index}.max_value`}
-							>
-								<Input
-									type='number'
-									placeholder={`До ${attribute.max}`}
-									{...form.register(
-										`offered_item.attributes.${index}.max_value`
-									)}
-								/>
-							</FormField>
-						</div>
-					)
-				}
-				if (attribute.type === 'select') {
-					return (
-						<FormField
-							name={`offered_item.attributes.${index}.value`}
-							label={attribute.label}
-							key={`${offeredCategoryId}-${attribute.id}`}
-						>
-							<Input
-								type='hidden'
-								{...form.register(
-									`offered_item.attributes.${index}.attribute_id` as const,
-									{ value: attribute.id }
-								)}
-							/>
-							<Controller
-								control={form.control}
 								name={`offered_item.attributes.${index}.value`}
-								render={({ field }) => {
-									const selectedAttributeOption = attribute.options.find(
-										option => option.name === field.value
-									)
+								label={attribute.label}
+								key={`${offeredCategoryId}-${attribute.id}`}
+							>
+								<Input
+									type='hidden'
+									{...form.register(
+										`offered_item.attributes.${index}.attribute_id` as const,
+										{ value: attribute.id }
+									)}
+								/>
+								<Controller
+									control={form.control}
+									name={`offered_item.attributes.${index}.value`}
+									render={({ field }) => {
+										const selectedAttributeOption = attribute.options.find(
+											option => option.name === field.value
+										)
 
-									return (
-										<Dropdown>
-											<DropdownTrigger type='button'>
-												{selectedAttributeOption?.label ?? attribute.label}
-											</DropdownTrigger>
+										return (
+											<Dropdown>
+												<DropdownTrigger type='button'>
+													{selectedAttributeOption?.label ?? attribute.label}
+												</DropdownTrigger>
 
-											<DropdownContent>
-												<DropdownRadioGroup
-													value={field.value ?? ''}
-													onValueChange={value => field.onChange(value)}
-												>
-													{attribute.options.map((option, index) => (
-														<DropdownRadioItem
-															key={`${option}-${index}`}
-															value={option.name}
+												<DropdownContent>
+													<DropdownRadioGroup
+														value={String(field.value ?? '')}
+														onValueChange={value => field.onChange(value)}
+													>
+														{attribute.options.map((option, index) => (
+															<DropdownRadioItem
+																key={`${option}-${index}`}
+																value={option.name}
+															>
+																{option.label}
+															</DropdownRadioItem>
+														))}
+													</DropdownRadioGroup>
+												</DropdownContent>
+											</Dropdown>
+										)
+									}}
+								/>
+							</FormField>
+						)
+					}
+
+					if (attribute.type === 'multiple-select') {
+						return (
+							<FormField
+								name={`offered_item.attributes.${index}.values`}
+								label={attribute.label}
+								key={`${offeredCategoryId}-${attribute.id}`}
+							>
+								<Input
+									type='hidden'
+									{...form.register(
+										`offered_item.attributes.${index}.attribute_id` as const,
+										{ value: attribute.id }
+									)}
+								/>
+								<Controller
+									control={form.control}
+									name={`offered_item.attributes.${index}.values`}
+									render={({ field }) => {
+										const selectedValues = field.value ?? []
+
+										return (
+											<Dropdown>
+												<DropdownTrigger type='button'>
+													{selectedValues.length
+														? `${selectedValues.length} выбрано`
+														: attribute.label}
+												</DropdownTrigger>
+
+												<DropdownContent>
+													{attribute.options.map(option => (
+														<DropdownCheckboxItem
+															key={option.name}
+															checked={selectedValues.includes(option.name)}
+															closeOnSelect={false}
+															onCheckedChange={checked => {
+																field.onChange(
+																	checked
+																		? [...selectedValues, option.name]
+																		: selectedValues.filter(
+																				value => value !== option.name
+																			)
+																)
+															}}
 														>
 															{option.label}
-														</DropdownRadioItem>
+														</DropdownCheckboxItem>
 													))}
-												</DropdownRadioGroup>
-											</DropdownContent>
-										</Dropdown>
-									)
-								}}
-							/>
-						</FormField>
-					)
-				}
-
-				if (attribute.type === 'multiple-select') {
-					return (
-						<FormField
-							name={`offered_item.attributes.${index}.value`}
-							label={attribute.label}
-							key={`${offeredCategoryId}-${attribute.id}`}
-						>
-							<Input
-								type='hidden'
-								{...form.register(
-									`offered_item.attributes.${index}.attribute_id` as const,
-									{ value: attribute.id }
-								)}
-							/>
-							<Controller
-								control={form.control}
-								name={`offered_item.attributes.${index}.values`}
-								render={({ field }) => {
-									const selectedValues = field.value ?? []
-
-									return (
-										<Dropdown>
-											<DropdownTrigger type='button'>
-												{selectedValues.length
-													? `${selectedValues.length} выбрано`
-													: attribute.label}
-											</DropdownTrigger>
-
-											<DropdownContent>
-												{attribute.options.map(option => (
-													<DropdownCheckboxItem
-														key={option.name}
-														checked={selectedValues.includes(option.name)}
-														closeOnSelect={false}
-														onCheckedChange={checked => {
-															field.onChange(
-																checked
-																	? [...selectedValues, option.name]
-																	: selectedValues.filter(
-																			value => value !== option.name
-																		)
-															)
-														}}
-													>
-														{option.label}
-													</DropdownCheckboxItem>
-												))}
-											</DropdownContent>
-										</Dropdown>
-									)
-								}}
-							/>
-						</FormField>
-					)
-				}
-			})}
+												</DropdownContent>
+											</Dropdown>
+										)
+									}}
+								/>
+							</FormField>
+						)
+					}
+				})}
+			</div>
 		</FormSection>
 	)
 }
