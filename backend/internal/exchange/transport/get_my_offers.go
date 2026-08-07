@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (h *OfferHandler) GetMyOffersHandler(c *gin.Context) {
+func (h *ExchangeHandler) GetMyOffersHandler(c *gin.Context) {
 	userIDValue, exists := c.Get("user_id")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized: missing user context"})

@@ -5,10 +5,10 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/offer"
+	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange"
 )
 
-func (r *OfferRepository) GetByUserID(ctx context.Context, userID uuid.UUID) ([]offer.Item, error) {
+func (r *TradeOfferRepository) GetByUserID(ctx context.Context, userID uuid.UUID) ([]exchange.Item, error) {
 	rows, err := r.db.Query(ctx, `
 		SELECT oi.id, oi.title, oi.category_id, oi.estimated_price,
 		       oi.city_name, oi.delivery_enabled, oi.photos, oi.status, oi.created_at,
@@ -36,9 +36,9 @@ func (r *OfferRepository) GetByUserID(ctx context.Context, userID uuid.UUID) ([]
 	}
 	defer rows.Close()
 
-	items := make([]offer.Item, 0)
+	items := make([]exchange.Item, 0)
 	for rows.Next() {
-		var item offer.Item
+		var item exchange.Item
 		var chainID *uuid.UUID
 		var chainStatus *string
 		var chainLength *int
@@ -53,7 +53,7 @@ func (r *OfferRepository) GetByUserID(ctx context.Context, userID uuid.UUID) ([]
 			return nil, fmt.Errorf("scan user offer: %w", err)
 		}
 		if chainID != nil {
-			item.Chain = &offer.ChainInfo{
+			item.Chain = &exchange.ChainInfo{
 				ID: *chainID, Status: *chainStatus, Length: *chainLength,
 				UserActionRequired: actionRequired != nil && *actionRequired,
 			}

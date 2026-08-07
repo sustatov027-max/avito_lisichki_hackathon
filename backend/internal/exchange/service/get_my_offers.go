@@ -5,12 +5,12 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/offer"
-	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/offer/dto"
+	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange"
+	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/dto"
 )
 
-func (s *OfferService) GetMyOffers(ctx context.Context, userID uuid.UUID) (*dto.GetMyOffersResponse, error) {
-	items, err := s.repository.GetByUserID(ctx, userID)
+func (s *ExchangeService) GetMyOffers(ctx context.Context, userID uuid.UUID) (*dto.GetMyOffersResponse, error) {
+	items, err := s.repo.GetByUserID(ctx, userID)
 	if err != nil {
 		return nil, fmt.Errorf("get user offers: %w", err)
 	}
@@ -23,7 +23,7 @@ func (s *OfferService) GetMyOffers(ctx context.Context, userID uuid.UUID) (*dto.
 	return &dto.GetMyOffersResponse{Items: responseItems, Total: len(responseItems)}, nil
 }
 
-func mapOffer(item offer.Item) dto.OfferResponse {
+func mapOffer(item exchange.Item) dto.OfferResponse {
 	chainInfo := dto.ChainInfoResponse{Status: "searching"}
 	if item.Chain != nil {
 		chainID := item.Chain.ID.String()
