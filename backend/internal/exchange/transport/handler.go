@@ -7,6 +7,7 @@ import (
 	"unicode"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/dto"
 	repoDTO "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/repository"
 )
@@ -14,7 +15,8 @@ import (
 const idempotencyKeyHeader = "Idempotency-Key"
 
 type ExchangeService interface {
-	PostExchange(ctx context.Context, idempotencyKey string, req dto.PostExchangeRequest) (*dto.PostExchangeResponse, error)
+	PostExchange(ctx context.Context, userID uuid.UUID, idempotencyKey string, req dto.PostExchangeRequest) (*dto.PostExchangeResponse, error)
+	GetMyOffers(ctx context.Context, userID uuid.UUID) (*dto.GetMyOffersResponse, error)
 }
 
 type ExchangeHandler struct {
@@ -28,6 +30,18 @@ func NewExchangeHandler(service ExchangeService) *ExchangeHandler {
 }
 
 func (h *ExchangeHandler) PostExchangeHandler(c *gin.Context) {
+	userIDValue, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized: missing user context"})
+		return
+	}
+
+	userID, ok := userIDValue.(uuid.UUID)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid user context type"})
+		return
+	}
+
 	idempotencyKey := c.GetHeader(idempotencyKeyHeader)
 	if !validIdempotencyKey(idempotencyKey) {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -45,7 +59,7 @@ func (h *ExchangeHandler) PostExchangeHandler(c *gin.Context) {
 		return
 	}
 
-	resp, err := h.service.PostExchange(c.Request.Context(), idempotencyKey, req)
+	resp, err := h.service.PostExchange(c.Request.Context(), userID, idempotencyKey, req)
 	if err != nil {
 		if errors.Is(err, repoDTO.ErrIdempotencyConflict) {
 			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})

@@ -3,7 +3,6 @@ package dto
 import "time"
 
 type PostExchangeRequest struct {
-	UserID          string      `json:"user_id" binding:"required"`
 	CityName        string      `json:"city_name" binding:"required"`
 	DeliveryEnabled bool        `json:"delivery_enabled"`
 	OfferedItem     OfferedItem `json:"offered_item" binding:"required"`
