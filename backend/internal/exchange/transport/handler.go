@@ -45,6 +45,13 @@ func (h *ExchangeHandler) PostExchangeHandler(c *gin.Context) {
 		return
 	}
 
+	if err := validatePostExchangeRequest(req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "validation failed: " + err.Error(),
+		})
+		return
+	}
+
 	resp, err := h.service.PostExchange(c.Request.Context(), idempotencyKey, req)
 	if err != nil {
 		if errors.Is(err, repoDTO.ErrIdempotencyConflict) {
@@ -63,6 +70,30 @@ func (h *ExchangeHandler) PostExchangeHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, resp)
+}
+
+func validatePostExchangeRequest(req dto.PostExchangeRequest) error {
+	if req.UserID == "" {
+		return errors.New("user_id is required")
+	}
+	if req.CityName == "" {
+		return errors.New("city_name is required")
+	}
+	if req.OfferedItem.Title == "" {
+		return errors.New("offered_item.title is required")
+	}
+	if req.OfferedItem.CategoryID == "" {
+		return errors.New("offered_item.category_id is required")
+	}
+	if req.OfferedItem.EstimatedPrice < 0 {
+		return errors.New("offered_item.estimated_price must be non-negative")
+	}
+	if req.WantedItem.MinPrice != nil && req.WantedItem.MaxPrice != nil {
+		if *req.WantedItem.MinPrice > *req.WantedItem.MaxPrice {
+			return errors.New("wanted_item.min_price cannot be greater than wanted_item.max_price")
+		}
+	}
+	return nil
 }
 
 func validIdempotencyKey(key string) bool {

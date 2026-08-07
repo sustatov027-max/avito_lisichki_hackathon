@@ -3,14 +3,14 @@ package dto
 import "time"
 
 type PostExchangeRequest struct {
-	UserID          string      `json:"user_id" binding:"required"`
-	CityName        string      `json:"city_name" binding:"required"`
-	DeliveryEnabled bool        `json:"delivery_enabled"`
-	OfferedItem     OfferedItem `json:"offered_item" binding:"required"`
-	WantedItem      WantedItem  `json:"wanted_item" binding:"required"`
+	UserID          string             `json:"user_id" binding:"required"`
+	CityName        string             `json:"city_name" binding:"required"`
+	DeliveryEnabled bool               `json:"delivery_enabled"`
+	OfferedItem     OfferedItemRequest `json:"offered_item" binding:"required"`
+	WantedItem      WantedItemRequest  `json:"wanted_item" binding:"required"`
 }
 
-type OfferedItem struct {
+type OfferedItemRequest struct {
 	Title          string      `json:"title" binding:"required"`
 	Description    string      `json:"description"`
 	CategoryID     string      `json:"category_id" binding:"required"`
@@ -19,7 +19,7 @@ type OfferedItem struct {
 	Attributes     []Attribute `json:"attributes,omitempty"`
 }
 
-type WantedItem struct {
+type WantedItemRequest struct {
 	TitleQuery string      `json:"title_query,omitempty"`
 	CategoryID string      `json:"category_id,omitempty"`
 	Attributes []Attribute `json:"attributes,omitempty"`
@@ -28,11 +28,8 @@ type WantedItem struct {
 }
 
 type Attribute struct {
-	AttributeID string   `json:"attribute_id" binding:"required"`
-	Value       *string  `json:"value,omitempty"`     // Добавлено для одиночных значений ("value": "like_new")
-	Values      []string `json:"values,omitempty"`    // Для массивов ("values": ["white"])
-	MinValue    *int     `json:"min_value,omitempty"` // Для диапазонных фильтров ("min_value": 65)
-	MaxValue    *int     `json:"max_value,omitempty"` // Для диапазонных фильтров ("max_value": 345)
+	AttributeID string      `json:"attribute_id" binding:"required"`
+	Value       interface{} `json:"value" binding:"required"` // Может быть строкой, числом, объектом {"min": X, "max": Y} или массивом
 }
 
 type PostExchangeResponse struct {
