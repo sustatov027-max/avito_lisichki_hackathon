@@ -56,7 +56,6 @@ const StepsNavigation = (props: ExchangeFormComponentsProps) => {
 			case EXCHANGE_STEPS.ONBOARD:
 				form.reset({
 					...values,
-					user_id: '',
 					city_name: '',
 					delivery_enabled: false
 				})

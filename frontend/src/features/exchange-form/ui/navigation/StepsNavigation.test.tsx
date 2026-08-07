@@ -23,7 +23,6 @@ const NavigationTest = () => {
 
 	return (
 		<FormProvider {...form}>
-			<Input aria-label='ID' {...form.register('user_id')} />
 			<Input aria-label='Город' {...form.register('city_name')} />
 			<StepsNavigation form={form} />
 		</FormProvider>
