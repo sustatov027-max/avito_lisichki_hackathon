@@ -11,22 +11,13 @@ import (
 	repoDTO "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/repository"
 )
 
-type TradeOfferRepository interface {
-	CreateOffer(ctx context.Context, params repoDTO.CreateOfferParams, idempotency repoDTO.IdempotencyParams) (*repoDTO.CreateOfferResult, error)
-}
-
-type ExchangeService struct {
-	repo TradeOfferRepository
-}
-
-func NewExchangeService(repo TradeOfferRepository) *ExchangeService {
-	return &ExchangeService{
-		repo: repo,
-	}
-}
-
-func (s *ExchangeService) PostExchange(ctx context.Context, idempotencyKey string, req dto.PostExchangeRequest) (*dto.PostExchangeResponse, error) {
-	params, err := buildCreateOfferParams(req)
+func (s *ExchangeService) PostExchange(
+	ctx context.Context,
+	userID uuid.UUID,
+	idempotencyKey string,
+	req dto.PostExchangeRequest,
+) (*dto.PostExchangeResponse, error) {
+	params, err := buildCreateOfferParams(userID, req)
 	if err != nil {
 		return nil, fmt.Errorf("build offer params: %w", err)
 	}
@@ -54,12 +45,7 @@ func (s *ExchangeService) PostExchange(ctx context.Context, idempotencyKey strin
 
 // --- Helper Functions ---
 
-func buildCreateOfferParams(req dto.PostExchangeRequest) (repoDTO.CreateOfferParams, error) {
-	userID, err := uuid.Parse(req.UserID)
-	if err != nil {
-		return repoDTO.CreateOfferParams{}, fmt.Errorf("invalid user_id UUID: %w", err)
-	}
-
+func buildCreateOfferParams(userID uuid.UUID, req dto.PostExchangeRequest) (repoDTO.CreateOfferParams, error) {
 	offeredCategoryID, err := uuid.Parse(req.OfferedItem.CategoryID)
 	if err != nil {
 		return repoDTO.CreateOfferParams{}, fmt.Errorf("invalid offered_item.category_id UUID: %w", err)
