@@ -52,10 +52,10 @@ func (a *App) registerRoutes() *gin.Engine {
 	{
 		api.Use(middleware.DummyAuthMiddleware())
 		{
-			api.GET("/offers/my", chainHandler.GetChainsHandler)
+			api.GET("/chains", chainHandler.GetChainsHandler)
 			api.POST("/chains/:chain_id/decision", chainHandler.ProcessDecisionHandler)
-			api.POST("/offers", exchangeHandler.PostExchangeHandler)
 		}
+		api.POST("/offers", exchangeHandler.PostExchangeHandler)
 	}
 
 	router.GET("/health", health.HealthHandler)

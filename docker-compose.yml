@@ -7,10 +7,9 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
       POSTGRES_DB: ${DB_NAME:-exchange_chain}
     ports:
-      - '${DB_PORT:-5433}:5432'
+      - '${DB_PORT:-5432}:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./backend/seeds:/seeds
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
       interval: 2s
@@ -18,7 +17,6 @@ services:
       retries: 5
     restart: unless-stopped
 
-  # Накатывание SQL миграций
   migrations:
     image: migrate/migrate
     container_name: exchange_chain_migrations
@@ -31,6 +29,26 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+
+  # Контейнер для автоматического применения сидов
+  seeds:
+    image: postgres:16-alpine
+    container_name: exchange_chain_seeds
+    volumes:
+      - ./backend/seeds:/seeds
+    environment:
+      PGPASSWORD: ${DB_PASSWORD:-postgres}
+    entrypoint: ["sh", "-c"]
+    command:
+      - |
+        echo "--> Applying seed data..."
+        psql -h postgres -U ${DB_USER:-postgres} -d ${DB_NAME:-exchange_chain} -f /seeds/01_seeds.sql
+        echo "--> Seeds applied successfully!"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
 
   app:
     build:
@@ -50,6 +68,8 @@ services:
       postgres:
         condition: service_healthy
       migrations:
+        condition: service_completed_successfully
+      seeds:
         condition: service_completed_successfully
 
   frontend:
