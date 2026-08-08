@@ -31,6 +31,8 @@ func (h *ChainHandler) handleError(c *gin.Context, err error) {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 	case errors.Is(err, repoDTO.ErrStepNotFound):
 		c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
+	case errors.Is(err, repoDTO.ErrItemsAlreadyReserved):
+		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 	case errors.Is(err, repoDTO.ErrChainNotProposed),
 		errors.Is(err, repoDTO.ErrAlreadyDecided),
 		errors.Is(err, repoDTO.ErrInvalidAction):

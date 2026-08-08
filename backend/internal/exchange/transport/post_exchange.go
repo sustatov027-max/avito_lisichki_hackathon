@@ -43,15 +43,23 @@ func (h *ExchangeHandler) PostExchangeHandler(c *gin.Context) {
 
 	resp, err := h.service.PostExchange(c.Request.Context(), userID, idempotencyKey, req)
 	if err != nil {
-		if errors.Is(err, repoDTO.ErrIdempotencyConflict) {
+		switch {
+		case errors.Is(err, repoDTO.ErrInvalidRequest):
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		case errors.Is(err, repoDTO.ErrUserNotFound):
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			return
+		case errors.Is(err, repoDTO.ErrDuplicateOffer),
+			errors.Is(err, repoDTO.ErrIdempotencyConflict):
 			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 			return
+		default:
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": "failed to create exchange offer: " + err.Error(),
+			})
+			return
 		}
-
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "failed to create exchange offer: " + err.Error(),
-		})
-		return
 	}
 
 	if resp.Replayed {

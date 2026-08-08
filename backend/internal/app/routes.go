@@ -17,6 +17,7 @@ import (
 
 func (a *App) registerRoutes() *gin.Engine {
 	router := gin.Default()
+	router.Use(middleware.MaxBytesMiddleware(2 << 20))
 
 	router.Use(cors.New(cors.Config{
 		AllowAllOrigins: true,

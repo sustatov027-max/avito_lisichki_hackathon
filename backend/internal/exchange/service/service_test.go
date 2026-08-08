@@ -48,35 +48,19 @@ type postExchangeTestCase struct {
 	errContains string
 }
 
-func getPostExchangeCases() []postExchangeTestCase {
-	validUserID := uuid.New()
-	offeredCatID := uuid.New()
-	wantedCatID := uuid.New()
-	minPrice := 100
-	maxPrice := 200
-
-	validReq := dto.PostExchangeRequest{
-		CityName:        "Москва",
-		DeliveryEnabled: true,
-		OfferedItem: dto.OfferedItem{
-			Title:          "Ноутбук",
-			CategoryID:     offeredCatID.String(),
-			EstimatedPrice: 50000,
-		},
-		WantedItem: dto.WantedItem{
-			TitleQuery: "Телефон",
-			CategoryID: wantedCatID.String(),
-			MinPrice:   &minPrice,
-			MaxPrice:   &maxPrice,
-		},
-	}
-
+func getPostExchangeValidationCases(validUserID, offeredCatID uuid.UUID) []postExchangeTestCase {
 	return []postExchangeTestCase{
 		{
-			name:        "Error - Invalid Offered Category UUID",
-			userID:      validUserID,
-			key:         "key-1",
-			req:         dto.PostExchangeRequest{OfferedItem: dto.OfferedItem{CategoryID: "invalid-uuid"}},
+			name:   "Error - Invalid Offered Category UUID",
+			userID: validUserID,
+			key:    "key-1",
+			req: dto.PostExchangeRequest{
+				CityName: "Москва",
+				OfferedItem: dto.OfferedItem{
+					Title:      "Ноутбук",
+					CategoryID: "invalid-uuid",
+				},
+			},
 			wantErr:     true,
 			errContains: "invalid offered_item.category_id UUID",
 		},
@@ -85,12 +69,21 @@ func getPostExchangeCases() []postExchangeTestCase {
 			userID: validUserID,
 			key:    "key-1",
 			req: dto.PostExchangeRequest{
-				OfferedItem: dto.OfferedItem{CategoryID: offeredCatID.String()},
-				WantedItem:  dto.WantedItem{CategoryID: "invalid-uuid"},
+				CityName: "Москва",
+				OfferedItem: dto.OfferedItem{
+					Title:      "Ноутбук",
+					CategoryID: offeredCatID.String(),
+				},
+				WantedItem: dto.WantedItem{CategoryID: "invalid-uuid"},
 			},
 			wantErr:     true,
 			errContains: "invalid wanted_item.category_id UUID",
 		},
+	}
+}
+
+func getPostExchangeRepoCases(validUserID, offeredCatID uuid.UUID, validReq dto.PostExchangeRequest) []postExchangeTestCase {
+	return []postExchangeTestCase{
 		{
 			name:   "Error - Repository CreateOffer Failed",
 			userID: validUserID,
@@ -120,6 +113,33 @@ func getPostExchangeCases() []postExchangeTestCase {
 			wantErr: false,
 		},
 	}
+}
+
+func getPostExchangeCases() []postExchangeTestCase {
+	validUserID := uuid.New()
+	offeredCatID := uuid.New()
+	wantedCatID := uuid.New()
+	minPrice := 100
+	maxPrice := 200
+
+	validReq := dto.PostExchangeRequest{
+		CityName:        "Москва",
+		DeliveryEnabled: true,
+		OfferedItem: dto.OfferedItem{
+			Title:          "Ноутбук",
+			CategoryID:     offeredCatID.String(),
+			EstimatedPrice: 50000,
+		},
+		WantedItem: dto.WantedItem{
+			TitleQuery: "Телефон",
+			CategoryID: wantedCatID.String(),
+			MinPrice:   &minPrice,
+			MaxPrice:   &maxPrice,
+		},
+	}
+
+	cases := getPostExchangeValidationCases(validUserID, offeredCatID)
+	return append(cases, getPostExchangeRepoCases(validUserID, offeredCatID, validReq)...)
 }
 
 func TestPostExchange(t *testing.T) {
