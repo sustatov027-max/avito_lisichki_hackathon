@@ -16,6 +16,7 @@ import (
 type chainRepositoryStub struct {
 	chains []chains.Chain
 	err    error
+	chain  *chains.Chain
 
 	// Поля для тестирования ProcessDecision
 	processDecisionResult *repoDTO.ProcessDecisionResult
@@ -28,6 +29,14 @@ func (r *chainRepositoryStub) GetByUserID(
 	_ uuid.UUID,
 ) ([]chains.Chain, error) {
 	return r.chains, r.err
+}
+
+func (r *chainRepositoryStub) GetByUserAndID(
+	_ context.Context,
+	_ uuid.UUID,
+	_ uuid.UUID,
+) (*chains.Chain, error) {
+	return r.chain, r.err
 }
 
 func (r *chainRepositoryStub) ProcessDecision(
@@ -96,6 +105,49 @@ func TestGetChainsRejectsInvalidUserID(t *testing.T) {
 	_, err := svc.GetChains(context.Background(), "")
 	if !errors.Is(err, chains.ErrInvalidUserID) {
 		t.Fatalf("expected ErrInvalidUserID, got %v", err)
+	}
+}
+
+func TestGetChainMapsExpectedContract(t *testing.T) {
+	currentUserID := uuid.New()
+	otherUserID := uuid.New()
+	chainID := uuid.New()
+
+	svc := service.NewChainService(&chainRepositoryStub{chain: &chains.Chain{
+		ID:          chainID,
+		Status:      "proposed",
+		ChainLength: 2,
+		CreatedAt:   time.Now().UTC(),
+		ExpiresAt:   time.Now().UTC().Add(time.Hour),
+		Steps: []chains.Step{{
+			Order:      1,
+			FromUser:   chains.User{ID: currentUserID, Name: "Алексей", City: "Москва"},
+			ToUser:     chains.User{ID: otherUserID, Name: "Иван", City: "Москва"},
+			Item:       chains.Item{ID: uuid.New(), Title: "Телефон", CategoryID: uuid.New(), Photo: "phone.jpg", EstimatedPrice: 85000},
+			IsAccepted: boolPointer(true),
+		}, {
+			Order:    2,
+			FromUser: chains.User{ID: otherUserID, Name: "Иван", City: "Москва"},
+			ToUser:   chains.User{ID: currentUserID, Name: "Алексей", City: "Москва"},
+			Item:     chains.Item{ID: uuid.New(), Title: "Ноутбук", CategoryID: uuid.New(), EstimatedPrice: 80000},
+		}},
+	}})
+
+	response, err := svc.GetChain(context.Background(), chainID.String(), currentUserID)
+	if err != nil {
+		t.Fatalf("GetChain returned an error: %v", err)
+	}
+	if response.ChainID != chainID.String() {
+		t.Fatalf("unexpected response: %#v", response)
+	}
+}
+
+func TestGetChainRejectsInvalidChainID(t *testing.T) {
+	svc := service.NewChainService(&chainRepositoryStub{})
+
+	_, err := svc.GetChain(context.Background(), "invalid-chain-id", uuid.New())
+	if !errors.Is(err, chains.ErrInvalidChainID) {
+		t.Fatalf("expected ErrInvalidChainID, got %v", err)
 	}
 }
 

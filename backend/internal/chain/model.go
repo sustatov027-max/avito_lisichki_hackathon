@@ -10,10 +10,11 @@ import (
 type DecisionAction string
 
 var (
-	ErrInvalidUserID                = errors.New("invalid user id")
-	ErrIncomplete                   = errors.New("chain does not contain both user directions")
-	ActionAccept     DecisionAction = "accept"
-	ActionReject     DecisionAction = "reject"
+	ErrInvalidUserID                 = errors.New("invalid user id")
+	ErrInvalidChainID                = errors.New("invalid chain id")
+	ErrIncomplete                    = errors.New("chain does not contain both user directions")
+	ActionAccept      DecisionAction = "accept"
+	ActionReject      DecisionAction = "reject"
 )
 
 type Chain struct {

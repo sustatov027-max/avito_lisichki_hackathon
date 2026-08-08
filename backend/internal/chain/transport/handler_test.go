@@ -19,6 +19,8 @@ import (
 type chainServiceStub struct {
 	getChainsResp   *dto.GetChainsResponse
 	getChainsErr    error
+	getChainResp    *dto.ChainResponse
+	getChainErr     error
 	processDecResp  *dto.DecisionResponse
 	processDecErr   error
 	lastChainID     string
@@ -31,6 +33,14 @@ func (s *chainServiceStub) GetChains(
 	_ string,
 ) (*dto.GetChainsResponse, error) {
 	return s.getChainsResp, s.getChainsErr
+}
+
+func (s *chainServiceStub) GetChain(
+	_ context.Context,
+	_ string,
+	_ uuid.UUID,
+) (*dto.ChainResponse, error) {
+	return s.getChainResp, s.getChainErr
 }
 
 func (s *chainServiceStub) ProcessDecision(
@@ -97,6 +107,76 @@ func TestGetChainsHandler(t *testing.T) {
 			}
 
 			request := httptest.NewRequest(http.MethodGet, "/api/v1/offers/my", nil)
+			if test.userIDHeader != "" {
+				request.Header.Set("X-User-ID", test.userIDHeader)
+			}
+			response := httptest.NewRecorder()
+
+			router.ServeHTTP(response, request)
+			if response.Code != test.wantStatus {
+				t.Fatalf("expected status %d, got %d: %s", test.wantStatus, response.Code, response.Body.String())
+			}
+		})
+	}
+}
+
+// --- Тесты GetChainHandler ---
+
+func TestGetChainHandler(t *testing.T) {
+	validUserID := uuid.New().String()
+	validChainID := uuid.New().String()
+
+	tests := []struct {
+		name         string
+		userIDHeader string
+		chainIDParam string
+		service      *chainServiceStub
+		wantStatus   int
+	}{
+		{
+			name:         "success",
+			userIDHeader: validUserID,
+			chainIDParam: validChainID,
+			service:      &chainServiceStub{getChainResp: &dto.ChainResponse{ChainID: validChainID}},
+			wantStatus:   http.StatusOK,
+		},
+		{
+			name:         "missing header (unauthorized)",
+			userIDHeader: "",
+			chainIDParam: validChainID,
+			service:      &chainServiceStub{},
+			wantStatus:   http.StatusUnauthorized,
+		},
+		{
+			name:         "chain not found",
+			userIDHeader: validUserID,
+			chainIDParam: validChainID,
+			service:      &chainServiceStub{getChainErr: repoDTO.ErrChainNotFound},
+			wantStatus:   http.StatusNotFound,
+		},
+		{
+			name:         "user not in chain (forbidden)",
+			userIDHeader: validUserID,
+			chainIDParam: validChainID,
+			service:      &chainServiceStub{getChainErr: repoDTO.ErrStepNotFound},
+			wantStatus:   http.StatusForbidden,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			gin.SetMode(gin.TestMode)
+			handler := transport.NewChainHandler(test.service)
+
+			router := gin.New()
+			api := router.Group("/api/v1")
+			api.Use(middleware.DummyAuthMiddleware())
+			{
+				api.GET("/chain/:chain_id", handler.GetChainHandler)
+			}
+
+			path := "/api/v1/chain/" + test.chainIDParam
+			request := httptest.NewRequest(http.MethodGet, path, nil)
 			if test.userIDHeader != "" {
 				request.Header.Set("X-User-ID", test.userIDHeader)
 			}

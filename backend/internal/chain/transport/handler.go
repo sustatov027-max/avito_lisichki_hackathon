@@ -13,6 +13,7 @@ import (
 
 type ChainService interface {
 	GetChains(ctx context.Context, userID string) (*dto.GetChainsResponse, error)
+	GetChain(ctx context.Context, chainIDStr string, userID uuid.UUID) (*dto.ChainResponse, error)
 	ProcessDecision(ctx context.Context, chainIDStr string, userID uuid.UUID, req dto.DecisionRequest) (*dto.DecisionResponse, error)
 }
 

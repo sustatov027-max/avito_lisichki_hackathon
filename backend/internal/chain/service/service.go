@@ -10,6 +10,7 @@ import (
 
 type ChainRepository interface {
 	GetByUserID(ctx context.Context, userID uuid.UUID) ([]chains.Chain, error)
+	GetByUserAndID(ctx context.Context, chainID uuid.UUID, userID uuid.UUID) (*chains.Chain, error)
 	ProcessDecision(ctx context.Context, params repoDTO.ProcessDecisionParams) (*repoDTO.ProcessDecisionResult, error)
 }
 
