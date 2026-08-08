@@ -7,7 +7,11 @@ describe('Input', () => {
 	it('blocks non-numeric keys for number input', () => {
 		render(<Input aria-label='Цена' type='number' />)
 		const input = screen.getByRole('spinbutton', { name: 'Цена' })
-		const event = new KeyboardEvent('keydown', { key: 'a', bubbles: true, cancelable: true })
+		const event = new KeyboardEvent('keydown', {
+			key: 'a',
+			bubbles: true,
+			cancelable: true
+		})
 
 		input.dispatchEvent(event)
 
@@ -17,7 +21,11 @@ describe('Input', () => {
 	it('allows numeric keys for number input', () => {
 		render(<Input aria-label='Цена' type='number' />)
 		const input = screen.getByRole('spinbutton', { name: 'Цена' })
-		const event = new KeyboardEvent('keydown', { key: '5', bubbles: true, cancelable: true })
+		const event = new KeyboardEvent('keydown', {
+			key: '5',
+			bubbles: true,
+			cancelable: true
+		})
 
 		input.dispatchEvent(event)
 
@@ -28,6 +36,8 @@ describe('Input', () => {
 		const onKeyDown = () => undefined
 		render(<Input aria-label='Поле' onKeyDown={onKeyDown} />)
 
-		expect(() => fireEvent.keyDown(screen.getByRole('textbox', { name: 'Поле' }))).not.toThrow()
+		expect(() =>
+			fireEvent.keyDown(screen.getByRole('textbox', { name: 'Поле' }))
+		).not.toThrow()
 	})
 })

@@ -1,5 +1,5 @@
 export const ROUTES = {
-  ROOT: '/',
+	ROOT: '/',
 	EXCHANGE: 'exchange',
-	EXCHANGES: 'exchanges',
+	EXCHANGES: 'exchanges'
 }

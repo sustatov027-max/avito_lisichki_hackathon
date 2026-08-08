@@ -1,6 +1,6 @@
 import { createBrowserRouter, redirect } from 'react-router'
 
-import { Exchange } from '@pages/exchange'
+import { CreateExchange } from '@pages/create-exchange'
 import { Exchanges } from '@pages/exchanges'
 
 import { ROUTES } from '@shared/constants/routes'
@@ -21,7 +21,7 @@ export const router = createBrowserRouter([
 					},
 					{
 						path: ROUTES.EXCHANGE,
-						Component: Exchange
+						Component: CreateExchange
 					},
 					{
 						path: ROUTES.EXCHANGES,
