@@ -20,7 +20,7 @@ export const USERS: User[] = [
 	},
 	{
 		userId: '10000000-0000-0000-0000-000000000003',
-		name: 'Алексей',
+		name: 'Иван',
 		email: 'seed.ivan@example.com',
 		phoneNumber: '+79990000003'
 	}

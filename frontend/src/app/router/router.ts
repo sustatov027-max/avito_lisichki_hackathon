@@ -1,22 +1,31 @@
-import { createBrowserRouter } from 'react-router'
+import { createBrowserRouter, redirect } from 'react-router'
 
-import { Exchange } from '@pages/exchange'
+import { CreateExchange } from '@pages/create-exchange'
+import { Exchanges } from '@pages/exchanges'
 
-import { HomeLayout, RootLayout } from '../layouts'
+import { ROUTES } from '@shared/constants/routes'
 
-import { ROUTES } from './routes'
+import { MainLayout, RootLayout } from '../layouts'
 
 export const router = createBrowserRouter([
 	{
 		Component: RootLayout,
 		children: [
 			{
-				path: '/',
-				Component: HomeLayout,
+				path: ROUTES.ROOT,
+				Component: MainLayout,
 				children: [
 					{
+						index: true,
+						loader: () => redirect(ROUTES.EXCHANGES)
+					},
+					{
 						path: ROUTES.EXCHANGE,
-						Component: Exchange
+						Component: CreateExchange
+					},
+					{
+						path: ROUTES.EXCHANGES,
+						Component: Exchanges
 					}
 				]
 			}

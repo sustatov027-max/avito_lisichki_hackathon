@@ -1,4 +1,4 @@
-import type { ExchangeFormDataInput } from '@features/exchange-form/model/exchange-form.schema'
+import type { ExchangeFormDataInput } from '@features/create-exchange-form/model/create-exchange-form.schema'
 
 import { ATTRIBUTES } from './attributes.constants'
 
@@ -10,7 +10,10 @@ const getOptionLabel = (attributeId: string, value: string | number) => {
 
 	if (!attribute || !('options' in attribute)) return String(value)
 
-	return attribute.options.find(option => option.name === value)?.label ?? String(value)
+	return (
+		attribute.options.find(option => option.name === value)?.label ??
+		String(value)
+	)
 }
 
 const getAttributeDataFromUUID = (attributeValue: AttributeValue) => {

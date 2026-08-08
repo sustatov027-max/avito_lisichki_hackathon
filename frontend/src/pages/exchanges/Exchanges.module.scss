@@ -1,0 +1,17 @@
+.body {
+	padding-block: 28px 48px;
+}
+.header {
+	display: flex;
+	justify-content: flex-end;
+	margin-bottom: 16px;
+}
+.count {
+	margin: 0;
+	color: var(--text-secondary);
+	font-size: 14px;
+}
+.list {
+	display: grid;
+	gap: 16px;
+}
