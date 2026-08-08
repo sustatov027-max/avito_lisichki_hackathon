@@ -7,11 +7,12 @@ import (
 )
 
 var (
-	ErrChainNotFound    = errors.New("exchange chain not found")
-	ErrChainNotProposed = errors.New("chain is no longer in proposed status")
-	ErrStepNotFound     = errors.New("user is not a participant in this chain step")
-	ErrAlreadyDecided   = errors.New("decision has already been recorded for this user")
-	ErrInvalidAction    = errors.New("invalid decision action: must be 'accept' or 'reject'")
+	ErrChainNotFound        = errors.New("exchange chain not found")
+	ErrChainNotProposed     = errors.New("chain is no longer in proposed status")
+	ErrStepNotFound         = errors.New("user is not a participant in this chain step")
+	ErrAlreadyDecided       = errors.New("decision has already been recorded for this user")
+	ErrInvalidAction        = errors.New("invalid decision action: must be 'accept' or 'reject'")
+	ErrItemsAlreadyReserved = errors.New("one or more items in the chain are no longer available")
 )
 
 type ProcessDecisionParams struct {

@@ -170,13 +170,13 @@ func (r *ChainRepository) processAccept(ctx context.Context, tx pgx.Tx, chainID,
 }
 
 func (r *ChainRepository) finalizeAcceptedChain(ctx context.Context, tx pgx.Tx, chainID uuid.UUID) error {
-	_, err := tx.Exec(ctx, `
-		UPDATE exchange_chains 
-		SET status = 'accepted', updated_at = CURRENT_TIMESTAMP 
-		WHERE id = $1
-	`, chainID)
-	if err != nil {
-		return fmt.Errorf("update chain status to accepted: %w", err)
+	var expectedReservedItemCount int
+	if err := tx.QueryRow(ctx, `
+		SELECT COUNT(*)
+		FROM exchange_chain_steps
+		WHERE chain_id = $1
+	`, chainID).Scan(&expectedReservedItemCount); err != nil {
+		return fmt.Errorf("count chain steps: %w", err)
 	}
 
 	rows, err := tx.Query(ctx, `
@@ -185,25 +185,38 @@ func (r *ChainRepository) finalizeAcceptedChain(ctx context.Context, tx pgx.Tx, 
 		WHERE id IN (
 			SELECT offered_item_id FROM exchange_chain_steps WHERE chain_id = $1
 		)
+		AND status = 'active'
 		RETURNING id
 	`, chainID)
 	if err != nil {
 		return fmt.Errorf("reserve offered items: %w", err)
 	}
+	defer rows.Close()
 
 	var reservedItemIDs []uuid.UUID
 	for rows.Next() {
 		var itemID uuid.UUID
 		if err := rows.Scan(&itemID); err != nil {
-			rows.Close()
 			return fmt.Errorf("scan reserved item id: %w", err)
 		}
 		reservedItemIDs = append(reservedItemIDs, itemID)
 	}
-	rows.Close()
 
 	if err := rows.Err(); err != nil {
 		return fmt.Errorf("rows iterate reserved items: %w", err)
+	}
+
+	if len(reservedItemIDs) != expectedReservedItemCount {
+		return repoDTO.ErrItemsAlreadyReserved
+	}
+
+	_, err = tx.Exec(ctx, `
+		UPDATE exchange_chains 
+		SET status = 'accepted', updated_at = CURRENT_TIMESTAMP 
+		WHERE id = $1
+	`, chainID)
+	if err != nil {
+		return fmt.Errorf("update chain status to accepted: %w", err)
 	}
 
 	_, err = tx.Exec(ctx, `

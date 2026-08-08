@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx/v5"
 	repoDTO "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/repository"
 )
@@ -38,13 +39,13 @@ func (r *TradeOfferRepository) CreateOffer(
 	// 2. Вставка предложенного товара
 	offeredItemID, status, createdAt, err := r.insertOfferedItem(ctx, tx, params)
 	if err != nil {
-		return nil, fmt.Errorf("insert offered_item: %w", err)
+		return nil, mapSQLError(fmt.Errorf("insert offered_item: %w", err))
 	}
 
 	// 3. Вставка желаемого товара
 	desiredItemID, err := r.insertDesiredItem(ctx, tx, offeredItemID, params)
 	if err != nil {
-		return nil, fmt.Errorf("insert desired_item: %w", err)
+		return nil, mapSQLError(fmt.Errorf("insert desired_item: %w", err))
 	}
 
 	// 3.5. Ищем и создаем цепочки обмена
@@ -87,13 +88,20 @@ func (r *TradeOfferRepository) checkIdempotency(
 		return nil, fmt.Errorf("lock idempotency key: %w", err)
 	}
 
+	if _, err := tx.Exec(ctx, `
+		DELETE FROM idempotency_keys
+		WHERE user_id = $1 AND key = $2 AND expires_at <= CURRENT_TIMESTAMP
+	`, userID, idempotency.Key); err != nil {
+		return nil, fmt.Errorf("cleanup expired idempotency key: %w", err)
+	}
+
 	var res repoDTO.CreateOfferResult
 	var existingHash string
 
 	err := tx.QueryRow(ctx, `
 		SELECT request_hash, offered_item_id, desired_item_id, status, created_at
 		FROM idempotency_keys
-		WHERE user_id = $1 AND key = $2
+		WHERE user_id = $1 AND key = $2 AND expires_at > CURRENT_TIMESTAMP
 		FOR UPDATE
 	`, userID, idempotency.Key).Scan(
 		&existingHash,
@@ -208,12 +216,44 @@ func (r *TradeOfferRepository) saveIdempotency(
 ) error {
 	query := `
 		INSERT INTO idempotency_keys (
-			user_id, key, request_hash, offered_item_id, desired_item_id, status, created_at
-		) VALUES ($1, $2, $3, $4, $5, $6, $7)`
+			user_id, key, request_hash, offered_item_id, desired_item_id, status, created_at, expires_at
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP + INTERVAL '24 hours')`
 
 	_, err := tx.Exec(ctx, query,
 		userID, idempotency.Key, idempotency.RequestHash,
 		res.OfferedItemID, res.DesiredItemID, res.Status, res.CreatedAt,
 	)
-	return err
+	return mapSQLError(err)
+}
+
+func mapSQLError(err error) error {
+	if err == nil {
+		return nil
+	}
+
+	var pgErr *pgconn.PgError
+	if !errors.As(err, &pgErr) {
+		return err
+	}
+
+	switch pgErr.Code {
+	case "23505":
+		switch pgErr.ConstraintName {
+		case "idx_offered_items_prevent_duplicates":
+			return repoDTO.ErrDuplicateOffer
+		default:
+			return repoDTO.ErrInvalidRequest
+		}
+	case "23503":
+		switch pgErr.ConstraintName {
+		case "offered_items_user_id_fkey":
+			return repoDTO.ErrUserNotFound
+		default:
+			return repoDTO.ErrInvalidRequest
+		}
+	case "23514", "22001", "22003", "22023":
+		return repoDTO.ErrInvalidRequest
+	default:
+		return err
+	}
 }
