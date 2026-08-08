@@ -1,18 +1,41 @@
+.button {
+  border: none;
+  outline: none;
+  background: none;
+}
+
 .node {
 	position: relative;
 	width: 200px;
 	padding: 16px;
-	border: var(--border);
-	border-radius: var(--radius-lg);
 	background: var(--surface);
 	box-shadow: var(--shadow-sm);
 	color: var(--text-primary);
 	cursor: pointer;
-	transition: transform var(--duration), box-shadow var(--duration);
+	transition-duration: var(--duration);
 
-	&:hover {
-		transform: translateY(-2px);
+	display: grid;
+	row-gap: 16px;
+
+	@include hover {
+		border-color: var(--accent-color);
 		box-shadow: var(--shadow-md);
+		translate: 0 1%;
+	}
+}
+
+.preview {
+	display: grid;
+	place-items: center;
+	min-height: 112px;
+	border-radius: var(--radius-md);
+	background: var(--surface-secondary);
+	color: var(--text-secondary);
+	overflow: hidden;
+
+	img {
+		width: 100%;
+		height: 100%;
 	}
 }
 
@@ -24,9 +47,30 @@
 }
 
 .user {
-	margin-top: 8px;
 	color: var(--text-secondary);
 	font-size: 14px;
+}
+
+.userInfo {
+	margin-top: 8px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	flex-wrap: wrap;
+}
+
+.userStatus {
+	font-size: 14px;
+	display: flex;
+	align-items: center;
+	column-gap: 6px;
+
+	color: var(--text-secondary);
+
+	&.isAccepted {
+		color: var(--success);
+	}
 }
 
 .handle {

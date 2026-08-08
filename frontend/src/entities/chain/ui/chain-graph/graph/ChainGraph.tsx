@@ -106,7 +106,6 @@ const ChainGraph = (props: ChainGraphProps) => {
 				nodesConnectable={false}
 				nodesFocusable={false}
 				edgesFocusable={false}
-				elementsSelectable={false}
 				selectionOnDrag={false}
 				panOnDrag={false}
 				panOnScroll={false}

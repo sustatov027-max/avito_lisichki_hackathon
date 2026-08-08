@@ -1,4 +1,5 @@
-export type ChainStatus = 'proposed' | 'searching' | 'accepted' | 'completed' | 'expired'
+export type ChainStatus =
+	'proposed' | 'searching' | 'accepted' | 'completed' | 'expired'
 
 export type ChainDecision = 'pending' | 'accepted' | 'rejected'
 
@@ -16,6 +17,7 @@ export type ChainItem = {
 	photo: string
 	estimated_price: number
 	from_user?: ChainUser
+	is_accepted: boolean
 }
 
 export type ChainSummary = {
@@ -29,7 +31,10 @@ export type ChainStep = {
 	step_order: number
 	from_user: ChainUser
 	to_user: ChainUser
-	item: Pick<ChainItem, 'id' | 'title' | 'category_id' | 'photo'>
+	item: Pick<
+		ChainItem,
+		'id' | 'title' | 'category_id' | 'photo' | 'is_accepted'
+	>
 	is_accepted: boolean | null
 }
 
