@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { Outlet } from 'react-router'
 
 import { MainHeader } from '@widgets/main-header'
@@ -13,7 +13,9 @@ const MainLayout = () => {
 				transition={{ duration: 0.5 }}
 			>
 				<MainHeader />
-				<Outlet />
+				<AnimatePresence>
+					<Outlet />
+				</AnimatePresence>
 			</motion.main>
 		</>
 	)

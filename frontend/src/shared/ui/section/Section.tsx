@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import { motion } from 'framer-motion'
 import type { PropsWithChildren } from 'react'
 
 import type { SectionProps } from './Section.types'
@@ -17,7 +18,14 @@ const Section = (props: PropsWithChildren<SectionProps>) => {
 	const titleId = `${id}-title`
 
 	return (
-		<section aria-labelledby={titleId} className={className}>
+		<motion.section
+			aria-labelledby={titleId}
+			className={className}
+			initial={{ opacity: 0, y: 16 }}
+			animate={{ opacity: 1, y: 0 }}
+			exit={{ opacity: 0, y: 16 }}
+			transition={{ duration: 0.2, ease: 'easeOut' }}
+		>
 			<div className={clsx('container', containerClassName)}>
 				<h1
 					id={titleId}
@@ -27,7 +35,7 @@ const Section = (props: PropsWithChildren<SectionProps>) => {
 				</h1>
 				{children}
 			</div>
-		</section>
+		</motion.section>
 	)
 }
 

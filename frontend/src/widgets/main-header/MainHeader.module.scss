@@ -3,3 +3,21 @@
 	align-items: center;
 	column-gap: 16px;
 }
+
+.navList {
+	display: flex;
+	align-items: center;
+	column-gap: 8px;
+
+	.navLink {
+		padding: 12px 16px;
+		color: var(--text-secondary);
+		border-radius: var(--radius-md);
+		transition-duration: var(--duration);
+
+		@include hover {
+			background-color: var(--border-color-secondary);
+			color: var(--text-primary);
+		}
+	}
+}
