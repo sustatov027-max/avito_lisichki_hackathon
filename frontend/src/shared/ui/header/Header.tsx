@@ -40,7 +40,7 @@ const Header = (props: HeaderProps) => {
 			className={clsx(styles.header, className)}
 			{...rest}
 		>
-			<div className={clsx(styles.inner, 'container')}>
+			<div className={styles.inner}>
 				{logo && <div className={styles.logo}>{logo}</div>}
 				{navigation && <nav className={styles.navigation}>{navigation}</nav>}
 				{actions && <div className={styles.actions}>{actions}</div>}
