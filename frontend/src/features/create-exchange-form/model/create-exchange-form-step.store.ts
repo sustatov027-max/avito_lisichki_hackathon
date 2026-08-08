@@ -1,8 +1,7 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-import { EXCHANGE_STEPS } from '@features/create-exchange-form'
-
+import { EXCHANGE_STEPS } from './create-exchange-form.config'
 import { normalizeCategoryAttributes } from './create-exchange-form.helpers'
 import type { ExchangeFormStepState } from './create-exchange-form.types'
 

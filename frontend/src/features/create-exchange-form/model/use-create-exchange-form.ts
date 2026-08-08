@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useWatch } from 'react-hook-form'
 
 import { DEFAULT_FORM_VALUES } from '@features/create-exchange-form'
-import { useCreatExchange } from '@features/create-exchange-form/api/exchange.mutation'
+import { useCreatExchange } from '@features/create-exchange-form/api/create-exchange.mutation'
 
 import { useDebounce, useFormsBase } from '@shared/lib'
 

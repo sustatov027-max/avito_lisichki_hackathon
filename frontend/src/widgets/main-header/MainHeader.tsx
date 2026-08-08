@@ -15,6 +15,11 @@ const MainHeader = () => {
 			navigation={
 				<ul className={styles.navList}>
 					<li>
+						<NavLink to={ROUTES.EXCHANGES} className={styles.navLink}>
+							Мои обмены
+						</NavLink>
+					</li>
+					<li>
 						<NavLink to={ROUTES.EXCHANGE} className={styles.navLink}>
 							Создать обмен
 						</NavLink>

@@ -2,11 +2,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { renderHook, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
-import { useCreatExchange } from './exchange.mutation'
-import { exchangeServices } from './exchange.services'
+import { useCreatExchange } from './create-exchange.mutation'
+import { createExchangeServices } from './create-exchange.services'
 
-vi.mock('./exchange.services', () => ({
-	exchangeServices: { createExchange: vi.fn() }
+vi.mock('./create-exchange.services', () => ({
+	createExchangeServices: { createExchange: vi.fn() }
 }))
 
 vi.mock('react-hot-toast', () => ({
@@ -24,7 +24,7 @@ const createWrapper = () => {
 
 describe('useCreatExchange', () => {
 	it('creates an exchange with generated idempotency key', async () => {
-		vi.mocked(exchangeServices.createExchange).mockResolvedValue({
+		vi.mocked(createExchangeServices.createExchange).mockResolvedValue({
 			id: 'offer-1'
 		})
 		const { result } = renderHook(() => useCreatExchange(), {
@@ -34,10 +34,10 @@ describe('useCreatExchange', () => {
 		result.current.createExchange({} as never)
 
 		await waitFor(() =>
-			expect(exchangeServices.createExchange).toHaveBeenCalled()
+			expect(createExchangeServices.createExchange).toHaveBeenCalled()
 		)
 		expect(
-			vi.mocked(exchangeServices.createExchange).mock.calls[0]?.[1]
+			vi.mocked(createExchangeServices.createExchange).mock.calls[0]?.[1]
 		).toMatch(/^[0-9a-f-]{36}$/)
 	})
 })

@@ -1,10 +1,7 @@
 import { Pencil } from 'lucide-react'
 import { useState } from 'react'
 
-import {
-	EXCHANGE_STEPS,
-	type ExchangeFormComponentsProps
-} from '@features/create-exchange-form'
+import { type ExchangeFormComponentsProps } from '@features/create-exchange-form'
 
 import { getAttributeDataFromUUID } from '@entities/categories/model/attributes.helpers'
 import { getCategoryDataFromUUID } from '@entities/categories/model/categories.helpers'
@@ -12,6 +9,7 @@ import { getCategoryDataFromUUID } from '@entities/categories/model/categories.h
 import { Button, FormSection, Modal } from '@shared/ui'
 
 import { useExchangeStepFormStore } from '../../../model/create-exchange-form-step.store'
+import { EXCHANGE_STEPS } from '../../../model/create-exchange-form.config'
 import styles from '../../CreateExchangeForm.module.scss'
 
 import { ConfirmItemCard } from './ConfirmItemCard'

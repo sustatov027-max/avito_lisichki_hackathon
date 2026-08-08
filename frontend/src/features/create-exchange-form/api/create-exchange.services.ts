@@ -2,7 +2,7 @@ import type { ExchangeFormDataOutput } from '@features/create-exchange-form/mode
 
 import { axiosWithAuth } from '@shared/api'
 
-class ExchangeServices {
+class CreateExchangeServices {
 	async createExchange(data: ExchangeFormDataOutput, idenpotentKey: string) {
 		const response = await axiosWithAuth({
 			url: '/offers',
@@ -17,4 +17,4 @@ class ExchangeServices {
 	}
 }
 
-export const exchangeServices = new ExchangeServices()
+export const createExchangeServices = new CreateExchangeServices()
