@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -71,12 +72,15 @@ func (r *ChainRepository) lockChain(ctx context.Context, tx pgx.Tx, chainID uuid
 }
 
 func (r *ChainRepository) verifyChainProposed(ctx context.Context, tx pgx.Tx, chainID uuid.UUID) error {
-	var status string
+	var (
+		status    string
+		expiresAt time.Time
+	)
 	err := tx.QueryRow(ctx, `
-		SELECT status 
+		SELECT status, expires_at 
 		FROM exchange_chains 
 		WHERE id = $1 FOR UPDATE
-	`, chainID).Scan(&status)
+	`, chainID).Scan(&status, &expiresAt)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return repoDTO.ErrChainNotFound
@@ -86,6 +90,19 @@ func (r *ChainRepository) verifyChainProposed(ctx context.Context, tx pgx.Tx, ch
 
 	if status != "proposed" {
 		return repoDTO.ErrChainNotProposed
+	}
+
+	if !expiresAt.After(time.Now()) {
+		// Ленивая инвалидация: раз уже увидели просроченную цепочку — сразу
+		// переводим её в expired, чтобы не оставлять "проросшую" proposed-запись.
+		if _, updErr := tx.Exec(ctx, `
+			UPDATE exchange_chains 
+			SET status = 'expired', updated_at = CURRENT_TIMESTAMP 
+			WHERE id = $1
+		`, chainID); updErr != nil {
+			return fmt.Errorf("mark chain expired: %w", updErr)
+		}
+		return repoDTO.ErrChainExpired
 	}
 
 	return nil
