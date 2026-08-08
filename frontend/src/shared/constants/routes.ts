@@ -3,6 +3,6 @@ export const ROUTES = {
 	EXCHANGE: 'exchange',
 	EXCHANGES: 'exchanges',
 	CHAIN_ID(id: string) {
-		return `chains/${id}`
+		return `/chains/${id}`
 	}
 }

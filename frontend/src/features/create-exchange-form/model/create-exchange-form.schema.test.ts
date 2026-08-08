@@ -111,7 +111,7 @@ describe('exchangeFormSchema', () => {
 
 		expect(result.data.offered_item.attributes).toEqual([
 			{ attribute_id: '1', values: undefined },
-			{ attribute_id: '2', value: 256 },
+			{ attribute_id: '2', value: '256' },
 			{ attribute_id: '3', value: undefined }
 		])
 		expect(result.data.wanted_item.attributes).toEqual([

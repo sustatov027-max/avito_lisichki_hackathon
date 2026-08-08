@@ -217,7 +217,7 @@ const wantedItemSchema = z
 		}
 	})
 
-export const exchangeFormSchema = z.object({
+const exchangeFormSchemaBase = z.object({
 	city_name: z
 		.string()
 		.min(3, 'Короткое название города')
@@ -226,6 +226,25 @@ export const exchangeFormSchema = z.object({
 	offered_item: offeredItemSchema,
 	wanted_item: wantedItemSchema
 })
+
+const serializeAttributeValue = <T extends { value?: string | number }>(
+	attribute: T
+) =>
+	attribute.value === undefined
+		? attribute
+		: { ...attribute, value: String(attribute.value) }
+
+export const exchangeFormSchema = exchangeFormSchemaBase.transform(data => ({
+	...data,
+	offered_item: {
+		...data.offered_item,
+		attributes: data.offered_item.attributes.map(serializeAttributeValue)
+	},
+	wanted_item: {
+		...data.wanted_item,
+		attributes: data.wanted_item.attributes.map(serializeAttributeValue)
+	}
+}))
 
 export type ExchangeFormDataInput = z.input<typeof exchangeFormSchema>
 export type ExchangeFormDataOutput = z.output<typeof exchangeFormSchema>

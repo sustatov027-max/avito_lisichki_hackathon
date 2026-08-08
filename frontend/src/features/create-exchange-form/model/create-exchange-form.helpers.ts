@@ -1,6 +1,9 @@
 import { ATTRIBUTES } from '@entities/categories/model/attributes.constants'
 
-import type { ExchangeFormDataInput } from './create-exchange-form.schema'
+import type {
+	ExchangeFormDataInput,
+	ExchangeFormDataOutput
+} from './create-exchange-form.schema'
 
 type ItemAttributes = ExchangeFormDataInput['offered_item']['attributes']
 type ItemKind = 'offered' | 'wanted'
@@ -80,5 +83,32 @@ const getCategoryDefaultAttributes = (
 	categoryId: string,
 	itemKind: ItemKind
 ): ItemAttributes => normalizeCategoryAttributes(categoryId, itemKind, [])
+
+const serializeItemAttributes = (
+	attributes: ExchangeFormDataOutput['offered_item']['attributes']
+) =>
+	attributes.map(attribute => ({
+		...attribute,
+		value:
+			attribute.value === undefined ? undefined : String(attribute.value)
+	}))
+
+export const serializeExchangeFormData = (
+	data: ExchangeFormDataOutput
+): ExchangeFormDataOutput => {
+	if (!data.offered_item || !data.wanted_item) return data
+
+	return {
+		...data,
+		offered_item: {
+			...data.offered_item,
+			attributes: serializeItemAttributes(data.offered_item.attributes)
+		},
+		wanted_item: {
+			...data.wanted_item,
+			attributes: serializeItemAttributes(data.wanted_item.attributes)
+		}
+	}
+}
 
 export { getCategoryDefaultAttributes, normalizeCategoryAttributes }
