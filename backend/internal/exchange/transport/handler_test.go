@@ -13,6 +13,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/dto"
 	repoDTO "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/repository"
 )
@@ -55,23 +56,7 @@ type postExchangeTestCase struct {
 	expectedHeader map[string]string
 }
 
-func getPostExchangeCases() []postExchangeTestCase {
-	validUserID := uuid.New()
-
-	validReq := dto.PostExchangeRequest{
-		CityName:        "Москва",
-		DeliveryEnabled: true,
-		OfferedItem: dto.OfferedItem{
-			Title:          "Горный велосипед",
-			CategoryID:     uuid.New().String(),
-			EstimatedPrice: 45000,
-		},
-		WantedItem: dto.WantedItem{
-			TitleQuery: "Игровая приставка",
-			CategoryID: uuid.New().String(),
-		},
-	}
-
+func getPostExchangeAuthCases(validUserID uuid.UUID) []postExchangeTestCase {
 	return []postExchangeTestCase{
 		{
 			name:           "Unauthorized - missing user context",
@@ -101,6 +86,11 @@ func getPostExchangeCases() []postExchangeTestCase {
 			body:           "invalid-json",
 			expectedStatus: http.StatusBadRequest,
 		},
+	}
+}
+
+func getPostExchangeServiceCases(validUserID uuid.UUID, validReq dto.PostExchangeRequest) []postExchangeTestCase {
+	return []postExchangeTestCase{
 		{
 			name: "Conflict - idempotency conflict",
 			setContext: func(c *gin.Context) {
@@ -154,6 +144,27 @@ func getPostExchangeCases() []postExchangeTestCase {
 	}
 }
 
+func getPostExchangeCases() []postExchangeTestCase {
+	validUserID := uuid.New()
+
+	validReq := dto.PostExchangeRequest{
+		CityName:        "Москва",
+		DeliveryEnabled: true,
+		OfferedItem: dto.OfferedItem{
+			Title:          "Горный велосипед",
+			CategoryID:     uuid.New().String(),
+			EstimatedPrice: 45000,
+		},
+		WantedItem: dto.WantedItem{
+			TitleQuery: "Игровая приставка",
+			CategoryID: uuid.New().String(),
+		},
+	}
+
+	cases := getPostExchangeAuthCases(validUserID)
+	return append(cases, getPostExchangeServiceCases(validUserID, validReq)...)
+}
+
 func TestPostExchangeHandler(t *testing.T) {
 	for _, tc := range getPostExchangeCases() {
 		t.Run(tc.name, func(t *testing.T) {
@@ -170,7 +181,9 @@ func TestPostExchangeHandler(t *testing.T) {
 			if strBody, ok := tc.body.(string); ok {
 				bodyBytes = []byte(strBody)
 			} else if tc.body != nil {
-				bodyBytes, _ = json.Marshal(tc.body)
+				var err error
+				bodyBytes, err = json.Marshal(tc.body)
+				require.NoError(t, err)
 			}
 
 			req := httptest.NewRequest(http.MethodPost, "/exchange", bytes.NewBuffer(bodyBytes))

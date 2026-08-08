@@ -1,10 +1,12 @@
 package platform
 
 import (
+	"fmt"
 	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 type loadTestCase struct {
@@ -73,15 +75,19 @@ func getLoadTestCases() []loadTestCase {
 func TestLoad(t *testing.T) {
 	for _, tc := range getLoadTestCases() {
 		t.Run(tc.name, func(t *testing.T) {
-			// Удаляем переменные, отсутствие которых нужно проверить
 			for _, k := range tc.unsetVars {
 				if oldVal, exists := os.LookupEnv(k); exists {
-					os.Unsetenv(k)
-					defer os.Setenv(k, oldVal)
+					err := os.Unsetenv(k)
+					require.NoError(t, err)
+
+					key := k
+					val := oldVal
+					t.Cleanup(func() {
+						_ = os.Setenv(key, val)
+					})
 				}
 			}
 
-			// Устанавливаем переданные переменные
 			for k, v := range tc.envVars {
 				t.Setenv(k, v)
 			}
@@ -112,7 +118,7 @@ func TestConfig_DSN(t *testing.T) {
 		DBSSLMode:  "disable",
 	}
 
-	expectedDSN := "postgres://postgres:secret_password@localhost:5432/my_database?sslmode=disable"
+	expectedDSN := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", cfg.DBUser, cfg.DBPassword, cfg.DBHost, cfg.DBPort, cfg.DBName)
 	assert.Equal(t, expectedDSN, cfg.DSN())
 }
 
@@ -136,8 +142,12 @@ func TestMustGet(t *testing.T) {
 		loadedConfig = nil
 
 		if oldVal, exists := os.LookupEnv("DB_PASSWORD"); exists {
-			os.Unsetenv("DB_PASSWORD")
-			defer os.Setenv("DB_PASSWORD", oldVal)
+			err := os.Unsetenv("DB_PASSWORD")
+			require.NoError(t, err)
+
+			t.Cleanup(func() {
+				_ = os.Setenv("DB_PASSWORD", oldVal)
+			})
 		}
 
 		assert.Panics(t, func() {
