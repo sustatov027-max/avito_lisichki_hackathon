@@ -1,4 +1,5 @@
 import type { ExchangeFormDataOutput } from '@features/create-exchange-form/model/create-exchange-form.schema'
+import { serializeExchangeFormData } from '@features/create-exchange-form/model/create-exchange-form.helpers'
 
 import { axiosWithAuth } from '@shared/api'
 
@@ -7,7 +8,7 @@ class CreateExchangeServices {
 		const response = await axiosWithAuth({
 			url: '/offers',
 			method: 'POST',
-			data,
+			data: serializeExchangeFormData(data),
 			headers: {
 				'Idempotency-Key': idenpotentKey
 			}

@@ -1,5 +1,6 @@
 import { createBrowserRouter, redirect } from 'react-router'
 
+import { Chain } from '@pages/chain'
 import { CreateExchange } from '@pages/create-exchange'
 import { Exchanges } from '@pages/exchanges'
 
@@ -26,6 +27,10 @@ export const router = createBrowserRouter([
 					{
 						path: ROUTES.EXCHANGES,
 						Component: Exchanges
+					},
+					{
+						path: ROUTES.CHAIN_ID(':chainId'),
+						Component: Chain
 					}
 				]
 			}
