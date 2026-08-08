@@ -1,0 +1,35 @@
+.node {
+	position: relative;
+	width: 200px;
+	padding: 16px;
+	border: var(--border);
+	border-radius: var(--radius-lg);
+	background: var(--surface);
+	box-shadow: var(--shadow-sm);
+	color: var(--text-primary);
+	cursor: pointer;
+	transition: transform var(--duration), box-shadow var(--duration);
+
+	&:hover {
+		transform: translateY(-2px);
+		box-shadow: var(--shadow-md);
+	}
+}
+
+.title {
+	overflow: hidden;
+	font-weight: 600;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.user {
+	margin-top: 8px;
+	color: var(--text-secondary);
+	font-size: 14px;
+}
+
+.handle {
+	opacity: 0;
+	pointer-events: none;
+}

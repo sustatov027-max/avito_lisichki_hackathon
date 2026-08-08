@@ -1,0 +1,23 @@
+.graph {
+	width: min(100%, 1100px);
+	height: clamp(420px, 65vh, 680px);
+	margin-inline: auto;
+
+	border: var(--border);
+	border-radius: var(--radius-2xl);
+	overflow: hidden;
+	background: var(--surface-secondary);
+
+	:global(.react-flow) {
+		background: var(--surface-secondary);
+	}
+
+	:global(.react-flow__attribution) {
+		display: none;
+	}
+
+	@include mobile {
+		height: 480px;
+		border-radius: var(--radius-lg);
+	}
+}

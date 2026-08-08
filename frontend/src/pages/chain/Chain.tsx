@@ -1,6 +1,8 @@
 import { useParams } from 'react-router'
 
-import { useChain } from '@entities/chain/api/chains.query'
+import { ChainDetails, useChain } from '@entities/chain'
+
+import { Section } from '@shared/ui/section'
 
 const Chain = () => {
 	const { chainId } = useParams()
@@ -9,7 +11,11 @@ const Chain = () => {
 
 	console.log(chain)
 
-	return <div></div>
+	return (
+		<Section title='Цепочка обмена' id='exchange-chain' isTitleHide>
+			{chain && <ChainDetails chain={chain} />}
+		</Section>
+	)
 }
 
 export { Chain }
