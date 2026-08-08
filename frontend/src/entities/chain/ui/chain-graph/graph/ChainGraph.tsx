@@ -1,5 +1,11 @@
 import { type Edge, MarkerType, type Node, ReactFlow } from '@xyflow/react'
 import { Position } from '@xyflow/react'
+import { Package } from 'lucide-react'
+
+import { getCategoryDataFromUUID } from '@entities/categories/model/categories.helpers'
+import { useChainModalStore } from '@entities/chain/model/chain-modal.store'
+
+import { Modal } from '@shared/ui'
 
 import { GraphNode } from '../node/GraphNode'
 import type { GraphNodeData } from '../node/GraphNode.types'
@@ -39,6 +45,7 @@ const getHandlePosition = (
 
 const ChainGraph = (props: ChainGraphProps) => {
 	const { chain } = props
+
 	const positions = new Map(
 		chain.steps.map((step, index) => [
 			step.step_order,
@@ -92,6 +99,13 @@ const ChainGraph = (props: ChainGraphProps) => {
 		}
 	})
 
+	const activeModalId = useChainModalStore(state => state.activeModal)
+	const disactiveModal = useChainModalStore(state => state.disactiveModal)
+
+	const closeModal = () => {
+		disactiveModal()
+	}
+
 	return (
 		<div className={styles.graph}>
 			<ReactFlow
@@ -113,6 +127,45 @@ const ChainGraph = (props: ChainGraphProps) => {
 				zoomOnPinch={false}
 				zoomOnDoubleClick={false}
 			/>
+
+			{chain.steps.map(({ item }) => {
+				const category = getCategoryDataFromUUID(item.category_id)
+
+				return (
+					<Modal
+						key={item.id}
+						open={activeModalId === item.id}
+						onClose={closeModal}
+						title={item.title || 'Товар не указан'}
+						size='lg'
+						className={styles.detailsModal}
+					>
+						<div className={styles.imagePreview} aria-hidden='true'>
+							{item.photo ? (
+								<img
+									className={styles.modalImage}
+									src={item.photo}
+									alt={item.title || 'Изображение товара'}
+								/>
+							) : (
+								<Package size={32} strokeWidth={1.6} />
+							)}
+						</div>
+						<section
+							className={styles.modalIntro}
+							aria-labelledby='item-main-info'
+						>
+							<h3 id='item-main-info'>Основная информация</h3>
+							<dl>
+								<div>
+									<dt>Категория</dt>
+									<dd>{category?.name || 'Не выбрана'}</dd>
+								</div>
+							</dl>
+						</section>
+					</Modal>
+				)
+			})}
 		</div>
 	)
 }

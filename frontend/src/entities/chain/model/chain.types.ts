@@ -17,7 +17,7 @@ export type ChainItem = {
 	photo: string
 	estimated_price: number
 	from_user?: ChainUser
-	is_accepted: boolean
+	is_accepted: boolean | null
 }
 
 export type ChainSummary = {
@@ -51,4 +51,13 @@ export type Chain = {
 
 export type ChainsResponse = {
 	chains: Chain[]
+}
+
+export type ChainModalStoreState = {
+  modalIds: string[]
+  activeModal: string | null
+
+  setModalIds: (items: ChainStep[]) => void
+  setActiveModal: (activeModalId: string) => void
+  disactiveModal: () => void
 }

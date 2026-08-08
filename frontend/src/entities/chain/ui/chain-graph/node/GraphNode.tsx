@@ -3,6 +3,8 @@ import clsx from 'clsx'
 import { Package } from 'lucide-react'
 import type { CSSProperties } from 'react'
 
+import { useChainModalStore } from '@entities/chain/model/chain-modal.store'
+
 import { Card } from '@shared/ui'
 
 import styles from './GraphNode.module.scss'
@@ -12,6 +14,8 @@ const GraphNode = (props: GraphNodeProps) => {
 	const { data } = props
 
 	const isSameSide = data.sourcePosition === data.targetPosition
+
+	const setActiveModal = useChainModalStore(state => state.setActiveModal)
 
 	const getHandleStyle = (
 		position: Position,
@@ -26,8 +30,12 @@ const GraphNode = (props: GraphNodeProps) => {
 			: { top: offset }
 	}
 
+	const onButtonClick = () => {
+		setActiveModal(data.item.id)
+	}
+
 	return (
-		<button className={styles.button}>
+		<button className={styles.button} onClick={onButtonClick}>
 			<Card className={styles.node}>
 				<Handle
 					className={styles.handle}
@@ -60,7 +68,11 @@ const GraphNode = (props: GraphNodeProps) => {
 								data.is_accepted && styles.isAccepted
 							)}
 						>
-							{data.is_accepted ? 'Согласился' : 'Думает'}
+							{data.is_accepted === true
+								? 'Согласился'
+								: data.is_accepted === false
+									? 'Отклонил'
+									: 'Думает'}
 						</div>
 					</div>
 				</div>
