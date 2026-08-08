@@ -54,6 +54,11 @@ func (a *App) Run(ctx context.Context) error {
 
 	select {
 	case err := <-errCh:
+		if a.closeResources != nil {
+			if closeErr := a.closeResources(); closeErr != nil {
+				a.logger.Error("close resources after server error", "err", closeErr)
+			}
+		}
 		return fmt.Errorf("HTTP server: %w", err)
 
 	case <-ctx.Done():
@@ -67,6 +72,11 @@ func (a *App) Run(ctx context.Context) error {
 	defer cancel()
 
 	if err := a.server.Shutdown(shutdownCtx); err != nil {
+		if a.closeResources != nil {
+			if closeErr := a.closeResources(); closeErr != nil {
+				a.logger.Error("close resources after shutdown error", "err", closeErr)
+			}
+		}
 		return fmt.Errorf("shutdown HTTP server: %w", err)
 	}
 

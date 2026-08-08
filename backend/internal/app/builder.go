@@ -34,6 +34,7 @@ func New(_ context.Context) (*App, error) {
 
 	if err := pool.Ping(context.Background()); err != nil {
 		logger.Error("error connect postgres", "err", err)
+		pool.Close()
 		return nil, err
 	}
 

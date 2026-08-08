@@ -103,7 +103,7 @@ func mapChainToResponse(
 	}
 
 	timeLeft := max(int64(chain.ExpiresAt.Sub(now).Seconds()), 0)
-	decision := mapDecision(receivingStep.IsAccepted)
+	decision := mapDecision(givingStep.IsAccepted)
 
 	return &dto.ChainResponse{
 		ChainID:     chain.ID.String(),

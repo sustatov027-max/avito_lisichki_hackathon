@@ -88,7 +88,7 @@ func TestGetChainsMapsExpectedContract(t *testing.T) {
 		t.Fatalf("unexpected response: %#v", response)
 	}
 	chain := response.Chains[0]
-	if chain.MySummary.MyDecision != "pending" || !chain.MySummary.UserActionRequired {
+	if chain.MySummary.MyDecision != "accepted" || chain.MySummary.UserActionRequired {
 		t.Fatalf("unexpected summary: %#v", chain.MySummary)
 	}
 	if chain.Steps[0].FromUser.Name != "Вы (Алексей)" || !chain.Steps[0].FromUser.IsMe {
