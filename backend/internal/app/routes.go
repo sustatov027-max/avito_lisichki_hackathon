@@ -53,6 +53,8 @@ func (a *App) registerRoutes() *gin.Engine {
 		api.Use(middleware.DummyAuthMiddleware())
 		{
 			api.GET("/chains", chainHandler.GetChainsHandler)
+			api.GET("/chain/:chain_id", chainHandler.GetChainHandler)
+			api.GET("/chains/:chain_id", chainHandler.GetChainHandler)
 			api.GET("/offers/my", exchangeHandler.GetMyOffersHandler)
 			api.POST("/offers", exchangeHandler.PostExchangeHandler)
 			api.POST("/chains/:chain_id/decision", chainHandler.ProcessDecisionHandler)

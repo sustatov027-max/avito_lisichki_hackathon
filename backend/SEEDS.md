@@ -25,6 +25,12 @@ make up-seed
 http://localhost:8080/api/v1/chains
 ```
 
+Для получения конкретной цепочки используйте:
+
+```text
+http://localhost:8080/api/v1/chain/<chain_id>
+```
+
 Добавьте заголовок с идентификатором первого seed-пользователя:
 
 ```text

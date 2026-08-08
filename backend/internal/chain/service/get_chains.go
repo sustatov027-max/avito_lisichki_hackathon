@@ -37,12 +37,45 @@ func (s *ChainService) GetChains(
 	return &dto.GetChainsResponse{Chains: responses}, nil
 }
 
+func (s *ChainService) GetChain(
+	ctx context.Context,
+	rawChainID string,
+	userID uuid.UUID,
+) (*dto.ChainResponse, error) {
+	chainID, err := parseChainID(rawChainID)
+	if err != nil {
+		return nil, err
+	}
+
+	chain, err := s.repository.GetByUserAndID(ctx, chainID, userID)
+	if err != nil {
+		return nil, fmt.Errorf("get user chain: %w", err)
+	}
+
+	now := time.Now()
+	response, err := mapChainToResponse(chain, userID, now)
+	if err != nil {
+		return nil, fmt.Errorf("map chain %s: %w", chain.ID, err)
+	}
+
+	return response, nil
+}
+
 // --- Helper Functions ---
 
 func parseUserID(rawID string) (uuid.UUID, error) {
 	id, err := uuid.Parse(rawID)
 	if err != nil {
 		return uuid.Nil, fmt.Errorf("%w: %s", chains.ErrInvalidUserID, rawID)
+	}
+
+	return id, nil
+}
+
+func parseChainID(rawID string) (uuid.UUID, error) {
+	id, err := uuid.Parse(rawID)
+	if err != nil {
+		return uuid.Nil, fmt.Errorf("%w: %s", chains.ErrInvalidChainID, rawID)
 	}
 
 	return id, nil
