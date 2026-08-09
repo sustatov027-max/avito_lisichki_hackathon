@@ -196,18 +196,26 @@ const wantedItemSchema = z
 		title_query: z.string().min(1, 'Укажите название желаемого товара'),
 		category_id: categoryIdSchema,
 		attributes: z.array(wantedAttributeSchema),
-		min_price: z.coerce
-			.number()
-			.nonnegative('Цена не может быть отрицательной'),
-		max_price: z.coerce
-			.number()
-			.nonnegative('Цена не может быть отрицательной'),
+		min_price: optionalNumber.refine(
+			value => value === undefined || value >= 0,
+			'Цена не может быть отрицательной'
+		),
+		max_price: optionalNumber.refine(
+			value => value === undefined || value >= 0,
+			'Цена не может быть отрицательной'
+		),
 		description: z.string()
 	})
-	.refine(value => value.min_price <= value.max_price, {
+	.refine(
+		value =>
+			value.min_price === undefined ||
+			value.max_price === undefined ||
+			value.min_price <= value.max_price,
+		{
 		message: 'Минимальная цена не может быть больше максимальной',
 		path: ['min_price']
-	})
+		}
+	)
 	.superRefine((item, ctx) => {
 		for (const [index, attribute] of item.attributes.entries()) {
 			if (!validateCategoryAttributes(item.category_id, attribute)) {
