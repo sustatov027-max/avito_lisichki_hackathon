@@ -144,10 +144,12 @@ func mapUser(user chains.User, currentUserID uuid.UUID) dto.UserResponse {
 
 func mapItem(item chains.Item) dto.ItemResponse {
 	return dto.ItemResponse{
-		ID:         item.ID.String(),
-		Title:      item.Title,
-		CategoryID: item.CategoryID.String(),
-		Photo:      item.Photo,
+		ID:          item.ID.String(),
+		Title:       item.Title,
+		Description: item.Description,
+		CategoryID:  item.CategoryID.String(),
+		Photo:       item.Photo,
+		Attributes:  item.Attributes,
 	}
 }
 
@@ -176,7 +178,10 @@ func mapItemSummary(item chains.Item) dto.ItemSummary {
 	return dto.ItemSummary{
 		ID:             item.ID.String(),
 		Title:          item.Title,
+		Description:    item.Description,
+		CategoryID:     item.CategoryID.String(),
 		Photo:          item.Photo,
+		Attributes:     item.Attributes,
 		EstimatedPrice: item.EstimatedPrice,
 	}
 }

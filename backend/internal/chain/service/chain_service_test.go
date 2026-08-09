@@ -2,6 +2,7 @@ package service_test
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"testing"
 	"time"
@@ -66,8 +67,10 @@ func TestGetChainsMapsExpectedContract(t *testing.T) {
 				FromUser: chains.User{ID: currentUserID, Name: "Алексей", City: "Москва"},
 				ToUser:   chains.User{ID: otherUserID, Name: "Иван", City: "Москва"},
 				Item: chains.Item{
-					ID: uuid.New(), Title: "Телефон", CategoryID: uuid.New(),
-					Photo: "phone.jpg", EstimatedPrice: 85000,
+					ID: uuid.New(), Title: "Телефон", Description: "Состояние отличное",
+					CategoryID: uuid.New(), Photo: "phone.jpg",
+					Attributes:     json.RawMessage(`[{"attribute_id":"condition","value":"excellent"}]`),
+					EstimatedPrice: 85000,
 				},
 				IsAccepted: boolPointer(true),
 			},
@@ -75,7 +78,7 @@ func TestGetChainsMapsExpectedContract(t *testing.T) {
 				Order:    2,
 				FromUser: chains.User{ID: otherUserID, Name: "Иван", City: "Москва"},
 				ToUser:   chains.User{ID: currentUserID, Name: "Алексей", City: "Москва"},
-				Item:     chains.Item{ID: uuid.New(), Title: "Ноутбук", CategoryID: uuid.New(), EstimatedPrice: 80000},
+				Item:     chains.Item{ID: uuid.New(), Title: "Ноутбук", Description: "Ноутбук для работы", CategoryID: uuid.New(), EstimatedPrice: 80000},
 			},
 		},
 	}}})
@@ -123,13 +126,13 @@ func TestGetChainMapsExpectedContract(t *testing.T) {
 			Order:      1,
 			FromUser:   chains.User{ID: currentUserID, Name: "Алексей", City: "Москва"},
 			ToUser:     chains.User{ID: otherUserID, Name: "Иван", City: "Москва"},
-			Item:       chains.Item{ID: uuid.New(), Title: "Телефон", CategoryID: uuid.New(), Photo: "phone.jpg", EstimatedPrice: 85000},
+			Item:       chains.Item{ID: uuid.New(), Title: "Телефон", Description: "Состояние отличное", CategoryID: uuid.New(), Photo: "phone.jpg", Attributes: json.RawMessage(`[{"attribute_id":"condition","value":"excellent"}]`), EstimatedPrice: 85000},
 			IsAccepted: boolPointer(true),
 		}, {
 			Order:    2,
 			FromUser: chains.User{ID: otherUserID, Name: "Иван", City: "Москва"},
 			ToUser:   chains.User{ID: currentUserID, Name: "Алексей", City: "Москва"},
-			Item:     chains.Item{ID: uuid.New(), Title: "Ноутбук", CategoryID: uuid.New(), EstimatedPrice: 80000},
+			Item:     chains.Item{ID: uuid.New(), Title: "Ноутбук", Description: "Ноутбук для работы", CategoryID: uuid.New(), EstimatedPrice: 80000},
 		}},
 	}})
 
