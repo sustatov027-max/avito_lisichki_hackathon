@@ -70,6 +70,7 @@ jobs:
         with:
           version: latest
           working-directory: backend
+          args: --config=../.golangci.yaml
 
       - name: Test
         run: go test ./...
