@@ -23,5 +23,11 @@ export const USERS: User[] = [
 		name: 'Иван',
 		email: 'seed.ivan@example.com',
 		phoneNumber: '+79990000003'
+	},
+	{
+		userId: '10000000-0000-0000-0000-000000000004',
+		name: 'Дмитрий',
+		email: 'seed.dmitry@example.com',
+		phoneNumber: '+79990000004'
 	}
 ]
