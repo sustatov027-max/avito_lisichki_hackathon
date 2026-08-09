@@ -5,9 +5,9 @@ import { axiosWithAuth } from '@shared/api'
 import type { ChainsResponse } from '../model/chain.types'
 
 class ChainServices {
-	async getChains() {
+	async getChains(chainId: string) {
 		const response: AxiosResponse<ChainsResponse> = await axiosWithAuth({
-			url: '/chains',
+			url: `/chain/${chainId}`,
 			method: 'GET'
 		})
 
