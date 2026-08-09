@@ -107,8 +107,15 @@ const ChainGraph = (props: ChainGraphProps) => {
 		disactiveModal()
 	}
 
+	console.log(chain.status === 'rejected')
+
 	return (
-		<div className={styles.graph}>
+		<div
+			className={clsx(
+				styles.graph,
+				chain.status === 'accepted' && styles.isAccepted
+			)}
+		>
 			<ReactFlow
 				nodes={nodes}
 				edges={edges}
@@ -127,7 +134,7 @@ const ChainGraph = (props: ChainGraphProps) => {
 				zoomOnScroll={false}
 				zoomOnPinch={false}
 				zoomOnDoubleClick={false}
-        elementsSelectable={false}
+				elementsSelectable={chain.status !== 'rejected'}
 				className={clsx(chain.status === 'rejected' && styles.flowRejected)}
 			/>
 

@@ -199,7 +199,10 @@ const wantedItemSchema = z
 		min_price: z.coerce
 			.number()
 			.nonnegative('Цена не может быть отрицательной'),
-		max_price: z.coerce.number().nonnegative('Цена не может быть отрицательной')
+		max_price: z.coerce
+			.number()
+			.nonnegative('Цена не может быть отрицательной'),
+		description: z.string()
 	})
 	.refine(value => value.min_price <= value.max_price, {
 		message: 'Минимальная цена не может быть больше максимальной',

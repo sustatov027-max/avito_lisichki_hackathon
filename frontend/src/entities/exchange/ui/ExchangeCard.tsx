@@ -72,6 +72,7 @@ const ExchangeCard = (props: ExchangeCardProps) => {
 					<div>
 						<span className={styles.label}>Предлагаю</span>
 						<strong>{formatExchangePrice(exchange.estimated_price)} ₽</strong>
+            {/* {exchange} */}
 					</div>
 					<ArrowRight className={styles.arrow} size={20} aria-hidden='true' />
 					<div>

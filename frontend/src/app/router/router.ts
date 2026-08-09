@@ -5,6 +5,7 @@ import { CreateExchange } from '@pages/create-exchange'
 import { Exchanges } from '@pages/exchanges'
 
 import { ROUTES } from '@shared/constants/routes'
+import { useCurrentUserStore } from '@shared/model/current-user.store'
 
 import { MainLayout, RootLayout } from '../layouts'
 
@@ -30,7 +31,12 @@ export const router = createBrowserRouter([
 					},
 					{
 						path: ROUTES.CHAIN_ID(':chainId'),
-						Component: Chain
+						Component: Chain,
+						loader: () => {
+							const { user } = useCurrentUserStore.getState()
+
+							if (!user) return redirect(ROUTES.ROOT)
+						}
 					}
 				]
 			}

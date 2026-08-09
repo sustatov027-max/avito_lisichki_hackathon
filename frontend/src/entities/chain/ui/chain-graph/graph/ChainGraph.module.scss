@@ -16,6 +16,10 @@
 		display: none;
 	}
 
+	&.isAccepted {
+		border-color: var(--success);
+	}
+
 	@include mobile {
 		height: 480px;
 		border-radius: var(--radius-lg);
@@ -28,7 +32,7 @@
 }
 
 .imagePreview {
-  @include flex-center;
+	@include flex-center;
 
 	width: 100%;
 	height: clamp(220px, 36vw, 320px);
@@ -77,6 +81,6 @@
 }
 
 .flowRejected {
-  opacity: 0.5;
-  user-select: none;
+	opacity: 0.5;
+	user-select: none;
 }

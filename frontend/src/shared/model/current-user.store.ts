@@ -8,15 +8,24 @@ export const useCurrentUserStore = create<CurrentUserStoreState>()(
 	persist(
 		set => ({
 			user: null,
-			setUser: userId =>
+			setUser: userId => {
 				set(() => {
 					const findedUser = USERS.find(userItem => userItem.userId === userId)
 
 					return {
 						user: findedUser ?? null
 					}
-				}),
-			clear: () => set({ user: null })
+				})
+
+				window.location.reload()
+			},
+			clear: () => {
+				set(state => {
+					return { ...state, user: null }
+				})
+
+				window.location.reload()
+			}
 		}),
 		{
 			name: 'user-info'

@@ -36,7 +36,13 @@ const GraphNode = (props: GraphNodeProps) => {
 
 	return (
 		<button className={styles.button} onClick={onButtonClick}>
-			<Card className={styles.node}>
+			<Card
+				className={clsx(
+					styles.node,
+					data.is_accepted && styles.isAccepted,
+					data.is_accepted === false && styles.isRejected
+				)}
+			>
 				<Handle
 					className={styles.handle}
 					type='target'

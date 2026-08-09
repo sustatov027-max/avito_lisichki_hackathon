@@ -22,6 +22,14 @@
 		box-shadow: var(--shadow-md);
 		translate: 0 1%;
 	}
+
+	&.isAccepted {
+		border-color: var(--success);
+	}
+
+	&.isRejected {
+		border-color: var(--danger);
+	}
 }
 
 .preview {
