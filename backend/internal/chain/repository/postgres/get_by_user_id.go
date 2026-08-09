@@ -39,7 +39,7 @@ func (r *ChainRepository) GetByUserAndID(
 		return nil, err
 	}
 
-	steps, err := r.getStepsForUser(ctx, chainID, userID)
+	steps, err := r.getSteps(ctx, chainID)
 	if err != nil {
 		return nil, err
 	}
@@ -137,18 +137,18 @@ func (r *ChainRepository) getStepsForUser(
 ) ([]chains.Step, error) {
 	rows, err := r.db.Query(ctx, `
 		SELECT s.step_order,
-			   from_user.id, from_user.name, offered.city_name,
-			   to_user.id, to_user.name, received.city_name,
-			   offered.id, offered.title, offered.category_id,
-			   COALESCE(offered.photos[1], ''), offered.estimated_price,
-			   s.is_accepted
+		       from_user.id, from_user.name, COALESCE(offered.city_name, ''),
+		       to_user.id, to_user.name, COALESCE(received.city_name, ''),
+		       offered.id, offered.title, COALESCE(offered.description, ''), offered.category_id,
+		       COALESCE(offered.photos[1], ''), offered.attributes, offered.estimated_price,
+		       s.is_accepted
 		FROM exchange_chain_steps s
 		JOIN users from_user ON from_user.id = s.from_user_id
 		JOIN users to_user ON to_user.id = s.to_user_id
 		JOIN offered_items offered ON offered.id = s.offered_item_id
-		JOIN offered_items received ON received.id = s.received_item_id
+		LEFT JOIN offered_items received ON received.id = s.received_item_id
 		WHERE s.chain_id = $1
-			AND (s.from_user_id = $2 OR s.to_user_id = $2)
+		    AND (s.from_user_id = $2 OR s.to_user_id = $2)
 		ORDER BY s.step_order
 	`, chainID, userID)
 	if err != nil {
@@ -163,8 +163,8 @@ func (r *ChainRepository) getStepsForUser(
 			&step.Order,
 			&step.FromUser.ID, &step.FromUser.Name, &step.FromUser.City,
 			&step.ToUser.ID, &step.ToUser.Name, &step.ToUser.City,
-			&step.Item.ID, &step.Item.Title, &step.Item.CategoryID,
-			&step.Item.Photo, &step.Item.EstimatedPrice,
+			&step.Item.ID, &step.Item.Title, &step.Item.Description, &step.Item.CategoryID,
+			&step.Item.Photo, &step.Item.Attributes, &step.Item.EstimatedPrice,
 			&step.IsAccepted,
 		); err != nil {
 			return nil, fmt.Errorf("scan exchange chain step for user: %w", err)
@@ -181,16 +181,16 @@ func (r *ChainRepository) getStepsForUser(
 func (r *ChainRepository) getSteps(ctx context.Context, chainID uuid.UUID) ([]chains.Step, error) {
 	rows, err := r.db.Query(ctx, `
 		SELECT s.step_order,
-			   from_user.id, from_user.name, offered.city_name,
-			   to_user.id, to_user.name, received.city_name,
-			   offered.id, offered.title, offered.category_id,
-			   COALESCE(offered.photos[1], ''), offered.estimated_price,
-			   s.is_accepted
+		       from_user.id, from_user.name, COALESCE(offered.city_name, ''),
+		       to_user.id, to_user.name, COALESCE(received.city_name, ''),
+		       offered.id, offered.title, COALESCE(offered.description, ''), offered.category_id,
+		       COALESCE(offered.photos[1], ''), offered.attributes, offered.estimated_price,
+		       s.is_accepted
 		FROM exchange_chain_steps s
 		JOIN users from_user ON from_user.id = s.from_user_id
 		JOIN users to_user ON to_user.id = s.to_user_id
 		JOIN offered_items offered ON offered.id = s.offered_item_id
-		JOIN offered_items received ON received.id = s.received_item_id
+		LEFT JOIN offered_items received ON received.id = s.received_item_id
 		WHERE s.chain_id = $1
 		ORDER BY s.step_order
 	`, chainID)
@@ -206,8 +206,8 @@ func (r *ChainRepository) getSteps(ctx context.Context, chainID uuid.UUID) ([]ch
 			&step.Order,
 			&step.FromUser.ID, &step.FromUser.Name, &step.FromUser.City,
 			&step.ToUser.ID, &step.ToUser.Name, &step.ToUser.City,
-			&step.Item.ID, &step.Item.Title, &step.Item.CategoryID,
-			&step.Item.Photo, &step.Item.EstimatedPrice,
+			&step.Item.ID, &step.Item.Title, &step.Item.Description, &step.Item.CategoryID,
+			&step.Item.Photo, &step.Item.Attributes, &step.Item.EstimatedPrice,
 			&step.IsAccepted,
 		); err != nil {
 			return nil, fmt.Errorf("scan exchange chain step: %w", err)

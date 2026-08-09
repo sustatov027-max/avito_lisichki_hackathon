@@ -1,6 +1,7 @@
 package chains
 
 import (
+	"encoding/json"
 	"errors"
 	"time"
 
@@ -43,8 +44,10 @@ type User struct {
 type Item struct {
 	ID             uuid.UUID
 	Title          string
+	Description    string
 	CategoryID     uuid.UUID
 	Photo          string
+	Attributes     json.RawMessage
 	EstimatedPrice float64
 }
 

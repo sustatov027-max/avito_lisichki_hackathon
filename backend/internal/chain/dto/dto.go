@@ -1,6 +1,9 @@
 package dto
 
-import "time"
+import (
+	"encoding/json"
+	"time"
+)
 
 type GetChainsResponse struct {
 	Chains []ChainResponse `json:"chains"`
@@ -25,10 +28,13 @@ type MySummaryResponse struct {
 }
 
 type ItemSummary struct {
-	ID             string  `json:"id"`
-	Title          string  `json:"title"`
-	Photo          string  `json:"photo"`
-	EstimatedPrice float64 `json:"estimated_price"`
+	ID             string          `json:"id"`
+	Title          string          `json:"title"`
+	Description    string          `json:"description"`
+	CategoryID     string          `json:"category_id"`
+	Photo          string          `json:"photo"`
+	Attributes     json.RawMessage `json:"attributes,omitempty"`
+	EstimatedPrice float64         `json:"estimated_price"`
 }
 
 type ReceivedItem struct {
@@ -58,10 +64,12 @@ type UserSummary struct {
 }
 
 type ItemResponse struct {
-	ID         string `json:"id"`
-	Title      string `json:"title"`
-	CategoryID string `json:"category_id"`
-	Photo      string `json:"photo"`
+	ID          string          `json:"id"`
+	Title       string          `json:"title"`
+	Description string          `json:"description"`
+	CategoryID  string          `json:"category_id"`
+	Photo       string          `json:"photo"`
+	Attributes  json.RawMessage `json:"attributes,omitempty"`
 }
 
 type DecisionRequest struct {
