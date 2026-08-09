@@ -8,6 +8,20 @@ import (
 	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain/dto"
 )
 
+// ProcessDecisionHandler handles processing a user's decision (accept/reject) on a chain
+// @Summary Process decision on chain
+// @Description Process accept or reject decision for a chain.
+// @Tags Chain
+// @Accept json
+// @Produce json
+// @Param chain_id path string true "Chain ID"
+// @Param X-User-ID header string true "User ID (UUID). Example: 123e4567-e89b-12d3-a456-426614174000"
+// @Param request body dto.DecisionRequest true "Decision request. Example: {\"action\":\"accept\"}"
+// @Success 200 {object} dto.DecisionResponse "Successful response. Example: {\"chain_id\":\"123e4567-e89b-12d3-a456-426614174000\", \"status\":\"processed\", \"message\":\"Decision accepted\"}"
+// @Failure 400 {object} map[string]string "Bad request"
+// @Failure 401 {object} map[string]string "Unauthorized"
+// @Failure 500 {object} map[string]string "Internal server error"
+// @Router /api/v1/chains/{chain_id}/decision [post]
 func (h *ChainHandler) ProcessDecisionHandler(c *gin.Context) {
 	chainID := c.Param("chain_id")
 	if chainID == "" {

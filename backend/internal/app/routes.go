@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	_ "github.com/sustatov027-max/avito_lisichki_hackathon/backend/docs"
 	chainRepo "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain/repository/postgres"
 	chainService "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain/service"
 	chainTransport "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain/transport"
@@ -13,6 +14,8 @@ import (
 	exchangeTransport "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/transport"
 	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/platform/health"
 	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/platform/middleware"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func (a *App) registerRoutes() *gin.Engine {
@@ -63,6 +66,10 @@ func (a *App) registerRoutes() *gin.Engine {
 	}
 
 	router.GET("/health", health.HealthHandler)
+
+	// swagger UI
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	router.OPTIONS("/*path", func(c *gin.Context) {
 		c.Status(204)
 	})

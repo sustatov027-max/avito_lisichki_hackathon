@@ -11,6 +11,22 @@ import (
 	repoDTO "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/repository"
 )
 
+// PostExchangeHandler creates a new exchange offer
+// @Summary Create exchange offer
+// @Description Create a new offer (idempotent with Idempotency-Key header)
+// @Tags Exchange
+// @Accept json
+// @Produce json
+// @Param X-User-ID header string true "User ID (UUID). Example: 123e4567-e89b-12d3-a456-426614174000"
+// @Param Idempotency-Key header string false "Idempotency key"
+// @Param request body dto.PostExchangeRequest true "Post exchange request. Example: {\"city_name\":\"Moscow\",\"delivery_enabled\":false,\"offered_item\":{\"title\":\"Vintage Camera\",\"category_id\":\"electronics-vintage\"},\"wanted_item\":{\"title_query\":\"camera\"}}"
+// @Success 201 {object} dto.PostExchangeResponse "Created"
+// @Failure 400 {object} map[string]string "Bad request"
+// @Failure 401 {object} map[string]string "Unauthorized"
+// @Failure 404 {object} map[string]string "Not found"
+// @Failure 409 {object} map[string]string "Conflict"
+// @Failure 500 {object} map[string]string "Internal server error"
+// @Router /api/v1/offers [post]
 func (h *ExchangeHandler) PostExchangeHandler(c *gin.Context) {
 	userIDValue, exists := c.Get("user_id")
 	if !exists {
