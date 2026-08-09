@@ -9,6 +9,17 @@ import (
 	chains "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain"
 )
 
+// GetChainsHandler returns chains visible for the current user
+// @Summary Get user chains
+// @Description Returns list of chains for authenticated user
+// @Tags Chain
+// @Accept json
+// @Produce json
+// @Param X-User-ID header string true "User ID (UUID). Example: 123e4567-e89b-12d3-a456-426614174000"
+// @Success 200 {object} dto.GetChainsResponse "List of chains"
+// @Failure 401 {object} map[string]string "Unauthorized"
+// @Failure 500 {object} map[string]string "Internal server error"
+// @Router /api/v1/chains [get]
 func (h *ChainHandler) GetChainsHandler(c *gin.Context) {
 	userIDVal, exists := c.Get("user_id")
 	if !exists {

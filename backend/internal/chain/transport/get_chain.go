@@ -10,6 +10,21 @@ import (
 	repoDTO "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain/repository"
 )
 
+// GetChainHandler returns a single chain by id
+// @Summary Get chain by ID
+// @Description Returns full chain details for the given chain_id
+// @Tags Chain
+// @Accept json
+// @Produce json
+// @Param chain_id path string true "Chain ID"
+// @Param X-User-ID header string true "User ID (UUID). Example: 123e4567-e89b-12d3-a456-426614174000"
+// @Success 200 {object} dto.ChainResponse "Chain details"
+// @Failure 400 {object} map[string]string "Bad request"
+// @Failure 401 {object} map[string]string "Unauthorized"
+// @Failure 403 {object} map[string]string "Forbidden"
+// @Failure 404 {object} map[string]string "Not found"
+// @Failure 500 {object} map[string]string "Internal server error"
+// @Router /api/v1/chains/{chain_id} [get]
 func (h *ChainHandler) GetChainHandler(c *gin.Context) {
 	chainID := c.Param("chain_id")
 	if chainID == "" {
