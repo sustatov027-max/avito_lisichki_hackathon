@@ -65,13 +65,16 @@ const GraphNode = (props: GraphNodeProps) => {
 						<div
 							className={clsx(
 								styles.userStatus,
-								data.is_accepted && styles.isAccepted
+								data.is_accepted && styles.isAccepted,
+								data.is_accepted === true
+									? styles.isAccepted
+									: data.is_accepted === false && styles.isRejected
 							)}
 						>
 							{data.is_accepted === true
-								? 'Согласился'
+								? 'Согласился(ась)'
 								: data.is_accepted === false
-									? 'Отклонил'
+									? 'Отклонил(а)'
 									: 'Думает'}
 						</div>
 					</div>

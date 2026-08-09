@@ -1,5 +1,5 @@
 export type ChainStatus =
-	'proposed' | 'searching' | 'accepted' | 'completed' | 'expired'
+	'proposed' | 'searching' | 'accepted' | 'completed' | 'expired' | 'rejected'
 
 export type ChainDecision = 'pending' | 'accepted' | 'rejected'
 

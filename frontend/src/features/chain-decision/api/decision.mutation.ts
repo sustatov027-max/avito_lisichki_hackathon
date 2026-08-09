@@ -31,7 +31,7 @@ export const useChainDecision = () => {
 
 	const { mutate: reject, isPending: isRejectPending } = useMutation({
 		mutationKey: ['decision-reject', user],
-		mutationFn: (chainId: string) => decisionServices.acceptChain(chainId),
+		mutationFn: (chainId: string) => decisionServices.rejectChain(chainId),
 		onSuccess() {
 			toast.success('Вы отказались от цепочки')
 

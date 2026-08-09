@@ -5,7 +5,7 @@ import { Button } from '@shared/ui'
 import type { AcceptButtonProps } from './AcceptButton.types'
 
 const AcceptButton = (props: AcceptButtonProps) => {
-	const { chainId } = props
+	const { chainId, disabled } = props
 
 	const { accept, isAcceptPending } = useChainDecision()
 
@@ -17,7 +17,7 @@ const AcceptButton = (props: AcceptButtonProps) => {
 		<Button
 			variant='green'
 			onClick={onAcceptButtonClick}
-			disabled={isAcceptPending}
+			disabled={isAcceptPending || disabled}
 		>
 			Согласиться
 		</Button>
