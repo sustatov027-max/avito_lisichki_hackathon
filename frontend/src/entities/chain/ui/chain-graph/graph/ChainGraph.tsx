@@ -173,6 +173,10 @@ const ChainGraph = (props: ChainGraphProps) => {
 								</div>
 							</dl>
 						</section>
+						<section className={styles.modalDescription}>
+							<h3 id='description'>Описание</h3>
+							{item.description ? <p>{item.description}</p> : <p>—</p>}
+						</section>
 					</Modal>
 				)
 			})}

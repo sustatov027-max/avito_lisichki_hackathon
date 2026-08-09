@@ -116,8 +116,10 @@ const ConfirmFormStep = (props: ExchangeFormComponentsProps) => {
 				</section>
 				<section className={styles.modalDescription}>
 					<h3 id='description'>Описание</h3>
-					{data.wanted_item.description && (
+					{data.wanted_item.description ? (
 						<p>{data.wanted_item.description}</p>
+					) : (
+						<p>—</p>
 					)}
 				</section>
 				<footer className={styles.modalFooter}>

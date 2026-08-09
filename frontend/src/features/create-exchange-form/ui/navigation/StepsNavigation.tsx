@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, Trash2 } from 'lucide-react'
+import { ArrowLeft, ArrowRight, RotateCcw, Trash2 } from 'lucide-react'
 import { useWatch } from 'react-hook-form'
 
 import { type ExchangeFormComponentsProps } from '@features/create-exchange-form'
@@ -7,6 +7,7 @@ import { Button, Tooltip, TooltipContent, TooltipTrigger } from '@shared/ui'
 
 import { useExchangeStepFormStore } from '../../model/create-exchange-form-step.store'
 import {
+	DEFAULT_FORM_VALUES,
 	EXCHANGE_STEPS,
 	FIELDS_BY_STEPS
 } from '../../model/create-exchange-form.config'
@@ -17,6 +18,7 @@ const StepsNavigation = (props: ExchangeFormComponentsProps) => {
 	useWatch({ control: form.control })
 
 	const step = useExchangeStepFormStore(state => state.step)
+	const setStep = useExchangeStepFormStore(state => state.setStep)
 	const updateData = useExchangeStepFormStore(state => state.updateData)
 	const forwardStep = useExchangeStepFormStore(state => state.forwardStep)
 	const backStep = useExchangeStepFormStore(state => state.backStep)
@@ -90,6 +92,14 @@ const StepsNavigation = (props: ExchangeFormComponentsProps) => {
 		updateData(form.getValues())
 	}
 
+	const onClearAllButtonClick = () => {
+		form.reset(DEFAULT_FORM_VALUES)
+
+		updateData(form.getValues())
+
+		setStep(EXCHANGE_STEPS.ONBOARD)
+	}
+
 	return (
 		<div className={styles.buttons}>
 			<div className={styles.navigation}>
@@ -111,6 +121,16 @@ const StepsNavigation = (props: ExchangeFormComponentsProps) => {
 					<Button type='submit'>Отправить</Button>
 				)}
 			</div>
+
+			{step === EXCHANGE_STEPS.CONFIRM && (
+				<Button
+					type='button'
+					variant='secondary'
+					onClick={onClearAllButtonClick}
+				>
+					<RotateCcw size={20} /> Начать занаво
+				</Button>
+			)}
 
 			{hasStepData && (
 				<Tooltip>

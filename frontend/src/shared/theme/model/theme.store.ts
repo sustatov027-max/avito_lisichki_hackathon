@@ -8,7 +8,7 @@ import { applyTheme } from '../lib/theme-dom'
 export const useThemeStore = create<ThemeStoreState>()(
 	persist(
 		set => ({
-			theme: 'forest',
+			theme: 'default',
 			mode: 'light',
 			setTheme: theme => set({ theme }),
 			setThemeMode: themeMode => set({ mode: themeMode })
