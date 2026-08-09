@@ -28,10 +28,10 @@ type WantedItem struct {
 
 type Attribute struct {
 	AttributeID string   `json:"attribute_id" binding:"required" example:"color"`
-	Value       *string  `json:"value,omitempty" example:"red"`     // Добавлено для одиночных значений ("value": "like_new")
-	Values      []string `json:"values,omitempty" example:"[\"white\"]"`    // Для массивов ("values": ["white"])
-	MinValue    *int     `json:"min_value,omitempty" example:"65"` // Для диапазонных фильтров ("min_value": 65)
-	MaxValue    *int     `json:"max_value,omitempty" example:"345"` // Для диапазонных фильтров ("max_value": 345)
+	Value       *string  `json:"value,omitempty" example:"red"`          // Добавлено для одиночных значений ("value": "like_new")
+	Values      []string `json:"values,omitempty" example:"[\"white\"]"` // Для массивов ("values": ["white"])
+	MinValue    *int     `json:"min_value,omitempty" example:"65"`       // Для диапазонных фильтров ("min_value": 65)
+	MaxValue    *int     `json:"max_value,omitempty" example:"345"`      // Для диапазонных фильтров ("max_value": 345)
 }
 
 type PostExchangeResponse struct {
