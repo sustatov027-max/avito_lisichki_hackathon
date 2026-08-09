@@ -109,25 +109,18 @@ func (r *ChainRepository) verifyChainProposed(ctx context.Context, tx pgx.Tx, ch
 }
 
 func (r *ChainRepository) getUserStepID(ctx context.Context, tx pgx.Tx, chainID, userID uuid.UUID) (uuid.UUID, error) {
-	var (
-		stepID     uuid.UUID
-		isAccepted *bool
-	)
+	var stepID uuid.UUID
 
 	err := tx.QueryRow(ctx, `
-		SELECT id, is_accepted 
+		SELECT id
 		FROM exchange_chain_steps 
 		WHERE chain_id = $1 AND from_user_id = $2 FOR UPDATE
-	`, chainID, userID).Scan(&stepID, &isAccepted)
+	`, chainID, userID).Scan(&stepID)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return uuid.Nil, repoDTO.ErrStepNotFound
 		}
 		return uuid.Nil, fmt.Errorf("fetch chain step: %w", err)
-	}
-
-	if isAccepted != nil {
-		return uuid.Nil, repoDTO.ErrAlreadyDecided
 	}
 
 	return stepID, nil
