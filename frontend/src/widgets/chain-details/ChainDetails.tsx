@@ -11,15 +11,21 @@ const ChainDetails = (props: ChainDetailsProps) => {
 
 	const { chain } = useChain(chainId)
 
-  console.log(chain)
+	console.log(chain)
 
 	return (
 		<div className={styles.body}>
 			{chain && <ChainGraph chain={chain} />}
 
 			<div className={styles.buttons}>
-				<AcceptButton chainId={chainId} />
-				<RejectButton chainId={chainId} />
+				<AcceptButton
+					chainId={chainId}
+					disabled={chain?.status === 'rejected'}
+				/>
+				<RejectButton
+					chainId={chainId}
+					disabled={chain?.status === 'rejected'}
+				/>
 			</div>
 		</div>
 	)

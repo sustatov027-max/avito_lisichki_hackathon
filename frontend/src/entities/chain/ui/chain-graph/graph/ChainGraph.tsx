@@ -1,5 +1,6 @@
 import { type Edge, MarkerType, type Node, ReactFlow } from '@xyflow/react'
 import { Position } from '@xyflow/react'
+import clsx from 'clsx'
 import { Package } from 'lucide-react'
 
 import { getCategoryDataFromUUID } from '@entities/categories/model/categories.helpers'
@@ -126,6 +127,8 @@ const ChainGraph = (props: ChainGraphProps) => {
 				zoomOnScroll={false}
 				zoomOnPinch={false}
 				zoomOnDoubleClick={false}
+        elementsSelectable={false}
+				className={clsx(chain.status === 'rejected' && styles.flowRejected)}
 			/>
 
 			{chain.steps.map(({ item }) => {

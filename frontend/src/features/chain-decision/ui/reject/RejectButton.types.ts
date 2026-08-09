@@ -1,3 +1,4 @@
-export type  RejectButtonProps = {
-  chainId: string
+export type RejectButtonProps = {
+	chainId: string
+	disabled?: boolean
 }

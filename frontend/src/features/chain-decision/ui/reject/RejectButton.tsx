@@ -5,7 +5,7 @@ import { Button } from '@shared/ui'
 import type { RejectButtonProps } from './RejectButton.types'
 
 const RejectButton = (props: RejectButtonProps) => {
-	const { chainId } = props
+	const { chainId, disabled } = props
 
 	const { reject, isRejectPending } = useChainDecision()
 
@@ -17,7 +17,7 @@ const RejectButton = (props: RejectButtonProps) => {
 		<Button
 			variant='red'
 			onClick={onAcceptButtonClick}
-			disabled={isRejectPending}
+			disabled={isRejectPending || disabled}
 		>
 			Отказаться
 		</Button>

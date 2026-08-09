@@ -1,7 +1,7 @@
 .button {
-  border: none;
-  outline: none;
-  background: none;
+	border: none;
+	outline: none;
+	background: none;
 }
 
 .node {
@@ -70,6 +70,10 @@
 
 	&.isAccepted {
 		color: var(--success);
+	}
+
+	&.isRejected {
+		color: var(--danger);
 	}
 }
 
