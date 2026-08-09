@@ -49,9 +49,7 @@ export type Chain = {
 	steps: ChainStep[]
 }
 
-export type ChainsResponse = {
-	chains: Chain[]
-}
+export type ChainsResponse = Chain
 
 export type ChainModalStoreState = {
   modalIds: string[]

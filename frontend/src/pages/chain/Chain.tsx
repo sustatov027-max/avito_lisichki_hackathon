@@ -1,19 +1,15 @@
 import { useParams } from 'react-router'
 
-import { ChainDetails, useChain } from '@entities/chain'
+import { ChainDetails } from '@widgets/chain-details'
 
 import { Section } from '@shared/ui/section'
 
 const Chain = () => {
 	const { chainId } = useParams()
 
-	const { chain } = useChain(chainId ?? null)
-
-	console.log(chain)
-
 	return (
 		<Section title='Цепочка обмена' id='exchange-chain' isTitleHide>
-			{chain && <ChainDetails chain={chain} />}
+			{chainId && <ChainDetails chainId={chainId as string} />}
 		</Section>
 	)
 }
