@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { describe, expect, it } from 'vitest'
 
-import type { ExchangeItem } from '../model/exchange.types'
+import type { ExchangeItem } from '../../model/exchange.types'
 
 import { ExchangeCard } from './ExchangeCard'
 

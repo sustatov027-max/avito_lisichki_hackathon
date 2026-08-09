@@ -19,7 +19,7 @@ import {
 	EXCHANGE_STATUS_LABELS,
 	formatExchangeDate,
 	formatExchangePrice
-} from '../model/exchange-card.helpers'
+} from '../../model/exchange-card.helpers'
 
 import styles from './ExchangeCard.module.scss'
 import type { ExchangeCardProps } from './ExchangeCard.types'
@@ -72,7 +72,7 @@ const ExchangeCard = (props: ExchangeCardProps) => {
 					<div>
 						<span className={styles.label}>Предлагаю</span>
 						<strong>{formatExchangePrice(exchange.estimated_price)} ₽</strong>
-            {/* {exchange} */}
+						{/* {exchange} */}
 					</div>
 					<ArrowRight className={styles.arrow} size={20} aria-hidden='true' />
 					<div>

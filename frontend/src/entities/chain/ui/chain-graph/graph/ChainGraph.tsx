@@ -107,8 +107,6 @@ const ChainGraph = (props: ChainGraphProps) => {
 		disactiveModal()
 	}
 
-	console.log(chain.status === 'rejected')
-
 	return (
 		<div
 			className={clsx(

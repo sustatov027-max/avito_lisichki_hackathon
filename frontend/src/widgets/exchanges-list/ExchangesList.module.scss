@@ -22,3 +22,12 @@
 .message {
 	text-align: center;
 }
+
+.nonExchanges {
+	@include flex-center;
+
+	flex-direction: column;
+	width: 100%;
+	height: 300px;
+	row-gap: 8px;
+}

@@ -1,2 +1,2 @@
-export { ExchangeCard } from './ExchangeCard'
-export type { ExchangeCardProps } from './ExchangeCard.types'
+export { ExchangeCard } from './exchange-card/ExchangeCard'
+export type { ExchangeCardProps } from './exchange-card/ExchangeCard.types'

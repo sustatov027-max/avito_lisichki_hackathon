@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest'
 
 import { getCategoryDefaultAttributes } from './create-exchange-form.helpers'
 
+const PHONE_MEMORY_ATTRIBUTE_ID = '00000000-0000-4000-8000-000000000002'
+
 const SMARTPHONES_CATEGORY_ID = '00000000-0000-0000-0000-000000000101'
 
 describe('getCategoryDefaultAttributes', () => {
@@ -12,9 +14,9 @@ describe('getCategoryDefaultAttributes', () => {
 		)
 
 		expect(
-			attributes.find(attribute => attribute.attribute_id === '2')
+			attributes.find(attribute => attribute.attribute_id === PHONE_MEMORY_ATTRIBUTE_ID)
 		).toEqual({
-			attribute_id: '2',
+			attribute_id: PHONE_MEMORY_ATTRIBUTE_ID,
 			value: undefined
 		})
 	})
@@ -26,9 +28,9 @@ describe('getCategoryDefaultAttributes', () => {
 		)
 
 		expect(
-			attributes.find(attribute => attribute.attribute_id === '2')
+			attributes.find(attribute => attribute.attribute_id === PHONE_MEMORY_ATTRIBUTE_ID)
 		).toEqual({
-			attribute_id: '2',
+			attribute_id: PHONE_MEMORY_ATTRIBUTE_ID,
 			min_value: undefined,
 			max_value: undefined
 		})

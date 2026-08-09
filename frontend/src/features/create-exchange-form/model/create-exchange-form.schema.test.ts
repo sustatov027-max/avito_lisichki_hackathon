@@ -2,6 +2,15 @@ import { describe, expect, it } from 'vitest'
 
 import { exchangeFormSchema } from './create-exchange-form.schema'
 
+const ATTRIBUTE_IDS = {
+	color: '00000000-0000-4000-8000-000000000001',
+	phoneMemory: '00000000-0000-4000-8000-000000000002',
+	condition: '00000000-0000-4000-8000-000000000003',
+	laptopRam: '00000000-0000-4000-8000-000000000004',
+	laptopStorage: '00000000-0000-4000-8000-000000000005',
+	brand: '00000000-0000-4000-8000-000000000006'
+} as const
+
 const validData = {
 	city_name: 'Москва',
 	delivery_enabled: false,
@@ -9,14 +18,15 @@ const validData = {
 		title: 'Телефон',
 		estimated_price: '50000',
 		category_id: '00000000-0000-0000-0000-000000000101',
-		attributes: [{ attribute_id: '3', value: 'new' }]
+		attributes: [{ attribute_id: ATTRIBUTE_IDS.condition, value: 'new' }]
 	},
 	wanted_item: {
 		title_query: 'Ноутбук',
 		category_id: '00000000-0000-0000-0000-000000000102',
-		attributes: [{ attribute_id: '12', value: 'Apple' }],
+		attributes: [{ attribute_id: ATTRIBUTE_IDS.brand, value: 'Apple' }],
 		min_price: '10000',
-		max_price: '100000'
+		max_price: '100000',
+		description: ''
 	}
 }
 
@@ -47,7 +57,7 @@ describe('exchangeFormSchema', () => {
 			...validData,
 			offered_item: {
 				...validData.offered_item,
-				attributes: [{ attribute_id: '12', value: 'Apple' }]
+				attributes: [{ attribute_id: ATTRIBUTE_IDS.brand, value: 'Apple' }]
 			}
 		})
 
@@ -59,7 +69,7 @@ describe('exchangeFormSchema', () => {
 			...validData,
 			wanted_item: {
 				...validData.wanted_item,
-				attributes: [{ attribute_id: '10', min_value: 32, max_value: 8 }]
+				attributes: [{ attribute_id: ATTRIBUTE_IDS.laptopRam, min_value: 32, max_value: 8 }]
 			}
 		})
 
@@ -71,14 +81,14 @@ describe('exchangeFormSchema', () => {
 			...validData,
 			offered_item: {
 				...validData.offered_item,
-				attributes: [{ attribute_id: '2', value: 256 }]
+				attributes: [{ attribute_id: ATTRIBUTE_IDS.phoneMemory, value: 256 }]
 			}
 		})
 		const withoutMemory = exchangeFormSchema.safeParse({
 			...validData,
 			offered_item: {
 				...validData.offered_item,
-				attributes: [{ attribute_id: '2', value: undefined }]
+				attributes: [{ attribute_id: ATTRIBUTE_IDS.phoneMemory, value: undefined }]
 			}
 		})
 
@@ -92,16 +102,16 @@ describe('exchangeFormSchema', () => {
 			offered_item: {
 				...validData.offered_item,
 				attributes: [
-					{ attribute_id: '1', min_value: 64 },
-					{ attribute_id: '2', value: 256, min_value: 64 },
-					{ attribute_id: '3', min_value: 64 }
+					{ attribute_id: ATTRIBUTE_IDS.color, min_value: 64 },
+					{ attribute_id: ATTRIBUTE_IDS.phoneMemory, value: 256, min_value: 64 },
+					{ attribute_id: ATTRIBUTE_IDS.condition, min_value: 64 }
 				]
 			},
 			wanted_item: {
 				...validData.wanted_item,
 				attributes: [
-					{ attribute_id: '10', min_value: 8, value: 'old' },
-					{ attribute_id: '12', min_value: 1 }
+					{ attribute_id: ATTRIBUTE_IDS.laptopRam, min_value: 8, value: 'old' },
+					{ attribute_id: ATTRIBUTE_IDS.brand, min_value: 1 }
 				]
 			}
 		})
@@ -110,13 +120,13 @@ describe('exchangeFormSchema', () => {
 		if (!result.success) return
 
 		expect(result.data.offered_item.attributes).toEqual([
-			{ attribute_id: '1', values: undefined },
-			{ attribute_id: '2', value: '256' },
-			{ attribute_id: '3', value: undefined }
+			{ attribute_id: ATTRIBUTE_IDS.color, values: undefined },
+			{ attribute_id: ATTRIBUTE_IDS.phoneMemory, value: '256' },
+			{ attribute_id: ATTRIBUTE_IDS.condition, value: undefined }
 		])
 		expect(result.data.wanted_item.attributes).toEqual([
-			{ attribute_id: '10', min_value: 8, max_value: undefined },
-			{ attribute_id: '12', value: undefined }
+			{ attribute_id: ATTRIBUTE_IDS.laptopRam, min_value: 8, max_value: undefined },
+			{ attribute_id: ATTRIBUTE_IDS.brand, value: undefined }
 		])
 	})
 })
