@@ -76,7 +76,7 @@ describe('exchangeFormSchema', () => {
 		expect(result.success).toBe(false)
 	})
 
-	it('accepts optional numeric memory for an offered item', () => {
+	it('accepts optional numeric values for offered range attributes', () => {
 		const withMemory = exchangeFormSchema.safeParse({
 			...validData,
 			offered_item: {
@@ -94,6 +94,17 @@ describe('exchangeFormSchema', () => {
 
 		expect(withMemory.success).toBe(true)
 		expect(withoutMemory.success).toBe(true)
+
+		const laptopRange = exchangeFormSchema.safeParse({
+			...validData,
+			offered_item: {
+				...validData.offered_item,
+				category_id: '00000000-0000-0000-0000-000000000102',
+				attributes: [{ attribute_id: ATTRIBUTE_IDS.laptopRam, value: 16 }]
+			}
+		})
+
+		expect(laptopRange.success).toBe(true)
 	})
 
 	it('strips stale fields left by a previous category', () => {

@@ -18,8 +18,6 @@ import {
 	Input
 } from '@shared/ui'
 
-import styles from '../../CreateExchangeForm.module.scss'
-
 const OfferedFormStep = (props: ExchangeFormComponentsProps) => {
 	const { form } = props
 
@@ -104,36 +102,10 @@ const OfferedFormStep = (props: ExchangeFormComponentsProps) => {
 			</FormField>
 			{offeredAttributes.map((attribute, index) => {
 				if (attribute.type === 'range') {
-					if (attribute.label === 'Память') {
-						return (
-							<FormField
-								label={attribute.label}
-								name={`offered_item.attributes.${index}.value`}
-								key={`${offeredCategoryId}-${attribute.id}`}
-							>
-								<Input
-									type='hidden'
-									{...form.register(
-										`offered_item.attributes.${index}.attribute_id` as const,
-										{ value: attribute.id }
-									)}
-								/>
-								<Input
-									type='number'
-									min={0}
-									placeholder='64'
-									{...form.register(`offered_item.attributes.${index}.value`, {
-										setValueAs: value =>
-											value === '' ? undefined : Number(value)
-									})}
-								/>
-							</FormField>
-						)
-					}
-
 					return (
-						<div
-							className={styles.smFieldsGroup}
+						<FormField
+							label={attribute.label}
+							name={`offered_item.attributes.${index}.value`}
 							key={`${offeredCategoryId}-${attribute.id}`}
 						>
 							<Input
@@ -143,31 +115,16 @@ const OfferedFormStep = (props: ExchangeFormComponentsProps) => {
 									{ value: attribute.id }
 								)}
 							/>
-							<FormField
-								label={`${attribute.label} минимум`}
-								name={`offered_item.attributes.${index}.min_value`}
-							>
-								<Input
-									type='number'
-									placeholder={`От ${attribute.min}`}
-									{...form.register(
-										`offered_item.attributes.${index}.min_value`
-									)}
-								/>
-							</FormField>
-							<FormField
-								label={`${attribute.label} максимум`}
-								name={`offered_item.attributes.${index}.max_value`}
-							>
-								<Input
-									type='number'
-									placeholder={`До ${attribute.max}`}
-									{...form.register(
-										`offered_item.attributes.${index}.max_value`
-									)}
-								/>
-							</FormField>
-						</div>
+							<Input
+								type='number'
+								min={0}
+								placeholder={String(attribute.min)}
+								{...form.register(`offered_item.attributes.${index}.value`, {
+									setValueAs: value =>
+										value === '' ? undefined : Number(value)
+								})}
+							/>
+						</FormField>
 					)
 				}
 				if (attribute.type === 'select') {

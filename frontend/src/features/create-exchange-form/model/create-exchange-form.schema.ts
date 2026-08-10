@@ -38,11 +38,7 @@ const normalizeAttribute = (
 		definition => definition.id === attribute.attribute_id
 	)
 
-	if (
-		itemKind === 'offered' &&
-		definition?.type === 'range' &&
-		definition.label === 'Память'
-	) {
+	if (itemKind === 'offered' && definition?.type === 'range') {
 		const value = Number(attribute.value)
 
 		return {
@@ -84,11 +80,7 @@ const createAttributeSchema = (itemKind: ItemKind) =>
 			)
 
 			if (!definition) return
-			if (
-				itemKind === 'offered' &&
-				definition.type === 'range' &&
-				definition.label === 'Память'
-			) {
+			if (itemKind === 'offered' && definition.type === 'range') {
 				return
 			}
 

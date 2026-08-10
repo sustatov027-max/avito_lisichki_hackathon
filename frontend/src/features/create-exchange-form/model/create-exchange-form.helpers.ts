@@ -35,11 +35,7 @@ const normalizeCategoryAttributes = (
 			storedAttribute => storedAttribute.attribute_id === attribute.id
 		)
 
-		if (
-			itemKind === 'offered' &&
-			attribute.type === 'range' &&
-			attribute.label === 'Память'
-		) {
+		if (itemKind === 'offered' && attribute.type === 'range') {
 			return {
 				attribute_id: attribute.id,
 				value: toOptionalNumber(previous?.value)
