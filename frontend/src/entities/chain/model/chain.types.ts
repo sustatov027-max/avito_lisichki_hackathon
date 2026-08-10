@@ -11,7 +11,7 @@ export type ChainUser = {
 }
 
 export type ChainItem = {
-	id: string
+	id: number
 	title: string
 	category_id?: string
 	photo: string
