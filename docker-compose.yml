@@ -38,7 +38,7 @@ services:
       - ./backend/seeds:/seeds
     environment:
       PGPASSWORD: ${DB_PASSWORD:-postgres}
-    entrypoint: ["sh", "-c"]
+    entrypoint: ['sh', '-c']
     command:
       - |
         echo "--> Applying seed data..."
@@ -79,9 +79,27 @@ services:
     container_name: exchange_chain_frontend
     ports:
       - '80:80'
+    volumes:
+      - certbot-webroot:/var/www/certbot:ro
+      - certbot-etc:/etc/letsencrypt:ro
     depends_on:
       app:
         condition: service_started
 
+  certbot:
+    image: certbot/certbot:latest
+    container_name: exchange_chain_certbot
+    volumes:
+      - certbot-webroot:/var/www/certbot
+      - certbot-etc:/etc/letsencrypt
+    entrypoint: /bin/sh
+    command: -c 'while :; do certbot renew --webroot -w /var/www/certbot; sleep 12h & wait $${!}; done'
+    depends_on:
+      frontend:
+        condition: service_started
+    restart: unless-stopped
+
 volumes:
   pgdata:
+  certbot-webroot:
+  certbot-etc:
