@@ -17,12 +17,12 @@ const FormField = <T extends FieldValues>(props: FormFieldProps<T>) => {
 	const fieldId = String(name).replaceAll('.', '-')
 
 	return (
-		<div className={clsx(styles.formField, className)}>
+		<div className={styles.formField}>
 			<label htmlFor={fieldId} className={styles.label}>
 				{label}
 				{isRequired && <span className={styles.required}>*</span>}
 			</label>
-			<div className={styles.control}>{children}</div>
+			<div className={clsx(styles.control, className)}>{children}</div>
 			{error && <p className={styles.error}>{error}</p>}
 		</div>
 	)

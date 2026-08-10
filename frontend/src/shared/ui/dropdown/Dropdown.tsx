@@ -90,19 +90,28 @@ DropdownItem.displayName = DropdownMenuPrimitive.Item.displayName
 const DropdownCheckboxItem = forwardRef<
 	ElementRef<typeof DropdownMenuPrimitive.CheckboxItem>,
 	DropdownCheckboxItemProps
->(({ className, children, checked, ...props }, ref) => (
-	<DropdownMenuPrimitive.CheckboxItem
-		ref={ref}
-		className={clsx(styles.checkboxItem, className)}
-		checked={checked}
-		{...props}
-	>
-		<span className={styles.indicator} aria-hidden='true'>
-			{checked ? <Check size={16} strokeWidth={2} /> : null}
-		</span>
-		{children}
-	</DropdownMenuPrimitive.CheckboxItem>
-))
+>(
+	(
+		{ className, children, checked, closeOnSelect = true, onSelect, ...props },
+		ref
+	) => (
+		<DropdownMenuPrimitive.CheckboxItem
+			ref={ref}
+			className={clsx(styles.checkboxItem, className)}
+			checked={checked}
+			onSelect={event => {
+				onSelect?.(event)
+				if (!closeOnSelect) event.preventDefault()
+			}}
+			{...props}
+		>
+			<span className={styles.indicator} aria-hidden='true'>
+				{checked ? <Check size={16} strokeWidth={2} /> : null}
+			</span>
+			{children}
+		</DropdownMenuPrimitive.CheckboxItem>
+	)
+)
 DropdownCheckboxItem.displayName =
 	DropdownMenuPrimitive.CheckboxItem.displayName
 

@@ -1,3 +1,5 @@
+export { Logo } from '@shared/ui/logo'
+
 export { FormField } from './form/ui/FormField'
 
 export { Button } from './button/Button'
@@ -14,6 +16,7 @@ export { FormSection } from './form/ui/FormSection'
 
 export { Card, CardSeparator } from './card/Card'
 export { ToastProvider, toast } from './toast'
+
 export type {
 	CustomToastOptions,
 	ToastMessage,

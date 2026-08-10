@@ -5,17 +5,22 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	chainPostgres "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chains/repository/postgres"
-	chainService "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chains/service"
-	chainTransport "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chains/transport"
-	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/repository/postgres"
-	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/service"
-	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/transport"
+	_ "github.com/sustatov027-max/avito_lisichki_hackathon/backend/docs"
+	chainRepo "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain/repository/postgres"
+	chainService "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain/service"
+	chainTransport "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain/transport"
+	exchangeRepo "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/repository/postgres"
+	exchangeService "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/service"
+	exchangeTransport "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/transport"
 	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/platform/health"
+	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/platform/middleware"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func (a *App) registerRoutes() *gin.Engine {
 	router := gin.Default()
+	router.Use(middleware.MaxBytesMiddleware(2 << 20))
 
 	router.Use(cors.New(cors.Config{
 		AllowAllOrigins: true,
@@ -28,6 +33,7 @@ func (a *App) registerRoutes() *gin.Engine {
 			"Accept",
 			"Authorization",
 			"Idempotency-Key",
+			"X-User-ID",
 			"X-Requested-With",
 		},
 
@@ -36,20 +42,34 @@ func (a *App) registerRoutes() *gin.Engine {
 		MaxAge: 12 * time.Hour,
 	}))
 
-	exchangeRepository := postgres.NewTradeOfferRepository(a.db)
-	exchangeService := service.NewExchangeService(exchangeRepository)
-	exchangeHandler := transport.NewExchangeHandler(exchangeService)
-	chainRepository := chainPostgres.NewChainRepository(a.db)
-	chainsService := chainService.NewChainService(chainRepository)
-	chainHandler := chainTransport.NewChainHandler(chainsService)
+	// Exchange layer initialization
+	exchangeRepository := exchangeRepo.NewTradeOfferRepository(a.db)
+	exchangeSvc := exchangeService.NewExchangeService(exchangeRepository)
+	exchangeHandler := exchangeTransport.NewExchangeHandler(exchangeSvc)
+
+	// Chain layer initialization
+	chainRepository := chainRepo.NewChainRepository(a.db)
+	chainSvc := chainService.NewChainService(chainRepository)
+	chainHandler := chainTransport.NewChainHandler(chainSvc)
 
 	api := router.Group("/api/v1")
 	{
-		api.POST("/offers", exchangeHandler.PostExchangeHandler)
-		api.GET("/chains/:chain_id", chainHandler.GetChainHandler)
+		api.Use(middleware.DummyAuthMiddleware())
+		{
+			api.GET("/chains", chainHandler.GetChainsHandler)
+			api.GET("/chain/:chain_id", chainHandler.GetChainHandler)
+			api.GET("/chains/:chain_id", chainHandler.GetChainHandler)
+			api.GET("/offers/my", exchangeHandler.GetMyOffersHandler)
+			api.POST("/offers", exchangeHandler.PostExchangeHandler)
+			api.POST("/chains/:chain_id/decision", chainHandler.ProcessDecisionHandler)
+		}
 	}
 
 	router.GET("/health", health.HealthHandler)
+
+	// swagger UI
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	router.OPTIONS("/*path", func(c *gin.Context) {
 		c.Status(204)
 	})

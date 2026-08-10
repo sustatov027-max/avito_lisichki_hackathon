@@ -25,7 +25,7 @@ export const useFormsBase = <
 	const { schema, defaultValues, onSubmit } = props
 	const form = useForm<TInput, unknown, TOutput>({
 		resolver: zodResolver(schema),
-		mode: 'onSubmit',
+		mode: 'onChange',
 		defaultValues
 	})
 

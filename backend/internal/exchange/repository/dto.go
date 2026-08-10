@@ -8,7 +8,12 @@ import (
 	"github.com/google/uuid"
 )
 
-var ErrIdempotencyConflict = errors.New("idempotency key was already used with a different request")
+var (
+	ErrInvalidRequest      = errors.New("invalid request")
+	ErrUserNotFound        = errors.New("user not found")
+	ErrDuplicateOffer      = errors.New("duplicate offer")
+	ErrIdempotencyConflict = errors.New("idempotency key was already used with a different request")
+)
 
 // IdempotencyParams contains the client key and a canonical request fingerprint.
 type IdempotencyParams struct {

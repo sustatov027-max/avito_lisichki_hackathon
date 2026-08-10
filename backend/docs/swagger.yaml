@@ -1,0 +1,626 @@
+definitions:
+  dto.Attribute:
+    properties:
+      attribute_id:
+        example: color
+        type: string
+      max_value:
+        description: 'Для диапазонных фильтров ("max_value": 345)'
+        example: 345
+        type: integer
+      min_value:
+        description: 'Для диапазонных фильтров ("min_value": 65)'
+        example: 65
+        type: integer
+      value:
+        description: 'Добавлено для одиночных значений ("value": "like_new")'
+        example: red
+        type: string
+      values:
+        description: 'Для массивов ("values": ["white"])'
+        example:
+        - '["white"]'
+        items:
+          type: string
+        type: array
+    required:
+    - attribute_id
+    type: object
+  dto.ChainInfoResponse:
+    properties:
+      chain_id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      chain_length:
+        example: 2
+        type: integer
+      has_chain:
+        example: true
+        type: boolean
+      status:
+        example: pending
+        type: string
+      user_action_required:
+        example: true
+        type: boolean
+    type: object
+  dto.ChainResponse:
+    properties:
+      chain_id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      chain_length:
+        example: 3
+        type: integer
+      created_at:
+        example: "2026-08-09T12:00:00Z"
+        type: string
+      expires_at:
+        example: "2026-08-10T12:00:00Z"
+        type: string
+      my_summary:
+        $ref: '#/definitions/dto.MySummaryResponse'
+      status:
+        example: pending
+        type: string
+      steps:
+        items:
+          $ref: '#/definitions/dto.StepResponse'
+        type: array
+      time_left_seconds:
+        example: 3600
+        type: integer
+    type: object
+  dto.DecisionRequest:
+    properties:
+      action:
+        enum:
+        - accept
+        - reject
+        example: accept
+        type: string
+    required:
+    - action
+    type: object
+  dto.DecisionResponse:
+    properties:
+      chain_id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      message:
+        example: Decision accepted
+        type: string
+      status:
+        example: processed
+        type: string
+    type: object
+  dto.DesiredItemResponse:
+    properties:
+      allow_delivery:
+        example: true
+        type: boolean
+      category_id:
+        example: electronics
+        type: string
+      id:
+        example: desired-1
+        type: string
+      max_price:
+        example: 3000
+        type: number
+      min_price:
+        example: 1000
+        type: number
+      title_pattern:
+        example: camera
+        type: string
+    type: object
+  dto.GetChainsResponse:
+    properties:
+      chains:
+        items:
+          $ref: '#/definitions/dto.ChainResponse'
+        type: array
+    type: object
+  dto.GetMyOffersResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/dto.OfferResponse'
+        type: array
+      total:
+        example: 1
+        type: integer
+    type: object
+  dto.ItemResponse:
+    properties:
+      attributes: {}
+      category_id:
+        example: kids-bikes
+        type: string
+      description:
+        example: Small bike for 4-6 years old
+        type: string
+      id:
+        example: item-uuid-2
+        type: string
+      photo:
+        example: https://example.com/photos/2.jpg
+        type: string
+      title:
+        example: Child Bike
+        type: string
+    type: object
+  dto.ItemSummary:
+    properties:
+      attributes: {}
+      category_id:
+        example: home-decor
+        type: string
+      description:
+        example: A nice vintage lamp in working condition
+        type: string
+      estimated_price:
+        example: 1999.99
+        type: number
+      id:
+        example: item-uuid-1
+        type: string
+      photo:
+        example: https://example.com/photos/1.jpg
+        type: string
+      title:
+        example: Vintage Lamp
+        type: string
+    type: object
+  dto.MySummaryResponse:
+    properties:
+      giving_item:
+        $ref: '#/definitions/dto.ItemSummary'
+      my_decision:
+        example: accept
+        type: string
+      receiving_item:
+        $ref: '#/definitions/dto.ReceivedItem'
+      user_action_required:
+        example: true
+        type: boolean
+    type: object
+  dto.OfferResponse:
+    properties:
+      category_id:
+        example: electronics-vintage
+        type: string
+      chain_info:
+        $ref: '#/definitions/dto.ChainInfoResponse'
+      city_name:
+        example: Moscow
+        type: string
+      created_at:
+        example: "2026-08-09T12:00:00Z"
+        type: string
+      delivery_enabled:
+        example: false
+        type: boolean
+      desired_item:
+        $ref: '#/definitions/dto.DesiredItemResponse'
+      estimated_price:
+        example: 2500
+        type: number
+      item_status:
+        example: active
+        type: string
+      offered_item_id:
+        example: offer-1
+        type: string
+      photos:
+        example:
+        - '["https://example.com/photos/1.jpg"]'
+        items:
+          type: string
+        type: array
+      title:
+        example: Vintage Camera
+        type: string
+    type: object
+  dto.OfferedItem:
+    properties:
+      attributes:
+        items:
+          $ref: '#/definitions/dto.Attribute'
+        type: array
+      category_id:
+        example: electronics-vintage
+        type: string
+      description:
+        example: Old film camera in working condition
+        type: string
+      estimated_price:
+        example: 2500
+        type: integer
+      photos:
+        example:
+        - '["https://example.com/photos/1.jpg"]'
+        items:
+          type: string
+        type: array
+      title:
+        example: Vintage Camera
+        type: string
+    required:
+    - category_id
+    - title
+    type: object
+  dto.PostExchangeRequest:
+    properties:
+      city_name:
+        example: Moscow
+        type: string
+      delivery_enabled:
+        example: false
+        type: boolean
+      offered_item:
+        $ref: '#/definitions/dto.OfferedItem'
+      wanted_item:
+        $ref: '#/definitions/dto.WantedItem'
+    required:
+    - city_name
+    - offered_item
+    - wanted_item
+    type: object
+  dto.PostExchangeResponse:
+    properties:
+      created_at:
+        example: "2026-08-09T12:00:00Z"
+        type: string
+      id:
+        example: exchange-uuid-1
+        type: string
+      status:
+        example: created
+        type: string
+    type: object
+  dto.ReceivedItem:
+    properties:
+      attributes: {}
+      category_id:
+        example: home-decor
+        type: string
+      description:
+        example: A nice vintage lamp in working condition
+        type: string
+      estimated_price:
+        example: 1999.99
+        type: number
+      from_user:
+        $ref: '#/definitions/dto.UserSummary'
+      id:
+        example: item-uuid-1
+        type: string
+      photo:
+        example: https://example.com/photos/1.jpg
+        type: string
+      title:
+        example: Vintage Lamp
+        type: string
+    type: object
+  dto.StepResponse:
+    properties:
+      from_user:
+        $ref: '#/definitions/dto.UserResponse'
+      is_accepted:
+        example: true
+        type: boolean
+      item:
+        $ref: '#/definitions/dto.ItemResponse'
+      step_order:
+        example: 1
+        type: integer
+      to_user:
+        $ref: '#/definitions/dto.UserResponse'
+    type: object
+  dto.UserResponse:
+    properties:
+      city:
+        example: Moscow
+        type: string
+      id:
+        example: user-uuid-1
+        type: string
+      is_me:
+        example: true
+        type: boolean
+      name:
+        example: Ivan Petrov
+        type: string
+    type: object
+  dto.UserSummary:
+    properties:
+      city:
+        example: Moscow
+        type: string
+      id:
+        example: user-uuid-1
+        type: string
+      name:
+        example: Ivan Petrov
+        type: string
+    type: object
+  dto.WantedItem:
+    properties:
+      attributes:
+        items:
+          $ref: '#/definitions/dto.Attribute'
+        type: array
+      category_id:
+        example: electronics
+        type: string
+      max_price:
+        example: 3000
+        type: integer
+      min_price:
+        example: 1000
+        type: integer
+      title_query:
+        example: camera
+        type: string
+    type: object
+  health.HealthResponse:
+    properties:
+      status:
+        example: ok
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /api/v1/chains:
+    get:
+      consumes:
+      - application/json
+      description: Returns list of chains for authenticated user
+      parameters:
+      - description: 'User ID (UUID). Example: 123e4567-e89b-12d3-a456-426614174000'
+        in: header
+        name: X-User-ID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of chains
+          schema:
+            $ref: '#/definitions/dto.GetChainsResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get user chains
+      tags:
+      - Chain
+  /api/v1/chains/{chain_id}:
+    get:
+      consumes:
+      - application/json
+      description: Returns full chain details for the given chain_id
+      parameters:
+      - description: Chain ID
+        in: path
+        name: chain_id
+        required: true
+        type: string
+      - description: 'User ID (UUID). Example: 123e4567-e89b-12d3-a456-426614174000'
+        in: header
+        name: X-User-ID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Chain details
+          schema:
+            $ref: '#/definitions/dto.ChainResponse'
+        "400":
+          description: Bad request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get chain by ID
+      tags:
+      - Chain
+  /api/v1/chains/{chain_id}/decision:
+    post:
+      consumes:
+      - application/json
+      description: Process accept or reject decision for a chain.
+      parameters:
+      - description: Chain ID
+        in: path
+        name: chain_id
+        required: true
+        type: string
+      - description: 'User ID (UUID). Example: 123e4567-e89b-12d3-a456-426614174000'
+        in: header
+        name: X-User-ID
+        required: true
+        type: string
+      - description: 'Decision request. Example: {\'
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.DecisionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Successful response. Example: {\"chain_id\":\"123e4567-e89b-12d3-a456-426614174000\",
+            \"status\":\"processed\", \"message\":\"Decision accepted\"}'
+          schema:
+            $ref: '#/definitions/dto.DecisionResponse'
+        "400":
+          description: Bad request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Process decision on chain
+      tags:
+      - Chain
+  /api/v1/offers:
+    post:
+      consumes:
+      - application/json
+      description: Create a new offer (idempotent with Idempotency-Key header)
+      parameters:
+      - description: 'User ID (UUID). Example: 123e4567-e89b-12d3-a456-426614174000'
+        in: header
+        name: X-User-ID
+        required: true
+        type: string
+      - description: Idempotency key
+        in: header
+        name: Idempotency-Key
+        type: string
+      - description: 'Post exchange request. Example: {\'
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.PostExchangeRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.PostExchangeResponse'
+        "400":
+          description: Bad request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Conflict
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create exchange offer
+      tags:
+      - Exchange
+  /api/v1/offers/my:
+    get:
+      consumes:
+      - application/json
+      description: Returns offers created by current user
+      parameters:
+      - description: 'User ID (UUID). Example: 123e4567-e89b-12d3-a456-426614174000'
+        in: header
+        name: X-User-ID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of user offers
+          schema:
+            $ref: '#/definitions/dto.GetMyOffersResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get my offers
+      tags:
+      - Exchange
+  /health:
+    get:
+      consumes:
+      - application/json
+      description: Returns service health status
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{\"status\":\"ok\"}'
+          schema:
+            $ref: '#/definitions/health.HealthResponse'
+      summary: Health check
+      tags:
+      - Health
+swagger: "2.0"

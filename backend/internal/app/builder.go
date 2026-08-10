@@ -34,6 +34,7 @@ func New(_ context.Context) (*App, error) {
 
 	if err := pool.Ping(context.Background()); err != nil {
 		logger.Error("error connect postgres", "err", err)
+		pool.Close()
 		return nil, err
 	}
 
@@ -52,6 +53,10 @@ func New(_ context.Context) (*App, error) {
 		Addr:              fmt.Sprintf(":%s", config.ServerPort),
 		Handler:           handler,
 		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       10 * time.Second,
+		WriteTimeout:      10 * time.Second,
+		IdleTimeout:       60 * time.Second,
+		MaxHeaderBytes:    1 << 20,
 	}
 
 	app.server = server
