@@ -11,8 +11,6 @@ const ChainDetails = (props: ChainDetailsProps) => {
 
 	const { chain } = useChain(chainId)
 
-	console.log(chain)
-
 	return (
 		<div className={styles.body}>
 			{chain && <ChainGraph chain={chain} />}
