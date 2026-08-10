@@ -7,7 +7,7 @@ import styles from './Logo.module.scss'
 const Logo = () => {
 	return (
 		<Link to={ROUTES.ROOT} className={styles.link}>
-			<span>swap</span>
+			<span>swape</span>
 		</Link>
 	)
 }
