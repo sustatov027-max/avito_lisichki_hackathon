@@ -138,7 +138,7 @@ func (r *ChainRepository) getSteps(ctx context.Context, chainID uuid.UUID) ([]ch
 		       from_user.id, from_user.name, COALESCE(offered.city_name, ''),
 		       to_user.id, to_user.name, COALESCE(received.city_name, ''),
 		       offered.id, offered.title, COALESCE(offered.description, ''), offered.category_id,
-		       COALESCE(offered.photos[1], ''), offered.attributes, offered.estimated_price,
+		       COALESCE(offered.photos, '{}'), offered.attributes, offered.estimated_price,
 		       s.is_accepted
 		FROM exchange_chain_steps s
 		JOIN users from_user ON from_user.id = s.from_user_id
@@ -161,12 +161,12 @@ func (r *ChainRepository) getSteps(ctx context.Context, chainID uuid.UUID) ([]ch
 			&step.FromUser.ID, &step.FromUser.Name, &step.FromUser.City,
 			&step.ToUser.ID, &step.ToUser.Name, &step.ToUser.City,
 			&step.Item.ID, &step.Item.Title, &step.Item.Description, &step.Item.CategoryID,
-			&step.Item.Photo, &step.Item.Attributes, &step.Item.EstimatedPrice,
+			&step.Item.Photos, &step.Item.Attributes, &step.Item.EstimatedPrice,
 			&step.IsAccepted,
 		); err != nil {
 			return nil, fmt.Errorf("scan exchange chain step: %w", err)
 		}
-		step.Item.Photo = normalizePhoto(step.Item.Photo)
+		step.Item.Photos = normalizePhotos(step.Item.Photos)
 		steps = append(steps, step)
 	}
 	if err := rows.Err(); err != nil {
@@ -190,4 +190,16 @@ func normalizePhoto(photo string) string {
 	base := strings.TrimRight(platform.MustGet().BaseURL, "/")
 
 	return base + "/photos/" + objectName
+}
+
+func normalizePhotos(photos []string) []string {
+	if photos == nil {
+		return []string{}
+	}
+
+	for index := range photos {
+		photos[index] = normalizePhoto(photos[index])
+	}
+
+	return photos
 }

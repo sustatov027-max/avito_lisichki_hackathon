@@ -148,7 +148,7 @@ func mapItem(item chains.Item) dto.ItemResponse {
 		Title:       item.Title,
 		Description: item.Description,
 		CategoryID:  item.CategoryID.String(),
-		Photo:       item.Photo,
+		Photos:      item.Photos,
 		Attributes:  item.Attributes,
 	}
 }
@@ -180,7 +180,7 @@ func mapItemSummary(item chains.Item) dto.ItemSummary {
 		Title:          item.Title,
 		Description:    item.Description,
 		CategoryID:     item.CategoryID.String(),
-		Photo:          item.Photo,
+		Photos:         item.Photos,
 		Attributes:     item.Attributes,
 		EstimatedPrice: item.EstimatedPrice,
 	}

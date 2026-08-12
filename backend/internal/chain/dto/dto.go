@@ -32,7 +32,7 @@ type ItemSummary struct {
 	Title          string          `json:"title" example:"Vintage Lamp"`
 	Description    string          `json:"description" example:"A nice vintage lamp in working condition"`
 	CategoryID     string          `json:"category_id" example:"home-decor"`
-	Photo          string          `json:"photo" example:"https://example.com/photos/1.jpg"`
+	Photos         []string        `json:"photos" example:"https://example.com/photos/1.jpg,https://example.com/photos/2.jpg"`
 	Attributes     json.RawMessage `json:"attributes,omitempty"`
 	EstimatedPrice float64         `json:"estimated_price" example:"1999.99"`
 }
@@ -68,7 +68,7 @@ type ItemResponse struct {
 	Title       string          `json:"title" example:"Child Bike"`
 	Description string          `json:"description" example:"Small bike for 4-6 years old"`
 	CategoryID  string          `json:"category_id" example:"kids-bikes"`
-	Photo       string          `json:"photo" example:"https://example.com/photos/2.jpg"`
+	Photos      []string        `json:"photos" example:"https://example.com/photos/1.jpg,https://example.com/photos/2.jpg"`
 	Attributes  json.RawMessage `json:"attributes,omitempty"`
 }
 
