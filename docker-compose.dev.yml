@@ -1,0 +1,72 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-exchange_chain}
+    ports:
+      - '${DB_PORT:-5432}:5432'
+    volumes:
+      - pgdata-dev:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
+      interval: 2s
+      timeout: 3s
+      retries: 5
+
+  migrations:
+    image: migrate/migrate
+    volumes:
+      - ./backend/migrations:/migrations:ro
+    command:
+      - -path=/migrations
+      - -database=postgres://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@postgres:5432/${DB_NAME:-exchange_chain}?sslmode=${DB_SSLMODE:-disable}
+      - up
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  seeds:
+    image: postgres:16-alpine
+    volumes:
+      - ./backend/seeds:/seeds:ro
+    environment:
+      PGPASSWORD: ${DB_PASSWORD:-postgres}
+    entrypoint: ['sh', '-c']
+    command:
+      - 'psql -h postgres -U ${DB_USER:-postgres} -d ${DB_NAME:-exchange_chain} -f /seeds/01_seeds.sql'
+    depends_on:
+      migrations:
+        condition: service_completed_successfully
+
+  app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - '8080:8080'
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_NAME: ${DB_NAME:-exchange_chain}
+      DB_SSLMODE: ${DB_SSLMODE:-disable}
+    depends_on:
+      seeds:
+        condition: service_completed_successfully
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - '80:80'
+    volumes:
+      - ./frontend/nginx.dev.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+
+volumes:
+  pgdata-dev:

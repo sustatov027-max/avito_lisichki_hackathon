@@ -65,6 +65,21 @@
 
 ### Запуск для разработки
 
+Для запуска frontend и backend в Docker без HTTPS используйте отдельный dev-compose:
+
+```bash
+docker compose -f docker-compose.dev.yml up --build
+```
+
+После запуска приложение доступно по адресу <http://localhost>.
+Nginx на 80-м порту раздаёт frontend и проксирует запросы `/api/` в backend-контейнер на `app:8080`.
+Сам backend также доступен напрямую по адресу <http://localhost:8080>.
+Остановка:
+
+```bash
+docker compose -f docker-compose.dev.yml down
+```
+
 Для frontend требуются Bun и Node.js-совместимое окружение, для backend — Go и PostgreSQL.
 
 ```bash
