@@ -1,6 +1,7 @@
 services:
   postgres:
     image: postgres:16-alpine
+    container_name: exchange_chain_postgres
     environment:
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
@@ -14,11 +15,13 @@ services:
       interval: 2s
       timeout: 3s
       retries: 5
+    restart: unless-stopped
 
   migrations:
     image: migrate/migrate
+    container_name: exchange_chain_migrations
     volumes:
-      - ./backend/migrations:/migrations:ro
+      - ./backend/migrations:/migrations
     command:
       - -path=/migrations
       - -database=postgres://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@postgres:5432/${DB_NAME:-exchange_chain}?sslmode=${DB_SSLMODE:-disable}
@@ -29,33 +32,116 @@ services:
 
   seeds:
     image: postgres:16-alpine
+    container_name: exchange_chain_seeds
     volumes:
-      - ./backend/seeds:/seeds:ro
+      - ./backend/seeds:/seeds
     environment:
       PGPASSWORD: ${DB_PASSWORD:-postgres}
     entrypoint: ['sh', '-c']
     command:
-      - 'psql -h postgres -U ${DB_USER:-postgres} -d ${DB_NAME:-exchange_chain} -f /seeds/01_seeds.sql'
+      - |
+        echo "--> Applying seed data..."
+        psql -h postgres -U ${DB_USER:-postgres} -d ${DB_NAME:-exchange_chain} -f /seeds/01_seeds.sql
+        echo "--> Seeds applied successfully!"
     depends_on:
+      postgres:
+        condition: service_healthy
       migrations:
         condition: service_completed_successfully
+
+  seeds-upload:
+    image: minio/mc
+    container_name: exchange_chain_seeds_upload
+    volumes:
+      - ./backend/seeds/images:/seeds/images:ro
+    environment:
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
+      MINIO_BUCKET: ${MINIO_BUCKET:-photos}
+      BASE_URL: ${BASE_URL:-http://localhost:8080}
+    entrypoint: ['/bin/sh', '-c']
+    command:
+      - |
+        set -e
+        echo "--> Configuring mc alias"
+        mc alias set local http://$$MINIO_ENDPOINT $$MINIO_ACCESS_KEY $$MINIO_SECRET_KEY
+        echo "--> Ensure bucket exists"
+        mc mb --ignore-existing local/$$MINIO_BUCKET
+        echo "--> Set bucket public read access"
+        mc anonymous set download local/$$MINIO_BUCKET
+        echo "--> Uploading seed images to MinIO"
+        ls -la /seeds/images/
+        for f in /seeds/images/*; do
+          if [ -f "$$f" ]; then
+            fname=$$(basename "$$f")
+            echo "Uploading $$fname"
+            mc cp "$$f" local/$$MINIO_BUCKET/$$fname
+          fi
+        done
+        echo "--> Images uploaded"
+    depends_on:
+      minio:
+        condition: service_healthy
+      seeds:
+        condition: service_completed_successfully
+    restart: 'no'
+
+  minio:
+    image: minio/minio:latest
+    container_name: exchange_chain_minio
+    command: server /data --console-address ":9001"
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'curl -f http://localhost:9000/minio/health/ready || exit 1',
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
 
   app:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    container_name: exchange_chain_app
     ports:
       - '8080:8080'
     environment:
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_USER: ${DB_USER:-postgres}
-      DB_PASSWORD: ${DB_PASSWORD:-postgres}
-      DB_NAME: ${DB_NAME:-exchange_chain}
-      DB_SSLMODE: ${DB_SSLMODE:-disable}
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
+      - DB_NAME=${DB_NAME:-exchange_chain}
+      - DB_SSLMODE=${DB_SSLMODE:-disable}
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY:-minioadmin}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY:-minioadmin}
+      - MINIO_BUCKET=${MINIO_BUCKET:-photos}
+      - MINIO_USE_SSL=${MINIO_USE_SSL:-false}
+      - MINIO_BASE_URL=${MINIO_BASE_URL:-http://minio:9000}
+      - BASE_URL=${BASE_URL:-http://localhost:8080}
     depends_on:
+      postgres:
+        condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
       seeds:
         condition: service_completed_successfully
+      seeds-upload:
+        condition: service_completed_successfully
+      minio:
+        condition: service_healthy
 
   frontend:
     build:
@@ -70,3 +156,4 @@ services:
 
 volumes:
   pgdata-dev:
+  minio_data:
