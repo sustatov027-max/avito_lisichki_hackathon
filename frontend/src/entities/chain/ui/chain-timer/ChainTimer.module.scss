@@ -11,38 +11,38 @@
 	line-height: 1.2;
 	white-space: nowrap;
 
-	@include mobile {
-		padding: 7px 11px;
-		font-size: 13px;
-	}
-}
-
-.dot {
-	width: 7px;
-	height: 7px;
-	border-radius: var(--radius-full);
-	background: var(--text-secondary);
-}
-
-.label {
-	color: var(--text-secondary);
-}
-
-.value {
-	color: var(--text-primary);
-	font-variant-numeric: tabular-nums;
-	font-weight: 700;
-}
-
-.isExpired {
-	color: var(--text-secondary);
-
 	.dot {
-		background: var(--danger);
+		width: 7px;
+		height: 7px;
+		border-radius: var(--radius-full);
+		background: var(--text-secondary);
 	}
 
 	.label {
 		color: var(--text-secondary);
+	}
+
+	.value {
+		color: var(--text-primary);
+		font-variant-numeric: tabular-nums;
+		font-weight: 700;
+	}
+
+	&.isExpired {
+		color: var(--text-secondary);
+
+		.dot {
+			background: var(--danger);
+		}
+
+		.label {
+			color: var(--text-secondary);
+		}
+	}
+
+	@include mobile {
+		padding: 7px 11px;
+		font-size: 13px;
 	}
 }
 

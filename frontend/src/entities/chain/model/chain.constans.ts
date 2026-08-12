@@ -9,3 +9,11 @@ export const chainStatusLabels: Record<ChainStatus, string> = {
 	rejected: 'Отклонена',
 	invalidated: 'Отменена'
 }
+
+export const terminalStatuses: ChainStatus[] = [
+	'accepted',
+	'completed',
+	'expired',
+	'rejected',
+	'invalidated'
+] 
