@@ -16,7 +16,9 @@ describe('getCategoryDefaultAttributes', () => {
 		)
 
 		expect(
-			attributes.find(attribute => attribute.attribute_id === PHONE_MEMORY_ATTRIBUTE_ID)
+			attributes.find(
+				attribute => attribute.attribute_id === PHONE_MEMORY_ATTRIBUTE_ID
+			)
 		).toEqual({
 			attribute_id: PHONE_MEMORY_ATTRIBUTE_ID,
 			value: undefined
@@ -30,7 +32,9 @@ describe('getCategoryDefaultAttributes', () => {
 		)
 
 		expect(
-			attributes.find(attribute => attribute.attribute_id === PHONE_MEMORY_ATTRIBUTE_ID)
+			attributes.find(
+				attribute => attribute.attribute_id === PHONE_MEMORY_ATTRIBUTE_ID
+			)
 		).toEqual({
 			attribute_id: PHONE_MEMORY_ATTRIBUTE_ID,
 			min_value: undefined,
@@ -45,7 +49,9 @@ describe('getCategoryDefaultAttributes', () => {
 		)
 
 		expect(
-			attributes.find(attribute => attribute.attribute_id === LAPTOP_RAM_ATTRIBUTE_ID)
+			attributes.find(
+				attribute => attribute.attribute_id === LAPTOP_RAM_ATTRIBUTE_ID
+			)
 		).toEqual({
 			attribute_id: LAPTOP_RAM_ATTRIBUTE_ID,
 			value: undefined

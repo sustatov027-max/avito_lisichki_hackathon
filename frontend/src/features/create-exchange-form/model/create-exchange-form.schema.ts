@@ -169,7 +169,8 @@ const offeredItemSchema = z
 			.nonnegative('Оценочная стоимость не может быть отрицательной')
 			.min(1, 'Укажите оценочную стоимость товара'),
 		category_id: categoryIdSchema,
-		attributes: z.array(offeredAttributeSchema)
+		attributes: z.array(offeredAttributeSchema),
+		description: z.string()
 	})
 	.superRefine((item, ctx) => {
 		for (const [index, attribute] of item.attributes.entries()) {
@@ -195,8 +196,7 @@ const wantedItemSchema = z
 		max_price: optionalNumber.refine(
 			value => value === undefined || value >= 0,
 			'Цена не может быть отрицательной'
-		),
-		description: z.string()
+		)
 	})
 	.refine(
 		value =>
@@ -204,8 +204,8 @@ const wantedItemSchema = z
 			value.max_price === undefined ||
 			value.min_price <= value.max_price,
 		{
-		message: 'Минимальная цена не может быть больше максимальной',
-		path: ['min_price']
+			message: 'Минимальная цена не может быть больше максимальной',
+			path: ['min_price']
 		}
 	)
 	.superRefine((item, ctx) => {

@@ -11,7 +11,10 @@ const ATTRIBUTE_IDS = {
 describe('getAttributeDataFromUUID', () => {
 	it('formats select value', () => {
 		expect(
-			getAttributeDataFromUUID({ attribute_id: ATTRIBUTE_IDS.condition, value: 'new' })
+			getAttributeDataFromUUID({
+				attribute_id: ATTRIBUTE_IDS.condition,
+				value: 'new'
+			})
 		).toEqual({
 			label: 'Состояние',
 			value: 'Новое'

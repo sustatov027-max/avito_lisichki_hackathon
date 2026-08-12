@@ -41,7 +41,11 @@ describe('normalizePersistedExchangeFormData', () => {
 			wanted_item: {
 				category_id: '00000000-0000-0000-0000-000000000102',
 				attributes: [
-					{ attribute_id: ATTRIBUTE_IDS.laptopRam, min_value: '8', max_value: '32' },
+					{
+						attribute_id: ATTRIBUTE_IDS.laptopRam,
+						min_value: '8',
+						max_value: '32'
+					},
 					{ attribute_id: ATTRIBUTE_IDS.brand, min_value: '1', max_value: '2' }
 				]
 			}
@@ -49,7 +53,11 @@ describe('normalizePersistedExchangeFormData', () => {
 
 		expect(data.wanted_item?.attributes).toEqual([
 			{ attribute_id: ATTRIBUTE_IDS.laptopRam, min_value: 8, max_value: 32 },
-			{ attribute_id: ATTRIBUTE_IDS.laptopStorage, min_value: undefined, max_value: undefined },
+			{
+				attribute_id: ATTRIBUTE_IDS.laptopStorage,
+				min_value: undefined,
+				max_value: undefined
+			},
 			{ attribute_id: ATTRIBUTE_IDS.brand, value: undefined },
 			{ attribute_id: ATTRIBUTE_IDS.laptopColor, values: undefined }
 		])
@@ -67,18 +75,22 @@ describe('normalizePersistedExchangeFormData', () => {
 					{ attribute_id: ATTRIBUTE_IDS.color, value: undefined },
 					{ attribute_id: ATTRIBUTE_IDS.phoneMemory, value: '256' },
 					{ attribute_id: ATTRIBUTE_IDS.condition, min_value: undefined }
-				]
+				],
+        description: ''
 			},
 			wanted_item: {
 				title_query: 'Ноутбук',
 				category_id: '00000000-0000-0000-0000-000000000102',
 				attributes: [
-					{ attribute_id: ATTRIBUTE_IDS.laptopRam, min_value: '8', max_value: '32' },
+					{
+						attribute_id: ATTRIBUTE_IDS.laptopRam,
+						min_value: '8',
+						max_value: '32'
+					},
 					{ attribute_id: ATTRIBUTE_IDS.brand, min_value: undefined }
 				],
 				min_price: '10000',
 				max_price: '100000',
-				description: ''
 			}
 		} as never)
 

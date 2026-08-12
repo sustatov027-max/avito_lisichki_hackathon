@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
-import type { Chain } from './chain.types'
 import { getChainById } from './chain.helpers'
+import type { Chain } from './chain.types'
 
 const chains = [{ chain_id: 'chain-1' }, { chain_id: 'chain-2' }] as Chain[]
 

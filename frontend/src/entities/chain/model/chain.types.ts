@@ -1,5 +1,11 @@
 export type ChainStatus =
-	'proposed' | 'searching' | 'accepted' | 'completed' | 'expired' | 'rejected'
+	| 'proposed'
+	| 'searching'
+	| 'accepted'
+	| 'completed'
+	| 'expired'
+	| 'rejected'
+	| 'invalidated'
 
 export type ChainDecision = 'pending' | 'accepted' | 'rejected'
 

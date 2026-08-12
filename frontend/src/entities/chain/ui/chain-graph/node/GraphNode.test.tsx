@@ -44,7 +44,9 @@ const props = {
 } as GraphNodeProps
 
 describe('GraphNode', () => {
-	beforeEach(() => useChainModalStore.setState({ activeModal: null, modalIds: [] }))
+	beforeEach(() =>
+		useChainModalStore.setState({ activeModal: null, modalIds: [] })
+	)
 
 	it('opens details of its item when clicked', () => {
 		render(<GraphNode {...props} />)

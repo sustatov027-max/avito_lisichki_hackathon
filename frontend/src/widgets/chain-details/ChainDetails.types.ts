@@ -1,3 +1,3 @@
 export type ChainDetailsProps = {
-  chainId: string
+	chainId: string
 }

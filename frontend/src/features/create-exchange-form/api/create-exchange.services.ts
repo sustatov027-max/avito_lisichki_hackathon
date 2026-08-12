@@ -1,5 +1,5 @@
-import type { ExchangeFormDataOutput } from '@features/create-exchange-form/model/create-exchange-form.schema'
 import { serializeExchangeFormData } from '@features/create-exchange-form/model/create-exchange-form.helpers'
+import type { ExchangeFormDataOutput } from '@features/create-exchange-form/model/create-exchange-form.schema'
 
 import { axiosWithAuth } from '@shared/api'
 

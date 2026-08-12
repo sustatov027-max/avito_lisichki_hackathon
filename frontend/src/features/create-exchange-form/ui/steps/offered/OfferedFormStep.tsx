@@ -15,7 +15,8 @@ import {
 	DropdownTrigger,
 	FormField,
 	FormSection,
-	Input
+	Input,
+	Textarea
 } from '@shared/ui'
 
 const OfferedFormStep = (props: ExchangeFormComponentsProps) => {
@@ -234,6 +235,14 @@ const OfferedFormStep = (props: ExchangeFormComponentsProps) => {
 					)
 				}
 			})}
+
+			<FormField name='offered_item.description' label='Описание'>
+				<Textarea
+					id='wanted_item.description'
+					placeholder='Данный iPhone 16 Pro имеет...'
+					{...form.register('offered_item.description')}
+				/>
+			</FormField>
 		</FormSection>
 	)
 }

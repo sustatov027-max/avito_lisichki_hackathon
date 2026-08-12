@@ -3,8 +3,8 @@ import { renderHook, waitFor } from '@testing-library/react'
 import type { PropsWithChildren } from 'react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { decisionServices } from './decision.services'
 import { useChainDecision } from './decision.mutation'
+import { decisionServices } from './decision.services'
 
 const mocks = vi.hoisted(() => ({
 	user: { userId: 'user-1' } as { userId: string } | null,
@@ -36,7 +36,9 @@ vi.mock('axios', () => ({
 const createWrapper = (client: QueryClient) =>
 	function Wrapper(props: PropsWithChildren) {
 		return (
-			<QueryClientProvider client={client}>{props.children}</QueryClientProvider>
+			<QueryClientProvider client={client}>
+				{props.children}
+			</QueryClientProvider>
 		)
 	}
 
@@ -48,7 +50,9 @@ describe('useChainDecision', () => {
 	})
 
 	it('accepts a chain, notifies the user, and refreshes related data', async () => {
-		const client = new QueryClient({ defaultOptions: { mutations: { retry: false } } })
+		const client = new QueryClient({
+			defaultOptions: { mutations: { retry: false } }
+		})
 		const invalidateQueries = vi.spyOn(client, 'invalidateQueries')
 		vi.mocked(decisionServices.acceptChain).mockResolvedValue({} as never)
 
@@ -60,14 +64,24 @@ describe('useChainDecision', () => {
 		await waitFor(() =>
 			expect(decisionServices.acceptChain).toHaveBeenCalledWith('chain-1')
 		)
-		await waitFor(() => expect(mocks.success).toHaveBeenCalledWith('Вы согласились с этой цепочкой'))
+		await waitFor(() =>
+			expect(mocks.success).toHaveBeenCalledWith(
+				'Вы согласились с этой цепочкой'
+			)
+		)
 		expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ['exchanges'] })
-		expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ['chain', 'user-1'] })
+		expect(invalidateQueries).toHaveBeenCalledWith({
+			queryKey: ['chain', 'user-1']
+		})
 	})
 
 	it('shows the server error after a rejected decision', async () => {
-		const client = new QueryClient({ defaultOptions: { mutations: { retry: false } } })
-		const requestError = { response: { data: { error: 'Цепочка уже закрыта' } } }
+		const client = new QueryClient({
+			defaultOptions: { mutations: { retry: false } }
+		})
+		const requestError = {
+			response: { data: { error: 'Цепочка уже закрыта' } }
+		}
 		mocks.isAxiosError.mockReturnValue(true)
 		vi.mocked(decisionServices.rejectChain).mockRejectedValue(requestError)
 

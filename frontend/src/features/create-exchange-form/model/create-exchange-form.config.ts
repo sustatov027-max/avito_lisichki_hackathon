@@ -32,14 +32,14 @@ export const DEFAULT_FORM_VALUES: ExchangeFormDataInput = {
 		title: '',
 		estimated_price: '',
 		category_id: '',
-		attributes: []
+		attributes: [],
+		description: ''
 	},
 	wanted_item: {
 		title_query: '',
 		category_id: '',
 		attributes: [],
 		min_price: '',
-		max_price: '',
-    description: ''
+		max_price: ''
 	}
 } as const
