@@ -2,16 +2,12 @@ import type { ChainDetailsProps } from '@widgets/chain-details/ChainDetails.type
 
 import { AcceptButton, RejectButton } from '@features/chain-decision'
 
-import { ChainGraph, useChain } from '@entities/chain'
+import { ChainGraph } from '@entities/chain'
 
 import styles from './ChainDetails.module.scss'
 
 const ChainDetails = (props: ChainDetailsProps) => {
-	const { chainId } = props
-
-	const { chain } = useChain(chainId)
-
-	console.log(chain)
+	const { chainId, chain } = props
 
 	return (
 		<div className={styles.body}>

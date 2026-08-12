@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react'
+
 export type SectionProps = {
 	id: string
 	title: string
@@ -5,4 +7,5 @@ export type SectionProps = {
 	className?: string
 	titleClassName?: string
 	containerClassName?: string
+	actions?: ReactNode
 }
