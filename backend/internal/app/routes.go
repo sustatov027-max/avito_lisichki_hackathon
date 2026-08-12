@@ -12,6 +12,7 @@ import (
 	exchangeRepo "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/repository/postgres"
 	exchangeService "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/service"
 	exchangeTransport "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange/transport"
+	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/platform"
 	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/platform/health"
 	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/platform/middleware"
 	swaggerFiles "github.com/swaggo/files"
@@ -64,6 +65,9 @@ func (a *App) registerRoutes() *gin.Engine {
 			api.POST("/chains/:chain_id/decision", chainHandler.ProcessDecisionHandler)
 		}
 	}
+
+	// Изменено на *object для корректного матчнга путей со слэшами
+	router.GET("/photos/*object", platform.PhotoHandler)
 
 	router.GET("/health", health.HealthHandler)
 

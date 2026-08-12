@@ -1,0 +1,11 @@
+{
+  "city_name": "Moscow",
+  "delivery_enabled": false,
+  "offered_item": {
+    "title": "Cam",
+    "category_id": "00000000-0000-0000-0000-000000000101"
+  },
+  "wanted_item": {
+    "title_query": "camera"
+  }
+}

@@ -17,6 +17,14 @@ type Config struct {
 	DBPassword string `envconfig:"DB_PASSWORD" required:"true"`
 	DBName     string `envconfig:"DB_NAME" default:"url_shortener"`
 	DBSSLMode  string `envconfig:"DB_SSLMODE" default:"disable"`
+
+	// MinIO configuration
+	MinioEndpoint  string `envconfig:"MINIO_ENDPOINT" default:"localhost:9000"`
+	MinioAccessKey string `envconfig:"MINIO_ACCESS_KEY" default:"minioadmin"`
+	MinioSecretKey string `envconfig:"MINIO_SECRET_KEY" default:"minioadmin"`
+	MinioBucket    string `envconfig:"MINIO_BUCKET" default:"photos"`
+	MinioUseSSL    bool   `envconfig:"MINIO_USE_SSL" default:"false"`
+	MinioBaseURL   string `envconfig:"MINIO_BASE_URL" default:"http://localhost:9000"`
 }
 
 var loadedConfig *Config

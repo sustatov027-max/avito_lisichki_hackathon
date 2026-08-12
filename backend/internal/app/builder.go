@@ -16,7 +16,7 @@ import (
 
 func New(_ context.Context) (*App, error) {
 	if err := godotenv.Load(); err != nil {
-		log.Println("Файл .env не найден, чтений из переменной среды")
+		log.Println("Файл .env не найден, чтение из переменных среды")
 	}
 
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
@@ -47,14 +47,21 @@ func New(_ context.Context) (*App, error) {
 		return nil
 	}
 
+	// Если MinIO не инициализировался, возвращаем ошибку, чтобы контейнер перезапустился, а не висел
+	if err := platform.InitMinIO(config); err != nil {
+		logger.Error("init minio error", "err", err)
+		pool.Close()
+		return nil, fmt.Errorf("init minio: %w", err)
+	}
+
 	handler := app.registerRoutes()
 
 	server := &http.Server{
 		Addr:              fmt.Sprintf(":%s", config.ServerPort),
 		Handler:           handler,
 		ReadHeaderTimeout: 5 * time.Second,
-		ReadTimeout:       10 * time.Second,
-		WriteTimeout:      10 * time.Second,
+		ReadTimeout:       30 * time.Second,
+		WriteTimeout:      0, // Отключаем WriteTimeout для передачи потоковых данных/изображений
 		IdleTimeout:       60 * time.Second,
 		MaxHeaderBytes:    1 << 20,
 	}
