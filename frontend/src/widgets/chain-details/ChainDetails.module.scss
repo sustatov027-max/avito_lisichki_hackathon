@@ -1,18 +1,48 @@
 .details {
-  display: grid;
-  row-gap: fluid(24, 16);
+	display: grid;
+	gap: fluid(24, 16);
 }
 
 .body {
+	display: grid;
+	grid-template-columns: minmax(0, 960px) minmax(280px, 320px);
+	align-items: start;
+	justify-content: center;
+	gap: 20px;
 	width: 100%;
-	display: flex;
-	align-items: center;
-	flex-direction: column;
-	row-gap: 16px;
+
+	@include laptop {
+		grid-template-columns: minmax(0, 960px);
+
+		.sidebar {
+			order: -1;
+		}
+	}
 }
 
-.buttons {
-	display: flex;
-	align-items: center;
-	column-gap: 8px;
+.sidebar {
+	position: sticky;
+	top: 120px;
+	display: grid;
+	gap: 16px;
+
+	.buttons {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 8px;
+
+		button {
+			width: 100%;
+		}
+	}
+
+	@include laptop {
+		position: static;
+	}
+
+	@include mobile {
+		.buttons {
+			grid-template-columns: 1fr;
+		}
+	}
 }

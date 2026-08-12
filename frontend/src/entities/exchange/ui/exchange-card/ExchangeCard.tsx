@@ -12,13 +12,13 @@ import { Link } from 'react-router'
 import { getCategoryDataFromUUID } from '@entities/categories/model/categories.helpers'
 
 import { ROUTES } from '@shared/constants/routes'
+import { formatPrice } from '@shared/lib'
 import { Card } from '@shared/ui'
 
 import {
 	EXCHANGE_CHAIN_STATUS_LABELS,
 	EXCHANGE_STATUS_LABELS,
-	formatExchangeDate,
-	formatExchangePrice
+	formatExchangeDate
 } from '../../model/exchange-card.helpers'
 
 import styles from './ExchangeCard.module.scss'
@@ -71,7 +71,7 @@ const ExchangeCard = (props: ExchangeCardProps) => {
 				<div className={styles.exchange}>
 					<div>
 						<span className={styles.label}>Предлагаю</span>
-						<strong>{formatExchangePrice(exchange.estimated_price)} ₽</strong>
+						<strong>{formatPrice(exchange.estimated_price)} ₽</strong>
 						{/* {exchange} */}
 					</div>
 					<ArrowRight className={styles.arrow} size={20} aria-hidden='true' />
@@ -79,8 +79,8 @@ const ExchangeCard = (props: ExchangeCardProps) => {
 						<span className={styles.label}>Хочу получить</span>
 						<strong>{exchange.desired_item.title_pattern}</strong>
 						<span className={styles.range}>
-							{formatExchangePrice(exchange.desired_item.min_price)}–
-							{formatExchangePrice(exchange.desired_item.max_price)} ₽
+							{formatPrice(exchange.desired_item.min_price)}–
+							{formatPrice(exchange.desired_item.max_price)} ₽
 						</span>
 					</div>
 				</div>

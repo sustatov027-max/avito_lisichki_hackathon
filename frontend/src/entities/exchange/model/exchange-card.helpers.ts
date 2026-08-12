@@ -17,9 +17,6 @@ export const EXCHANGE_CHAIN_STATUS_LABELS: Record<
 	accepted: 'Обмен подтверждён'
 }
 
-export const formatExchangePrice = (price: number) =>
-	new Intl.NumberFormat('ru-RU').format(price)
-
 export const formatExchangeDate = (date: string) =>
 	new Intl.DateTimeFormat('ru-RU', {
 		day: 'numeric',
