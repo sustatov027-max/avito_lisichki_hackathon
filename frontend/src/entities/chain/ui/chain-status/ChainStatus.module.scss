@@ -1,0 +1,47 @@
+.status {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 14px;
+	border: 1px solid var(--border-color-secondary);
+	border-radius: var(--radius-md);
+	background: var(--surface-secondary);
+	color: var(--text-secondary);
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.2;
+	white-space: nowrap;
+}
+
+.dot {
+	width: 7px;
+	height: 7px;
+	border-radius: var(--radius-full);
+	background: currentColor;
+}
+
+.proposed,
+.searching {
+	color: var(--info);
+}
+
+.accepted,
+.completed {
+	color: var(--success);
+}
+
+.rejected,
+.invalidated {
+	color: var(--danger);
+}
+
+.expired {
+	color: var(--text-secondary);
+}
+
+@include mobile {
+	.status {
+		padding: 7px 11px;
+		font-size: 13px;
+	}
+}
