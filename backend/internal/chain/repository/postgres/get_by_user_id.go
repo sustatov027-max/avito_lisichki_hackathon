@@ -3,10 +3,12 @@ package postgres
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/google/uuid"
 	chains "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain"
 	repoDTO "github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/chain/repository"
+	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/platform"
 )
 
 func (r *ChainRepository) GetByUserID(
@@ -164,6 +166,7 @@ func (r *ChainRepository) getSteps(ctx context.Context, chainID uuid.UUID) ([]ch
 		); err != nil {
 			return nil, fmt.Errorf("scan exchange chain step: %w", err)
 		}
+		step.Item.Photo = normalizePhoto(step.Item.Photo)
 		steps = append(steps, step)
 	}
 	if err := rows.Err(); err != nil {
@@ -171,4 +174,20 @@ func (r *ChainRepository) getSteps(ctx context.Context, chainID uuid.UUID) ([]ch
 	}
 
 	return steps, nil
+}
+
+func normalizePhoto(photo string) string {
+	photo = strings.TrimSpace(photo)
+	if photo == "" {
+		return ""
+	}
+	if strings.HasPrefix(photo, "http://") || strings.HasPrefix(photo, "https://") {
+		return photo
+	}
+
+	parts := strings.Split(photo, "/")
+	objectName := parts[len(parts)-1]
+	base := strings.TrimRight(platform.MustGet().BaseURL, "/")
+
+	return base + "/photos/" + objectName
 }

@@ -97,6 +97,9 @@ func TestGetChainsMapsExpectedContract(t *testing.T) {
 	if chain.Steps[0].FromUser.Name != "Вы (Алексей)" || !chain.Steps[0].FromUser.IsMe {
 		t.Fatalf("current user was not marked: %#v", chain.Steps[0].FromUser)
 	}
+	if chain.Steps[0].Item.Photo != "phone.jpg" {
+		t.Fatalf("unexpected step photo: %q", chain.Steps[0].Item.Photo)
+	}
 	if chain.MySummary.ReceivingItem.FromUser.Name != "Иван" {
 		t.Fatalf("unexpected receiving user: %#v", chain.MySummary.ReceivingItem.FromUser)
 	}
@@ -142,6 +145,9 @@ func TestGetChainMapsExpectedContract(t *testing.T) {
 	}
 	if response.ChainID != chainID.String() {
 		t.Fatalf("unexpected response: %#v", response)
+	}
+	if response.MySummary.GivingItem.Photo != "phone.jpg" {
+		t.Fatalf("unexpected summary photo: %q", response.MySummary.GivingItem.Photo)
 	}
 }
 
