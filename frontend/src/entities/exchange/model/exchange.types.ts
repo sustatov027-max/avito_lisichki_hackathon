@@ -1,4 +1,4 @@
-export type ExchangeItemStatus = 'active' | 'inactive' | 'completed'
+export type ExchangeItemStatus = 'active' | 'reserved'
 
 export type ExchangeChainStatus = 'proposed' | 'searching' | 'accepted'
 

@@ -4,9 +4,8 @@ export const EXCHANGE_STATUS_LABELS: Record<
 	ExchangeItem['item_status'],
 	string
 > = {
-	active: 'Активен',
-	inactive: 'Неактивен',
-	completed: 'Завершён'
+	active: 'В поиске',
+	reserved: 'В цепочке'
 }
 
 export const EXCHANGE_CHAIN_STATUS_LABELS: Record<

@@ -1,0 +1,20 @@
+.header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.body {
+	display: grid;
+	row-gap: fluid(24, 16);
+}
+
+.actions {
+	display: flex;
+	align-items: center;
+	column-gap: 8px;
+}
+
+.title {
+	font-size: fluid(36, 24);
+}
