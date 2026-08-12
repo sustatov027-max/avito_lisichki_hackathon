@@ -7,6 +7,9 @@ export type ChainStatus =
 	| 'rejected'
 	| 'invalidated'
 
+export type TerminalStatuses =
+	'accepted' | 'completed' | 'expired' | 'rejected' | 'invalidated'
+
 export type ChainDecision = 'pending' | 'accepted' | 'rejected'
 
 export type ChainUser = {

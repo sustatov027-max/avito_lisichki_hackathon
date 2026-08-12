@@ -1,3 +1,8 @@
+.details {
+  display: grid;
+  row-gap: fluid(24, 16);
+}
+
 .body {
 	width: 100%;
 	display: flex;

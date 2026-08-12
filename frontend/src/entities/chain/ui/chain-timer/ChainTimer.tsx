@@ -24,31 +24,27 @@ const ChainTimer = (props: ChainTimerProps) => {
 	const isExpired = timeLeft === 0
 
 	return (
-		<Tooltip>
-			<TooltipTrigger asChild>
-				<div
-					className={clsx(styles.timer, isExpired && styles.isExpired)}
-					aria-live='polite'
-				>
-					<Tooltip>
-						<TooltipTrigger asChild>
-							<div className={styles.infoIcon}>
-								<Info size={16} opacity={0.5} />
-							</div>
-						</TooltipTrigger>
-						<TooltipContent>Время до окончания обмена</TooltipContent>
-					</Tooltip>
-					<span className={styles.label}>
-						{isExpired ? 'Срок истёк' : 'Осталось:'}
-					</span>
-					{!isExpired && (
-						<strong className={styles.value}>
-							{getTimeFromSeconds(timeLeft)}
-						</strong>
-					)}
-				</div>
-			</TooltipTrigger>
-		</Tooltip>
+		!isExpired && (
+			<div
+				className={clsx(styles.timer, isExpired && styles.isExpired)}
+				aria-live='polite'
+			>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<div className={styles.infoIcon}>
+							<Info size={16} opacity={0.5} />
+						</div>
+					</TooltipTrigger>
+					<TooltipContent>Время до окончания обмена</TooltipContent>
+				</Tooltip>
+				<span className={styles.label}>Осталось:</span>
+				{!isExpired && (
+					<strong className={styles.value}>
+						{getTimeFromSeconds(timeLeft)}
+					</strong>
+				)}
+			</div>
+		)
 	)
 }
 
