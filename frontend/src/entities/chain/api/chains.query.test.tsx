@@ -44,7 +44,9 @@ describe('useChain', () => {
 
 	it('requests the selected chain after a user is available', async () => {
 		mocks.user = { userId: 'user-1' }
-		vi.mocked(chainServices.getChains).mockResolvedValue({ chain_id: 'chain-1' } as never)
+		vi.mocked(chainServices.getChains).mockResolvedValue({
+			chain_id: 'chain-1'
+		} as never)
 
 		const { result } = renderHook(() => useChain('chain-1'), {
 			wrapper: createWrapper()
@@ -58,7 +60,9 @@ describe('useChain', () => {
 
 	it('exposes a readable error message when the request fails', async () => {
 		mocks.user = { userId: 'user-1' }
-		vi.mocked(chainServices.getChains).mockRejectedValue(new Error('Network error'))
+		vi.mocked(chainServices.getChains).mockRejectedValue(
+			new Error('Network error')
+		)
 
 		const { result } = renderHook(() => useChain('chain-1'), {
 			wrapper: createWrapper()

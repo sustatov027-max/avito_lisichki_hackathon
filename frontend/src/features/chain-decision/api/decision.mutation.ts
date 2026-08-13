@@ -4,6 +4,7 @@ import toast from 'react-hot-toast'
 
 import { decisionServices } from '@features/chain-decision/api/decision.services'
 
+import { getApiErrorMessage } from '@shared/lib'
 import { useCurrentUserStore } from '@shared/model/current-user.store'
 
 export const useChainDecision = () => {
@@ -22,7 +23,7 @@ export const useChainDecision = () => {
 		},
 		onError(error) {
 			if (axios.isAxiosError(error)) {
-				toast.error(error.response?.data.error)
+				toast.error(getApiErrorMessage(error))
 			} else {
 				toast.error(error.message)
 			}

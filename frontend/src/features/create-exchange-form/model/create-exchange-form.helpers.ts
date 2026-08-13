@@ -85,8 +85,7 @@ const serializeItemAttributes = (
 ) =>
 	attributes.map(attribute => ({
 		...attribute,
-		value:
-			attribute.value === undefined ? undefined : String(attribute.value)
+		value: attribute.value === undefined ? undefined : String(attribute.value)
 	}))
 
 export const serializeExchangeFormData = (

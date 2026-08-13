@@ -17,6 +17,14 @@
 .list {
 	display: grid;
 	gap: 16px;
+
+	@include mobile {
+		grid-template-columns: 1fr 1fr;
+	}
+
+	@include mobile-s {
+		grid-template-columns: 1fr;
+	}
 }
 
 .message {

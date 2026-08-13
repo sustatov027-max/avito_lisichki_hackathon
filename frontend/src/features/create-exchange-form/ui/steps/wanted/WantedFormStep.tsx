@@ -15,8 +15,7 @@ import {
 	DropdownTrigger,
 	FormField,
 	FormSection,
-	Input,
-	Textarea
+	Input
 } from '@shared/ui'
 
 import styles from '../../CreateExchangeForm.module.scss'
@@ -260,13 +259,6 @@ const WantedFormStep = (props: ExchangeFormComponentsProps) => {
 					/>
 				</FormField>
 			</div>
-			<FormField name='wanted_item.description' label='Описание'>
-				<Textarea
-					id='wanted_item.description'
-					placeholder='Хочу дом...'
-					{...form.register('wanted_item.description')}
-				/>
-			</FormField>
 		</FormSection>
 	)
 }

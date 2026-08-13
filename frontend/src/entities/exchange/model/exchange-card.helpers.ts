@@ -4,9 +4,8 @@ export const EXCHANGE_STATUS_LABELS: Record<
 	ExchangeItem['item_status'],
 	string
 > = {
-	active: 'Активен',
-	inactive: 'Неактивен',
-	completed: 'Завершён'
+	active: 'В поиске',
+	reserved: 'В цепочке'
 }
 
 export const EXCHANGE_CHAIN_STATUS_LABELS: Record<
@@ -17,9 +16,6 @@ export const EXCHANGE_CHAIN_STATUS_LABELS: Record<
 	searching: 'Ищем совпадения',
 	accepted: 'Обмен подтверждён'
 }
-
-export const formatExchangePrice = (price: number) =>
-	new Intl.NumberFormat('ru-RU').format(price)
 
 export const formatExchangeDate = (date: string) =>
 	new Intl.DateTimeFormat('ru-RU', {

@@ -15,9 +15,11 @@ const data = {
 	item: {
 		id: 'item-1',
 		title: 'Ноутбук',
-		photo: '',
+		photos: [],
 		category_id: 'category-1',
 		description: '',
+		estimated_price: 50000,
+		attributes: [],
 		is_accepted: null
 	},
 	from_user: { id: 'user-1', name: 'Иван', city: 'Москва' },
@@ -44,7 +46,9 @@ const props = {
 } as GraphNodeProps
 
 describe('GraphNode', () => {
-	beforeEach(() => useChainModalStore.setState({ activeModal: null, modalIds: [] }))
+	beforeEach(() =>
+		useChainModalStore.setState({ activeModal: null, modalIds: [] })
+	)
 
 	it('opens details of its item when clicked', () => {
 		render(<GraphNode {...props} />)

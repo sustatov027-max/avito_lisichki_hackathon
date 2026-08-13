@@ -3,9 +3,11 @@ package postgres
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/exchange"
+	"github.com/sustatov027-max/avito_lisichki_hackathon/backend/internal/platform"
 )
 
 func (r *TradeOfferRepository) GetByUserID(ctx context.Context, userID uuid.UUID) ([]exchange.Item, error) {
@@ -60,6 +62,25 @@ func (r *TradeOfferRepository) GetByUserID(ctx context.Context, userID uuid.UUID
 		}
 		if item.Photos == nil {
 			item.Photos = []string{}
+		}
+		// Normalize photo entries: if stored value is not an absolute URL, treat as object name and build proxy URL
+		for i, p := range item.Photos {
+			p = strings.TrimSpace(p)
+			if p == "" {
+				continue
+			}
+			if strings.HasPrefix(p, "http://") || strings.HasPrefix(p, "https://") {
+				item.Photos[i] = p
+				continue
+			}
+			// If p contains '/', take base name
+			bn := p
+			if strings.Contains(p, "/") {
+				parts := strings.Split(p, "/")
+				bn = parts[len(parts)-1]
+			}
+			base := platform.MustGet().BaseURL
+			item.Photos[i] = strings.TrimRight(base, "/") + "/photos/" + bn
 		}
 		items = append(items, item)
 	}

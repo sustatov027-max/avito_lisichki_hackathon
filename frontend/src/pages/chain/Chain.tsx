@@ -8,7 +8,7 @@ const Chain = () => {
 	const { chainId } = useParams()
 
 	return (
-		<Section title='Цепочка обмена' id='exchange-chain' isTitleHide>
+		<Section title='Цепочка обмена' id='exchange-chain'>
 			{chainId && <ChainDetails chainId={chainId as string} />}
 		</Section>
 	)

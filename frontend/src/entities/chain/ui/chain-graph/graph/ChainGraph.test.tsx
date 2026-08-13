@@ -23,8 +23,18 @@ vi.mock('../node/GraphNode', () => ({
 }))
 
 vi.mock('@shared/ui', () => ({
-	Modal: ({ children, open, title }: { children: React.ReactNode; open: boolean; title: string }) =>
-		open ? <section aria-label={title}>{children}</section> : null
+	Modal: ({
+		children,
+		open,
+		title
+	}: {
+		children: React.ReactNode
+		open: boolean
+		title: string
+	}) => (open ? <section aria-label={title}>{children}</section> : null),
+	ModalSlider: ({ images }: { images: string[] }) => (
+		<div data-testid='modal-slider'>{images.length}</div>
+	)
 }))
 
 const chain = {
@@ -41,7 +51,14 @@ const chain = {
 			from_user: { id: 'user-1', name: 'Иван', city: 'Москва' },
 			to_user: { id: 'user-2', name: 'Ольга', city: 'Казань' },
 			item: {
-				id: 'item-1', title: 'Телефон', category_id: '00000000-0000-0000-0000-000000000101', photo: '', description: '', is_accepted: null
+				id: 'item-1',
+				title: 'Телефон',
+				category_id: '00000000-0000-0000-0000-000000000101',
+				photos: [],
+				description: '',
+				estimated_price: 50000,
+				attributes: [],
+				is_accepted: null
 			},
 			is_accepted: null
 		},
@@ -50,12 +67,19 @@ const chain = {
 			from_user: { id: 'user-2', name: 'Ольга', city: 'Казань' },
 			to_user: { id: 'user-1', name: 'Иван', city: 'Москва' },
 			item: {
-				id: 'item-2', title: 'Ноутбук', category_id: '00000000-0000-0000-0000-000000000102', photo: '', description: '', is_accepted: null
+				id: 'item-2',
+				title: 'Ноутбук',
+				category_id: '00000000-0000-0000-0000-000000000102',
+				photos: [],
+				description: '',
+				estimated_price: 80000,
+				attributes: [],
+				is_accepted: null
 			},
 			is_accepted: null
 		}
 	]
-} as Chain
+} as unknown as Chain
 
 describe('ChainGraph', () => {
 	beforeEach(() => {

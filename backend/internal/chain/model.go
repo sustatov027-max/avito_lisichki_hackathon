@@ -46,7 +46,7 @@ type Item struct {
 	Title          string
 	Description    string
 	CategoryID     uuid.UUID
-	Photo          string
+	Photos         []string
 	Attributes     json.RawMessage
 	EstimatedPrice float64
 }

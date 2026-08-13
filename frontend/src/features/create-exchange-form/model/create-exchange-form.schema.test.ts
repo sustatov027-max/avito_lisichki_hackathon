@@ -14,11 +14,13 @@ const ATTRIBUTE_IDS = {
 const validData = {
 	city_name: 'Москва',
 	delivery_enabled: false,
+	photos: [],
 	offered_item: {
 		title: 'Телефон',
 		estimated_price: '50000',
 		category_id: '00000000-0000-0000-0000-000000000101',
-		attributes: [{ attribute_id: ATTRIBUTE_IDS.condition, value: 'new' }]
+		attributes: [{ attribute_id: ATTRIBUTE_IDS.condition, value: 'new' }],
+    description: ''
 	},
 	wanted_item: {
 		title_query: 'Ноутбук',
@@ -26,7 +28,6 @@ const validData = {
 		attributes: [{ attribute_id: ATTRIBUTE_IDS.brand, value: 'Apple' }],
 		min_price: '10000',
 		max_price: '100000',
-		description: ''
 	}
 }
 
@@ -52,6 +53,22 @@ describe('exchangeFormSchema', () => {
 		expect(result.success).toBe(false)
 	})
 
+	it('rejects photos larger than 5 MB in total', () => {
+		const result = exchangeFormSchema.safeParse({
+			...validData,
+			photos: [
+				new File([new Uint8Array(3 * 1024 * 1024)], 'first.jpg', {
+					type: 'image/jpeg'
+				}),
+				new File([new Uint8Array(3 * 1024 * 1024)], 'second.jpg', {
+					type: 'image/jpeg'
+				})
+			]
+		})
+
+		expect(result.success).toBe(false)
+	})
+
 	it('rejects an attribute from another category', () => {
 		const result = exchangeFormSchema.safeParse({
 			...validData,
@@ -69,7 +86,9 @@ describe('exchangeFormSchema', () => {
 			...validData,
 			wanted_item: {
 				...validData.wanted_item,
-				attributes: [{ attribute_id: ATTRIBUTE_IDS.laptopRam, min_value: 32, max_value: 8 }]
+				attributes: [
+					{ attribute_id: ATTRIBUTE_IDS.laptopRam, min_value: 32, max_value: 8 }
+				]
 			}
 		})
 
@@ -88,7 +107,9 @@ describe('exchangeFormSchema', () => {
 			...validData,
 			offered_item: {
 				...validData.offered_item,
-				attributes: [{ attribute_id: ATTRIBUTE_IDS.phoneMemory, value: undefined }]
+				attributes: [
+					{ attribute_id: ATTRIBUTE_IDS.phoneMemory, value: undefined }
+				]
 			}
 		})
 
@@ -114,7 +135,11 @@ describe('exchangeFormSchema', () => {
 				...validData.offered_item,
 				attributes: [
 					{ attribute_id: ATTRIBUTE_IDS.color, min_value: 64 },
-					{ attribute_id: ATTRIBUTE_IDS.phoneMemory, value: 256, min_value: 64 },
+					{
+						attribute_id: ATTRIBUTE_IDS.phoneMemory,
+						value: 256,
+						min_value: 64
+					},
 					{ attribute_id: ATTRIBUTE_IDS.condition, min_value: 64 }
 				]
 			},
@@ -136,7 +161,11 @@ describe('exchangeFormSchema', () => {
 			{ attribute_id: ATTRIBUTE_IDS.condition, value: undefined }
 		])
 		expect(result.data.wanted_item.attributes).toEqual([
-			{ attribute_id: ATTRIBUTE_IDS.laptopRam, min_value: 8, max_value: undefined },
+			{
+				attribute_id: ATTRIBUTE_IDS.laptopRam,
+				min_value: 8,
+				max_value: undefined
+			},
 			{ attribute_id: ATTRIBUTE_IDS.brand, value: undefined }
 		])
 	})

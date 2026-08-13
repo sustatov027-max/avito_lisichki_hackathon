@@ -1,5 +1,6 @@
 import { Pencil } from 'lucide-react'
 import { useState } from 'react'
+import { useWatch } from 'react-hook-form'
 
 import { type ExchangeFormComponentsProps } from '@features/create-exchange-form'
 
@@ -11,6 +12,7 @@ import { Button, FormSection, Modal } from '@shared/ui'
 import { useExchangeStepFormStore } from '../../../model/create-exchange-form-step.store'
 import { EXCHANGE_STEPS } from '../../../model/create-exchange-form.config'
 import styles from '../../CreateExchangeForm.module.scss'
+import { ExchangePhotos } from '../../photos/ExchangePhotos'
 
 import { ConfirmItemCard } from './ConfirmItemCard'
 
@@ -20,6 +22,8 @@ const ConfirmFormStep = (props: ExchangeFormComponentsProps) => {
 	const { form } = props
 
 	const data = form.getValues()
+	const photos =
+		useWatch({ control: form.control, name: 'photos' }) ?? data.photos ?? []
 
 	const [activeItemType, setActiveItemType] = useState<ItemType | null>(null)
 
@@ -43,6 +47,13 @@ const ConfirmFormStep = (props: ExchangeFormComponentsProps) => {
 	const onEditButtonClick = () => {
 		setStep(isOffered ? EXCHANGE_STEPS.OFFERED : EXCHANGE_STEPS.WANTED)
 		closeModal()
+	}
+	const onPhotoRemove = (index: number) => {
+		form.setValue(
+			'photos',
+			photos.filter((_, photoIndex) => photoIndex !== index),
+			{ shouldDirty: true, shouldValidate: true }
+		)
 	}
 
 	return (
@@ -73,6 +84,12 @@ const ConfirmFormStep = (props: ExchangeFormComponentsProps) => {
 				size='lg'
 				className={styles.detailsModal}
 			>
+				{isOffered && photos.length > 0 && (
+					<section className={styles.modalPhotos} aria-labelledby='item-photos'>
+						<h3 id='item-photos'>Фотографии</h3>
+						<ExchangePhotos photos={photos} onRemove={onPhotoRemove} />
+					</section>
+				)}
 				<section className={styles.modalIntro} aria-labelledby='item-main-info'>
 					<h3 id='item-main-info'>Основная информация</h3>
 					<dl>
@@ -114,14 +131,12 @@ const ConfirmFormStep = (props: ExchangeFormComponentsProps) => {
 						<p>Характеристики не указаны</p>
 					)}
 				</section>
-				<section className={styles.modalDescription}>
-					<h3 id='description'>Описание</h3>
-					{data.wanted_item.description ? (
-						<p>{data.wanted_item.description}</p>
-					) : (
-						<p>—</p>
-					)}
-				</section>
+				{data.offered_item.description && (
+					<section className={styles.modalDescription}>
+						<h3 id='description'>Описание</h3>
+						<p>{data.offered_item.description}</p>
+					</section>
+				)}
 				<footer className={styles.modalFooter}>
 					<Button type='button' variant='secondary' onClick={onEditButtonClick}>
 						<Pencil size={18} aria-hidden='true' /> Изменить

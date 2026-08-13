@@ -1,0 +1,51 @@
+.timer {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 14px;
+	border: 1px solid var(--border-color-secondary);
+	border-radius: var(--radius-md);
+	background: var(--surface-secondary);
+	color: var(--text-primary);
+	font-size: 14px;
+	line-height: 1.2;
+	white-space: nowrap;
+
+	.dot {
+		width: 7px;
+		height: 7px;
+		border-radius: var(--radius-full);
+		background: var(--text-secondary);
+	}
+
+	.label {
+		color: var(--text-secondary);
+	}
+
+	.value {
+		color: var(--text-primary);
+		font-variant-numeric: tabular-nums;
+		font-weight: 700;
+	}
+
+	&.isExpired {
+		color: var(--text-secondary);
+
+		.dot {
+			background: var(--danger);
+		}
+
+		.label {
+			color: var(--text-secondary);
+		}
+	}
+
+	@include mobile {
+		padding: 7px 11px;
+		font-size: 13px;
+	}
+}
+
+.infoIcon {
+	@include flex-center;
+}
