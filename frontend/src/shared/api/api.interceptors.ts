@@ -4,9 +4,6 @@ import { useCurrentUserStore } from '@shared/model/current-user.store'
 
 const options: CreateAxiosDefaults = {
 	baseURL: '/api',
-	headers: {
-		'Content-Type': 'application/json'
-	},
 	withCredentials: true
 }
 

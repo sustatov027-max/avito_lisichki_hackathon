@@ -3,6 +3,16 @@ import z from 'zod'
 import { ATTRIBUTES } from '@entities/categories/model/attributes.constants'
 import { categoryIdSchema } from '@entities/categories/model/categories.schemas'
 
+export const MAX_EXCHANGE_PHOTOS = 10
+export const MAX_EXCHANGE_PHOTOS_TOTAL_SIZE = 5 * 1024 * 1024
+
+const photoSchema = z
+	.custom<File>(
+		value => typeof File !== 'undefined' && value instanceof File,
+		'Некорректный файл'
+	)
+	.refine(file => file.type.startsWith('image/'), 'Можно загрузить только фото')
+
 const attributeIdLiterals = ATTRIBUTES.map(attribute =>
 	z.literal(attribute.id)
 ) as [z.ZodLiteral<string>, ...z.ZodLiteral<string>[]]
@@ -226,6 +236,18 @@ const exchangeFormSchemaBase = z.object({
 		.min(3, 'Короткое название города')
 		.max(150, 'Слишком длинное название города'),
 	delivery_enabled: z.boolean(),
+	photos: z
+		.array(photoSchema)
+		.max(
+			MAX_EXCHANGE_PHOTOS,
+			`Можно загрузить не больше ${MAX_EXCHANGE_PHOTOS} фотографий`
+		)
+		.refine(
+			photos =>
+				photos.reduce((total, photo) => total + photo.size, 0) <=
+				MAX_EXCHANGE_PHOTOS_TOTAL_SIZE,
+			'Общий размер фотографий не должен превышать 5 МБ'
+		),
 	offered_item: offeredItemSchema,
 	wanted_item: wantedItemSchema
 })
