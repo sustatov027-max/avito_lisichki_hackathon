@@ -15,6 +15,7 @@ const normalizePersistedExchangeFormData = (
 
 	return {
 		...data,
+		photos: [],
 		...(offeredItem && {
 			offered_item: {
 				...offeredItem,
@@ -79,6 +80,10 @@ export const useExchangeStepFormStore = create<ExchangeFormStepState>()(
 		{
 			name: 'exchange-form',
 			storage: createJSONStorage(() => sessionStorage),
+			partialize: state => ({
+				...state,
+				data: { ...state.data, photos: [] }
+			}),
 			version: 2,
 			migrate: persistedState => {
 				const state = persistedState as Pick<ExchangeFormStepState, 'data'>

@@ -19,6 +19,8 @@ import {
 	Textarea
 } from '@shared/ui'
 
+import { OfferedPhotosField } from './OfferedPhotosField'
+
 const OfferedFormStep = (props: ExchangeFormComponentsProps) => {
 	const { form } = props
 
@@ -238,11 +240,13 @@ const OfferedFormStep = (props: ExchangeFormComponentsProps) => {
 
 			<FormField name='offered_item.description' label='Описание'>
 				<Textarea
-					id='wanted_item.description'
+					id='offered_item.description'
 					placeholder='Данный iPhone 16 Pro имеет...'
 					{...form.register('offered_item.description')}
 				/>
 			</FormField>
+
+			<OfferedPhotosField form={form} />
 		</FormSection>
 	)
 }

@@ -1,5 +1,6 @@
 import { Pencil } from 'lucide-react'
 import { useState } from 'react'
+import { useWatch } from 'react-hook-form'
 
 import { type ExchangeFormComponentsProps } from '@features/create-exchange-form'
 
@@ -7,6 +8,8 @@ import { getAttributeDataFromUUID } from '@entities/categories/model/attributes.
 import { getCategoryDataFromUUID } from '@entities/categories/model/categories.helpers'
 
 import { Button, FormSection, Modal } from '@shared/ui'
+
+import { ExchangePhotos } from '../../photos/ExchangePhotos'
 
 import { useExchangeStepFormStore } from '../../../model/create-exchange-form-step.store'
 import { EXCHANGE_STEPS } from '../../../model/create-exchange-form.config'
@@ -20,6 +23,8 @@ const ConfirmFormStep = (props: ExchangeFormComponentsProps) => {
 	const { form } = props
 
 	const data = form.getValues()
+	const photos =
+		useWatch({ control: form.control, name: 'photos' }) ?? data.photos ?? []
 
 	const [activeItemType, setActiveItemType] = useState<ItemType | null>(null)
 
@@ -43,6 +48,13 @@ const ConfirmFormStep = (props: ExchangeFormComponentsProps) => {
 	const onEditButtonClick = () => {
 		setStep(isOffered ? EXCHANGE_STEPS.OFFERED : EXCHANGE_STEPS.WANTED)
 		closeModal()
+	}
+	const onPhotoRemove = (index: number) => {
+		form.setValue(
+			'photos',
+			photos.filter((_, photoIndex) => photoIndex !== index),
+			{ shouldDirty: true, shouldValidate: true }
+		)
 	}
 
 	return (
@@ -73,6 +85,15 @@ const ConfirmFormStep = (props: ExchangeFormComponentsProps) => {
 				size='lg'
 				className={styles.detailsModal}
 			>
+				{isOffered && photos.length > 0 && (
+					<section
+						className={styles.modalPhotos}
+						aria-labelledby='item-photos'
+					>
+						<h3 id='item-photos'>Фотографии</h3>
+						<ExchangePhotos photos={photos} onRemove={onPhotoRemove} />
+					</section>
+				)}
 				<section className={styles.modalIntro} aria-labelledby='item-main-info'>
 					<h3 id='item-main-info'>Основная информация</h3>
 					<dl>

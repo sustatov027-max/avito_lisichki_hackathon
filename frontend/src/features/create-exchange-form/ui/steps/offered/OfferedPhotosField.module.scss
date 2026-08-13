@@ -1,0 +1,82 @@
+.photosField {
+	display: grid;
+	gap: 12px;
+
+	.dropzone {
+		border: 1px dashed var(--border-color-secondary);
+		border-radius: var(--radius-lg);
+		background-color: var(--surface-secondary);
+		transition-duration: var(--duration);
+
+		&.isDragging {
+			border-color: var(--primary);
+			background-color: var(--primary-soft);
+		}
+
+		@include hover {
+			border-color: var(--primary-border);
+			background-color: var(--surface-hover);
+		}
+	}
+
+	.uploadButton {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 10px;
+		min-height: 84px;
+		padding: 16px;
+		color: var(--text-primary);
+		cursor: pointer;
+
+		.uploadText {
+			display: grid;
+			gap: 3px;
+			text-align: left;
+
+			strong {
+				font-size: 14px;
+				font-weight: 600;
+			}
+
+			span {
+				color: var(--text-secondary);
+				font-size: 13px;
+			}
+		}
+
+		.counter {
+			color: var(--text-secondary);
+			font-size: 13px;
+		}
+	}
+
+	.fileInput {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		border: 0;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+
+	.hint {
+		margin: 0;
+		color: var(--text-secondary);
+		font-size: 13px;
+		text-align: center;
+	}
+
+	@include mobile-s {
+		.uploadButton {
+			justify-content: flex-start;
+
+			.counter {
+				margin-left: auto;
+			}
+		}
+	}
+}
