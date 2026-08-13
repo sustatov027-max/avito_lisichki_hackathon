@@ -1,0 +1,22 @@
+.trigger {
+	.icon {
+		display: none;
+	}
+
+	@include mobile {
+		@include square(44px);
+
+		justify-content: center;
+		min-width: 0;
+		padding: 0;
+
+		.icon {
+			display: block;
+		}
+
+		.label,
+		> svg:last-child {
+			display: none;
+		}
+	}
+}

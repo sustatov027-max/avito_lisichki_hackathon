@@ -38,7 +38,7 @@ const ExchangesList = () => {
 				<p className={styles.count}>{data?.total} обмена</p>
 			</div>
 			<div className={styles.list}>
-				{data?.items.length ? (
+				{data?.items?.length ? (
 					sortExchangesByChain(data.items).map(exchange => (
 						<ExchangeCard key={exchange?.offered_item_id} exchange={exchange} />
 					))

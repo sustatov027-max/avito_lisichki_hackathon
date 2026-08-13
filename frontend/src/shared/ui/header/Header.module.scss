@@ -30,7 +30,8 @@
 
 		@include mobile {
 			min-height: 64px;
-			gap: 12px;
+			padding: 10px 12px;
+			gap: 8px;
 		}
 	}
 
@@ -105,6 +106,7 @@
 
 		@include mobile {
 			margin-left: auto;
+			gap: 8px;
 		}
 	}
 
@@ -113,7 +115,6 @@
 
 		@include mobile {
 			display: inline-flex;
-			margin-left: auto;
 		}
 	}
 }

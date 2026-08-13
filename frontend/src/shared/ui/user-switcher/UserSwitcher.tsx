@@ -1,3 +1,5 @@
+import { UserRound } from 'lucide-react'
+
 import { USERS } from '@shared/constants/mock-users'
 import { useCurrentUserStore } from '@shared/model/current-user.store'
 import {
@@ -8,6 +10,8 @@ import {
 	DropdownTrigger
 } from '@shared/ui'
 
+import styles from './UserSwitcher.module.scss'
+
 const UserSwitcher = () => {
 	const user = useCurrentUserStore(state => state.user)
 	const setUser = useCurrentUserStore(state => state.setUser)
@@ -15,8 +19,16 @@ const UserSwitcher = () => {
 
 	return (
 		<Dropdown>
-			<DropdownTrigger type='button'>
-				{user?.name ?? 'Выберите пользователя'}
+			<DropdownTrigger
+				type='button'
+				className={styles.trigger}
+				aria-label={user?.name ?? 'Выберите пользователя'}
+				title={user?.name ?? 'Выберите пользователя'}
+			>
+				<UserRound className={styles.icon} size={18} aria-hidden='true' />
+				<span className={styles.label}>
+					{user?.name ?? 'Выберите пользователя'}
+				</span>
 			</DropdownTrigger>
 
 			<DropdownContent>
