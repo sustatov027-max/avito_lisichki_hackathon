@@ -14,7 +14,7 @@ const ChainDetails = (props: ChainDetailsProps) => {
 	const { chain } = useChain(chainId)
 
 	const isDecisionDisabled = getIsDecisionDisabled(chain)
-
+  
 	return (
 		<div className={styles.details}>
 			<ChainHeader chain={chain} />
