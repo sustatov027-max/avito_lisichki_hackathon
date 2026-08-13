@@ -31,7 +31,10 @@ vi.mock('@shared/ui', () => ({
 		children: React.ReactNode
 		open: boolean
 		title: string
-	}) => (open ? <section aria-label={title}>{children}</section> : null)
+	}) => (open ? <section aria-label={title}>{children}</section> : null),
+	ModalSlider: ({ images }: { images: string[] }) => (
+		<div data-testid='modal-slider'>{images.length}</div>
+	)
 }))
 
 const chain = {

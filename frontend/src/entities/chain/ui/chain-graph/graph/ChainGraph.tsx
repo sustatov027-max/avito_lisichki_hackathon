@@ -1,13 +1,12 @@
 import { type Edge, MarkerType, type Node, ReactFlow } from '@xyflow/react'
 import { Position } from '@xyflow/react'
 import clsx from 'clsx'
-import { Package } from 'lucide-react'
 
 import { getAttributeDataFromUUID } from '@entities/categories/model/attributes.helpers'
 import { getCategoryDataFromUUID } from '@entities/categories/model/categories.helpers'
 import { useChainModalStore } from '@entities/chain/model/chain-modal.store'
 
-import { Modal } from '@shared/ui'
+import { Modal, ModalSlider } from '@shared/ui'
 
 import { GraphNode } from '../node/GraphNode'
 import type { GraphNodeData } from '../node/GraphNode.types'
@@ -141,9 +140,8 @@ const ChainGraph = (props: ChainGraphProps) => {
 				const category = getCategoryDataFromUUID(item.category_id)
 				const attributes = item.attributes
 					.map(getAttributeDataFromUUID)
-					.filter(
-						(attribute): attribute is NonNullable<typeof attribute> =>
-							Boolean(attribute)
+					.filter((attribute): attribute is NonNullable<typeof attribute> =>
+						Boolean(attribute)
 					)
 
 				return (
@@ -155,17 +153,11 @@ const ChainGraph = (props: ChainGraphProps) => {
 						size='lg'
 						className={styles.detailsModal}
 					>
-						<div className={styles.imagePreview}>
-							{item.photos[0] ? (
-								<img
-									className={styles.modalImage}
-									src={item.photos[0]}
-									alt={`Фото товара «${item.title || 'Без названия'}»`}
-								/>
-							) : (
-								<Package size={32} strokeWidth={1.6} aria-hidden='true' />
-							)}
-						</div>
+						<ModalSlider
+							className={styles.imageSlider}
+							images={item.photos}
+							imageAlt={`Фото товара «${item.title || 'Без названия'}»`}
+						/>
 						<section
 							className={styles.modalIntro}
 							aria-labelledby='item-main-info'
