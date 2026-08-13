@@ -1,19 +1,12 @@
 import clsx from 'clsx'
-import {
-	ArrowRight,
-	CheckCircle2,
-	Clock3,
-	MapPin,
-	Package,
-	Truck
-} from 'lucide-react'
+import { ArrowRight, CheckCircle2, Clock3, MapPin, Truck } from 'lucide-react'
 import { Link } from 'react-router'
 
 import { getCategoryDataFromUUID } from '@entities/categories/model/categories.helpers'
 
 import { ROUTES } from '@shared/constants/routes'
 import { formatPrice } from '@shared/lib'
-import { Card } from '@shared/ui'
+import { Card, PreviewSlider } from '@shared/ui'
 
 import {
 	EXCHANGE_CHAIN_STATUS_LABELS,
@@ -34,13 +27,7 @@ const ExchangeCard = (props: ExchangeCardProps) => {
 
 	const content = (
 		<div className={styles.content}>
-			<div className={styles.preview} aria-hidden='true'>
-				{exchange.photos[0] ? (
-					<img src={exchange.photos[0]} alt='' />
-				) : (
-					<Package size={32} strokeWidth={1.6} />
-				)}
-			</div>
+			<PreviewSlider className={styles.preview} images={exchange.photos} />
 
 			<div className={styles.main}>
 				<div className={styles.topline}>
