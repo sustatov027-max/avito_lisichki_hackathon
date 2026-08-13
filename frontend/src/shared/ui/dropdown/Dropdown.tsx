@@ -31,14 +31,16 @@ type DropdownTriggerExtraProps = {
 const DropdownTrigger = forwardRef<
 	ElementRef<typeof DropdownMenuPrimitive.Trigger>,
 	DropdownTriggerProps & DropdownTriggerExtraProps
->(({ className, children, showIcon = true, asChild, ...props }, ref) => {
+>((props, ref) => {
+	const { className, children, showIcon = true, asChild, ...rest } = props
+
 	if (asChild) {
 		return (
 			<DropdownMenuPrimitive.Trigger
 				ref={ref}
 				className={className}
 				asChild
-				{...props}
+				{...rest}
 			>
 				{children}
 			</DropdownMenuPrimitive.Trigger>
@@ -49,7 +51,7 @@ const DropdownTrigger = forwardRef<
 		<DropdownMenuPrimitive.Trigger
 			ref={ref}
 			className={clsx(styles.trigger, className)}
-			{...props}
+			{...rest}
 		>
 			{children}
 			{showIcon && (
@@ -63,38 +65,52 @@ DropdownTrigger.displayName = DropdownMenuPrimitive.Trigger.displayName
 const DropdownContent = forwardRef<
 	ElementRef<typeof DropdownMenuPrimitive.Content>,
 	DropdownContentProps
->(({ className, sideOffset = 8, ...props }, ref) => (
-	<DropdownMenuPrimitive.Portal>
-		<DropdownMenuPrimitive.Content
-			ref={ref}
-			className={clsx(styles.content, className)}
-			sideOffset={sideOffset}
-			{...props}
-		/>
-	</DropdownMenuPrimitive.Portal>
-))
+>((props, ref) => {
+	const { className, sideOffset = 8, ...rest } = props
+
+	return (
+		<DropdownMenuPrimitive.Portal>
+			<DropdownMenuPrimitive.Content
+				ref={ref}
+				className={clsx(styles.content, className)}
+				sideOffset={sideOffset}
+				{...rest}
+			/>
+		</DropdownMenuPrimitive.Portal>
+	)
+})
 DropdownContent.displayName = DropdownMenuPrimitive.Content.displayName
 
 const DropdownItem = forwardRef<
 	ElementRef<typeof DropdownMenuPrimitive.Item>,
 	DropdownItemProps
->(({ className, ...props }, ref) => (
-	<DropdownMenuPrimitive.Item
-		ref={ref}
-		className={clsx(styles.item, className)}
-		{...props}
-	/>
-))
+>((props, ref) => {
+	const { className, ...rest } = props
+
+	return (
+		<DropdownMenuPrimitive.Item
+			ref={ref}
+			className={clsx(styles.item, className)}
+			{...rest}
+		/>
+	)
+})
 DropdownItem.displayName = DropdownMenuPrimitive.Item.displayName
 
 const DropdownCheckboxItem = forwardRef<
 	ElementRef<typeof DropdownMenuPrimitive.CheckboxItem>,
 	DropdownCheckboxItemProps
->(
-	(
-		{ className, children, checked, closeOnSelect = true, onSelect, ...props },
-		ref
-	) => (
+>((props, ref) => {
+	const {
+		className,
+		children,
+		checked,
+		closeOnSelect = true,
+		onSelect,
+		...rest
+	} = props
+
+	return (
 		<DropdownMenuPrimitive.CheckboxItem
 			ref={ref}
 			className={clsx(styles.checkboxItem, className)}
@@ -103,7 +119,7 @@ const DropdownCheckboxItem = forwardRef<
 				onSelect?.(event)
 				if (!closeOnSelect) event.preventDefault()
 			}}
-			{...props}
+			{...rest}
 		>
 			<span className={styles.indicator} aria-hidden='true'>
 				{checked ? <Check size={16} strokeWidth={2} /> : null}
@@ -111,7 +127,7 @@ const DropdownCheckboxItem = forwardRef<
 			{children}
 		</DropdownMenuPrimitive.CheckboxItem>
 	)
-)
+})
 DropdownCheckboxItem.displayName =
 	DropdownMenuPrimitive.CheckboxItem.displayName
 
@@ -122,44 +138,56 @@ const DropdownRadioGroup = (props: DropdownRadioGroupProps) => (
 const DropdownRadioItem = forwardRef<
 	ElementRef<typeof DropdownMenuPrimitive.RadioItem>,
 	DropdownRadioItemProps
->(({ className, children, ...props }, ref) => (
-	<DropdownMenuPrimitive.RadioItem
-		ref={ref}
-		className={clsx(styles.radioItem, className)}
-		{...props}
-	>
-		<span className={styles.indicator} aria-hidden='true'>
-			<DropdownMenuPrimitive.ItemIndicator>
-				<Circle size={8} fill='currentColor' strokeWidth={0} />
-			</DropdownMenuPrimitive.ItemIndicator>
-		</span>
-		{children}
-	</DropdownMenuPrimitive.RadioItem>
-))
+>((props, ref) => {
+	const { className, children, ...rest } = props
+
+	return (
+		<DropdownMenuPrimitive.RadioItem
+			ref={ref}
+			className={clsx(styles.radioItem, className)}
+			{...rest}
+		>
+			<span className={styles.indicator} aria-hidden='true'>
+				<DropdownMenuPrimitive.ItemIndicator>
+					<Circle size={8} fill='currentColor' strokeWidth={0} />
+				</DropdownMenuPrimitive.ItemIndicator>
+			</span>
+			{children}
+		</DropdownMenuPrimitive.RadioItem>
+	)
+})
 DropdownRadioItem.displayName = DropdownMenuPrimitive.RadioItem.displayName
 
 const DropdownLabel = forwardRef<
 	ElementRef<typeof DropdownMenuPrimitive.Label>,
 	DropdownLabelProps
->(({ className, ...props }, ref) => (
-	<DropdownMenuPrimitive.Label
-		ref={ref}
-		className={clsx(styles.label, className)}
-		{...props}
-	/>
-))
+>((props, ref) => {
+	const { className, ...rest } = props
+
+	return (
+		<DropdownMenuPrimitive.Label
+			ref={ref}
+			className={clsx(styles.label, className)}
+			{...rest}
+		/>
+	)
+})
 DropdownLabel.displayName = DropdownMenuPrimitive.Label.displayName
 
 const DropdownSeparator = forwardRef<
 	ElementRef<typeof DropdownMenuPrimitive.Separator>,
 	DropdownSeparatorProps
->(({ className, ...props }, ref) => (
-	<DropdownMenuPrimitive.Separator
-		ref={ref}
-		className={clsx(styles.separator, className)}
-		{...props}
-	/>
-))
+>((props, ref) => {
+	const { className, ...rest } = props
+
+	return (
+		<DropdownMenuPrimitive.Separator
+			ref={ref}
+			className={clsx(styles.separator, className)}
+			{...rest}
+		/>
+	)
+})
 DropdownSeparator.displayName = DropdownMenuPrimitive.Separator.displayName
 
 const DropdownSub = (props: DropdownSubProps) => (
@@ -169,43 +197,50 @@ const DropdownSub = (props: DropdownSubProps) => (
 const DropdownSubTrigger = forwardRef<
 	ElementRef<typeof DropdownMenuPrimitive.SubTrigger>,
 	DropdownSubTriggerProps
->(({ className, children, ...props }, ref) => (
-	<DropdownMenuPrimitive.SubTrigger
-		ref={ref}
-		className={clsx(styles.subTrigger, className)}
-		{...props}
-	>
-		{children}
-		<ChevronRight
-			className={styles.subTriggerIcon}
-			aria-hidden='true'
-			size={16}
-		/>
-	</DropdownMenuPrimitive.SubTrigger>
-))
+>((props, ref) => {
+	const { className, children, ...rest } = props
+
+	return (
+		<DropdownMenuPrimitive.SubTrigger
+			ref={ref}
+			className={clsx(styles.subTrigger, className)}
+			{...rest}
+		>
+			{children}
+			<ChevronRight
+				className={styles.subTriggerIcon}
+				aria-hidden='true'
+				size={16}
+			/>
+		</DropdownMenuPrimitive.SubTrigger>
+	)
+})
 DropdownSubTrigger.displayName = DropdownMenuPrimitive.SubTrigger.displayName
 
 const DropdownSubContent = forwardRef<
 	ElementRef<typeof DropdownMenuPrimitive.SubContent>,
 	DropdownSubContentProps
->(({ className, sideOffset = 8, ...props }, ref) => (
-	<DropdownMenuPrimitive.Portal>
-		<DropdownMenuPrimitive.SubContent
-			ref={ref}
-			className={clsx(styles.subContent, className)}
-			sideOffset={sideOffset}
-			{...props}
-		/>
-	</DropdownMenuPrimitive.Portal>
-))
+>((props, ref) => {
+	const { className, sideOffset = 8, ...rest } = props
+
+	return (
+		<DropdownMenuPrimitive.Portal>
+			<DropdownMenuPrimitive.SubContent
+				ref={ref}
+				className={clsx(styles.subContent, className)}
+				sideOffset={sideOffset}
+				{...rest}
+			/>
+		</DropdownMenuPrimitive.Portal>
+	)
+})
 DropdownSubContent.displayName = DropdownMenuPrimitive.SubContent.displayName
 
-const DropdownShortcut = ({
-	className,
-	...props
-}: ComponentPropsWithoutRef<'span'>) => (
-	<span className={clsx(styles.shortcut, className)} {...props} />
-)
+const DropdownShortcut = (props: ComponentPropsWithoutRef<'span'>) => {
+	const { className, ...rest } = props
+
+	return <span className={clsx(styles.shortcut, className)} {...rest} />
+}
 
 export {
 	Dropdown,

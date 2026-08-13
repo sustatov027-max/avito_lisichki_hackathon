@@ -73,17 +73,17 @@
 		flex: 1;
 		row-gap: 4px;
 		margin-left: 16px;
+
+		strong {
+			font-size: 18px;
+			line-height: 1.25;
+		}
 	}
 
 	.cardCaption,
 	.cardCategory {
 		color: var(--text-secondary);
 		font-size: 14px;
-	}
-
-	.cardContent strong {
-		font-size: 18px;
-		line-height: 1.25;
 	}
 
 	.cardArrow {
@@ -123,32 +123,40 @@
 	border: var(--border);
 	border-radius: var(--radius-lg);
 	background-color: var(--surface-secondary);
-}
 
-.modalIntro dl {
-	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: 12px;
-	margin: 0;
-}
+	@include mobile {
+		padding: 16px;
+	}
 
-.modalIntro dl div {
-	padding: 14px 16px;
-	border-radius: var(--radius-md);
-	background-color: var(--surface);
-	box-shadow: var(--shadow-xs);
-}
+	dl {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 12px;
+		margin: 0;
 
-.modalIntro dt {
-	color: var(--text-secondary);
-	font-size: 13px;
-}
+		@include mobile {
+			grid-template-columns: 1fr;
+		}
 
-.modalIntro dd {
-	margin: 5px 0 0;
-	font-size: 17px;
-	font-weight: 600;
-	line-height: 1.3;
+		div {
+			padding: 14px 16px;
+			border-radius: var(--radius-md);
+			background-color: var(--surface);
+			box-shadow: var(--shadow-xs);
+		}
+	}
+
+	dt {
+		color: var(--text-secondary);
+		font-size: 13px;
+	}
+
+	dd {
+		margin: 5px 0 0;
+		font-size: 17px;
+		font-weight: 600;
+		line-height: 1.3;
+	}
 }
 
 .modalDescription {
@@ -163,58 +171,50 @@
 
 .attributes {
 	margin-top: 28px;
-}
 
-.attributes dl {
-	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: 10px;
-	margin: 0;
-}
+	dl {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 10px;
+		margin: 0;
 
-.attributes dl div {
-	min-height: 78px;
-	padding: 14px 16px;
-	border: var(--border);
-	border-radius: var(--radius-md);
-	background-color: var(--surface-secondary);
-}
+		@include mobile {
+			grid-template-columns: 1fr;
+		}
 
-.attributes dt {
-	color: var(--text-secondary);
-	font-size: 13px;
-}
+		div {
+			min-height: 78px;
+			padding: 14px 16px;
+			border: var(--border);
+			border-radius: var(--radius-md);
+			background-color: var(--surface-secondary);
+		}
+	}
 
-.attributes dd {
-	margin: 6px 0 0;
-	font-size: 16px;
-	font-weight: 600;
-	line-height: 1.35;
-}
+	dt {
+		color: var(--text-secondary);
+		font-size: 13px;
+	}
 
-.attributes p {
-	margin: 0;
-	padding: 18px;
-	border: 1px dashed var(--border-color);
-	border-radius: var(--radius-md);
-	color: var(--text-secondary);
-	text-align: center;
+	dd {
+		margin: 6px 0 0;
+		font-size: 16px;
+		font-weight: 600;
+		line-height: 1.35;
+	}
+
+	p {
+		margin: 0;
+		padding: 18px;
+		border: 1px dashed var(--border-color);
+		border-radius: var(--radius-md);
+		color: var(--text-secondary);
+		text-align: center;
+	}
 }
 
 .modalFooter {
 	display: flex;
 	justify-content: flex-end;
 	margin-top: 28px;
-}
-
-@media (max-width: 640px) {
-	.modalIntro {
-		padding: 16px;
-	}
-	.modalIntro dl {
-		grid-template-columns: 1fr;
-	}
-	.attributes dl {
-		grid-template-columns: 1fr;
-	}
 }

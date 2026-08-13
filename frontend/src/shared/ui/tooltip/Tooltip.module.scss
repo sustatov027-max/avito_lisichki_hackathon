@@ -48,12 +48,16 @@
 	@include mobile-s {
 		max-width: calc(100vw - 24px);
 	}
-}
 
-.arrow {
-	fill: var(--surface);
-	stroke: var(--border-color);
-	stroke-width: 1px;
+	@media (prefers-reduced-motion: reduce) {
+		animation-duration: 0.01ms;
+	}
+
+	.arrow {
+		fill: var(--surface);
+		stroke: var(--border-color);
+		stroke-width: 1px;
+	}
 }
 
 @keyframes tooltip-open {
@@ -79,11 +83,5 @@
 		opacity: 0;
 		transform: translate(var(--tooltip-translate-x), var(--tooltip-translate-y))
 			scale(0.96);
-	}
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.content {
-		animation-duration: 0.01ms;
 	}
 }

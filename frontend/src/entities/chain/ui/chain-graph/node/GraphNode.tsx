@@ -1,11 +1,10 @@
 import { Handle, Position } from '@xyflow/react'
 import clsx from 'clsx'
-import { Package } from 'lucide-react'
 import type { CSSProperties } from 'react'
 
 import { useChainModalStore } from '@entities/chain/model/chain-modal.store'
 
-import { Card } from '@shared/ui'
+import { Card, PreviewSlider } from '@shared/ui'
 
 import styles from './GraphNode.module.scss'
 import type { GraphNodeProps } from './GraphNode.types'
@@ -56,13 +55,7 @@ const GraphNode = (props: GraphNodeProps) => {
 					style={getHandleStyle(data.sourcePosition, true)}
 				/>
 
-				<div className={styles.preview} aria-hidden='true'>
-					{data.item.photos[0] ? (
-						<img src={data.item.photos[0]} alt='' />
-					) : (
-						<Package size={32} strokeWidth={1.6} />
-					)}
-				</div>
+				<PreviewSlider className={styles.preview} images={data.item.photos} />
 
 				<div className={styles.info}>
 					<div className={styles.title}>{data.item.title}</div>
