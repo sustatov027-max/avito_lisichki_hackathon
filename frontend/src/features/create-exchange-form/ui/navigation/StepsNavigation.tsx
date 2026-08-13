@@ -66,11 +66,13 @@ const StepsNavigation = (props: ExchangeFormComponentsProps) => {
 			case EXCHANGE_STEPS.OFFERED:
 				form.reset({
 					...values,
+					photos: [],
 					offered_item: {
 						title: '',
 						estimated_price: '',
 						category_id: undefined,
-						attributes: []
+						attributes: [],
+						description: ''
 					}
 				})
 				break

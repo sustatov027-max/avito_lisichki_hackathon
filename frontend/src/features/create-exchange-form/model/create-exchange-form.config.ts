@@ -13,7 +13,8 @@ export const FIELDS_BY_STEPS = {
 		'offered_item.title',
 		'offered_item.estimated_price',
 		'offered_item.category_id',
-		'offered_item.attributes'
+		'offered_item.attributes',
+		'photos'
 	],
 	[EXCHANGE_STEPS.WANTED]: [
 		'wanted_item.title_query',
@@ -28,6 +29,7 @@ export const FIELDS_BY_STEPS = {
 export const DEFAULT_FORM_VALUES: ExchangeFormDataInput = {
 	city_name: '',
 	delivery_enabled: false,
+	photos: [],
 	offered_item: {
 		title: '',
 		estimated_price: '',

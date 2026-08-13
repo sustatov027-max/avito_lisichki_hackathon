@@ -1,0 +1,51 @@
+.gallery {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 12px;
+
+	.photo {
+		position: relative;
+		min-width: 0;
+		margin: 0;
+		border: var(--border);
+		border-radius: var(--radius-lg);
+		background-color: var(--surface-secondary);
+		aspect-ratio: 4 / 3;
+		overflow: hidden;
+
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		figcaption {
+			position: absolute;
+			left: 10px;
+			bottom: 10px;
+			@include flex-center;
+
+			width: 26px;
+			aspect-ratio: 1;
+			border-radius: var(--radius-full);
+			background-color: var(--overlay);
+			color: #fff;
+			font-size: 12px;
+			font-weight: 600;
+		}
+	}
+
+	.removeButton {
+		position: absolute;
+		top: 8px;
+		right: 8px;
+		border-color: var(--border-color-secondary);
+		background-color: var(--surface);
+		color: var(--danger);
+	}
+
+	@include mobile-s {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 8px;
+	}
+}

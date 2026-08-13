@@ -14,6 +14,7 @@ const ATTRIBUTE_IDS = {
 const validData = {
 	city_name: 'Москва',
 	delivery_enabled: false,
+	photos: [],
 	offered_item: {
 		title: 'Телефон',
 		estimated_price: '50000',
@@ -47,6 +48,22 @@ describe('exchangeFormSchema', () => {
 				min_price: '100000',
 				max_price: '10000'
 			}
+		})
+
+		expect(result.success).toBe(false)
+	})
+
+	it('rejects photos larger than 5 MB in total', () => {
+		const result = exchangeFormSchema.safeParse({
+			...validData,
+			photos: [
+				new File([new Uint8Array(3 * 1024 * 1024)], 'first.jpg', {
+					type: 'image/jpeg'
+				}),
+				new File([new Uint8Array(3 * 1024 * 1024)], 'second.jpg', {
+					type: 'image/jpeg'
+				})
+			]
 		})
 
 		expect(result.success).toBe(false)
