@@ -3,6 +3,7 @@ import { Position } from '@xyflow/react'
 import clsx from 'clsx'
 import { Package } from 'lucide-react'
 
+import { getAttributeDataFromUUID } from '@entities/categories/model/attributes.helpers'
 import { getCategoryDataFromUUID } from '@entities/categories/model/categories.helpers'
 import { useChainModalStore } from '@entities/chain/model/chain-modal.store'
 
@@ -138,6 +139,12 @@ const ChainGraph = (props: ChainGraphProps) => {
 
 			{chain.steps.map(({ item }) => {
 				const category = getCategoryDataFromUUID(item.category_id)
+				const attributes = item.attributes
+					.map(getAttributeDataFromUUID)
+					.filter(
+						(attribute): attribute is NonNullable<typeof attribute> =>
+							Boolean(attribute)
+					)
 
 				return (
 					<Modal
@@ -148,15 +155,15 @@ const ChainGraph = (props: ChainGraphProps) => {
 						size='lg'
 						className={styles.detailsModal}
 					>
-						<div className={styles.imagePreview} aria-hidden='true'>
-							{item.photo ? (
+						<div className={styles.imagePreview}>
+							{item.photos[0] ? (
 								<img
 									className={styles.modalImage}
-									src={item.photo}
-									alt={item.title || 'Изображение товара'}
+									src={item.photos[0]}
+									alt={`Фото товара «${item.title || 'Без названия'}»`}
 								/>
 							) : (
-								<Package size={32} strokeWidth={1.6} />
+								<Package size={32} strokeWidth={1.6} aria-hidden='true' />
 							)}
 						</div>
 						<section
@@ -169,11 +176,40 @@ const ChainGraph = (props: ChainGraphProps) => {
 									<dt>Категория</dt>
 									<dd>{category?.name || 'Не выбрана'}</dd>
 								</div>
+								<div>
+									<dt>Оценочная стоимость</dt>
+									<dd>
+										{item.estimated_price
+											? `${item.estimated_price.toLocaleString('ru-RU')} ₽`
+											: 'Не указана'}
+									</dd>
+								</div>
 							</dl>
 						</section>
-						<section className={styles.modalDescription}>
-							<h3 id='description'>Описание</h3>
-							{item.description ? <p>{item.description}</p> : <p>—</p>}
+						<section
+							className={styles.attributes}
+							aria-labelledby={`item-attributes-${item.id}`}
+						>
+							<h3 id={`item-attributes-${item.id}`}>Характеристики</h3>
+							{attributes.length ? (
+								<dl>
+									{attributes.map(attribute => (
+										<div key={attribute.label}>
+											<dt>{attribute.label}</dt>
+											<dd>{attribute.value}</dd>
+										</div>
+									))}
+								</dl>
+							) : (
+								<p>Характеристики не указаны</p>
+							)}
+						</section>
+						<section
+							className={styles.modalDescription}
+							aria-labelledby={`item-description-${item.id}`}
+						>
+							<h3 id={`item-description-${item.id}`}>Описание</h3>
+							<p>{item.description || 'Описание не указано'}</p>
 						</section>
 					</Modal>
 				)

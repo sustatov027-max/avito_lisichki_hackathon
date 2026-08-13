@@ -51,8 +51,10 @@ const chain = {
 				id: 'item-1',
 				title: 'Телефон',
 				category_id: '00000000-0000-0000-0000-000000000101',
-				photo: '',
+				photos: [],
 				description: '',
+				estimated_price: 50000,
+				attributes: [],
 				is_accepted: null
 			},
 			is_accepted: null
@@ -65,14 +67,16 @@ const chain = {
 				id: 'item-2',
 				title: 'Ноутбук',
 				category_id: '00000000-0000-0000-0000-000000000102',
-				photo: '',
+				photos: [],
 				description: '',
+				estimated_price: 80000,
+				attributes: [],
 				is_accepted: null
 			},
 			is_accepted: null
 		}
 	]
-} as Chain
+} as unknown as Chain
 
 describe('ChainGraph', () => {
 	beforeEach(() => {

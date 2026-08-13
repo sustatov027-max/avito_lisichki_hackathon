@@ -11,7 +11,7 @@ class CreateExchangeServices {
 			data: serializeExchangeFormData(data),
 			headers: {
 				'Idempotency-Key': idenpotentKey
-			}
+			},
 		})
 
 		return response.data

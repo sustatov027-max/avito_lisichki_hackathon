@@ -57,8 +57,8 @@ const GraphNode = (props: GraphNodeProps) => {
 				/>
 
 				<div className={styles.preview} aria-hidden='true'>
-					{data.item.photo ? (
-						<img src={data.item.photo} alt='' />
+					{data.item.photos[0] ? (
+						<img src={data.item.photos[0]} alt='' />
 					) : (
 						<Package size={32} strokeWidth={1.6} />
 					)}

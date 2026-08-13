@@ -32,8 +32,8 @@ const ExchangeItemCard = (props: ExchangeItemCardProps) => {
 		>
 			<Card className={styles.card}>
 				<div className={styles.preview} aria-hidden='true'>
-					{item.photo ? (
-						<img src={item.photo} alt='' />
+					{item.photos[0] ? (
+						<img src={item.photos[0]} alt='' />
 					) : (
 						<Package size={30} strokeWidth={1.6} />
 					)}
