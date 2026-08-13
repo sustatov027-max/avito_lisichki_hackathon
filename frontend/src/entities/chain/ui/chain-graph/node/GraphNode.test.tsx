@@ -15,9 +15,11 @@ const data = {
 	item: {
 		id: 'item-1',
 		title: 'Ноутбук',
-		photo: '',
+		photos: [],
 		category_id: 'category-1',
 		description: '',
+		estimated_price: 50000,
+		attributes: [],
 		is_accepted: null
 	},
 	from_user: { id: 'user-1', name: 'Иван', city: 'Москва' },

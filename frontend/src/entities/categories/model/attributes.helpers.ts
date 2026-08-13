@@ -1,9 +1,12 @@
-import type { ExchangeFormDataInput } from '@features/create-exchange-form/model/create-exchange-form.schema'
-
 import { ATTRIBUTES } from './attributes.constants'
 
-type AttributeValue =
-	ExchangeFormDataInput['offered_item']['attributes'][number]
+type AttributeValue = {
+	attribute_id: string
+	value?: string | number
+	values?: string[]
+	min_value?: unknown
+	max_value?: unknown
+}
 
 const getOptionLabel = (attributeId: string, value: string | number) => {
 	const attribute = ATTRIBUTES.find(item => item.id === attributeId)
@@ -23,14 +26,14 @@ const getAttributeDataFromUUID = (attributeValue: AttributeValue) => {
 
 	if (!attribute) return undefined
 
-	if ('value' in attributeValue && attributeValue.value) {
+	if (attributeValue.value !== undefined) {
 		return {
 			label: attribute.label,
 			value: getOptionLabel(attribute.id, attributeValue.value)
 		}
 	}
 
-	if ('values' in attributeValue && attributeValue.values?.length) {
+	if (attributeValue.values?.length) {
 		return {
 			label: attribute.label,
 			value: attributeValue.values
@@ -39,7 +42,10 @@ const getAttributeDataFromUUID = (attributeValue: AttributeValue) => {
 		}
 	}
 
-	if ('min_value' in attributeValue || 'max_value' in attributeValue) {
+	if (
+		attributeValue.min_value !== undefined ||
+		attributeValue.max_value !== undefined
+	) {
 		const unit = ['Память', 'SSD', 'Оперативная память'].includes(
 			attribute.label
 		)

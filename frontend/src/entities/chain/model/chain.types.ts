@@ -19,15 +19,24 @@ export type ChainUser = {
 	is_me?: boolean
 }
 
+export type ChainItemAttribute = {
+	attribute_id: string
+	value?: string | number
+	values?: string[]
+	min_value?: number
+	max_value?: number
+}
+
 export type ChainItem = {
 	id: string
 	title: string
 	category_id?: string
-	photo: string
+	photos: string[]
 	estimated_price: number
 	from_user?: ChainUser
 	is_accepted: boolean | null
 	description: string
+	attributes: ChainItemAttribute[]
 }
 
 export type ChainSummary = {
@@ -43,7 +52,14 @@ export type ChainStep = {
 	to_user: ChainUser
 	item: Pick<
 		ChainItem,
-		'id' | 'title' | 'category_id' | 'photo' | 'is_accepted' | 'description'
+		| 'id'
+		| 'title'
+		| 'category_id'
+		| 'photos'
+		| 'estimated_price'
+		| 'is_accepted'
+		| 'description'
+		| 'attributes'
 	>
 	is_accepted: boolean | null
 }

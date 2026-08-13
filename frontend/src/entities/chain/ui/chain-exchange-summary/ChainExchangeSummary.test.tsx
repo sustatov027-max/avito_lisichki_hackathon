@@ -13,19 +13,21 @@ const summary: ChainSummary = {
 		id: 'giving-item',
 		title: 'Горный велосипед',
 		category_id: 'bikes',
-		photo: '',
+		photos: [],
 		estimated_price: 50000,
 		is_accepted: null,
-		description: 'Описание велосипеда'
+		description: 'Описание велосипеда',
+		attributes: []
 	},
 	receiving_item: {
 		id: 'receiving-item',
 		title: 'Фотоаппарат',
 		category_id: 'electronics',
-		photo: '',
+		photos: [],
 		estimated_price: 45000,
 		is_accepted: null,
-		description: 'Описание фотоаппарата'
+		description: 'Описание фотоаппарата',
+		attributes: []
 	}
 }
 
