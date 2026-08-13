@@ -156,6 +156,16 @@ bun run test:run
 bun run build
 ```
 
+### Запуск теста поиска цепочек
+Для запуска интеграционного теста сначала поднимите проект через Docker Compose. Затем перейдите в директорию backend и задайте переменную окружения для подключения к PostgreSQL. После этого запустите тест.
+
+```bash
+docker compose up -d
+cd backend
+$env:TEST_DATABASE_URL="postgres://postgres:postgres@localhost:5432/exchange_chain?sslmode=disable"
+go test internal/chain/repository/postgres/find_exchange_chains_test.go -v
+```
+
 ## Используемые технологии
 
 ### Backend
