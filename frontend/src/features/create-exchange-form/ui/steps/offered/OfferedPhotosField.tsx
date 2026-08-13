@@ -82,7 +82,9 @@ const OfferedPhotosField = (props: ExchangeFormComponentsProps) => {
 					}
 
 					const onPhotoRemove = (index: number) => {
-						field.onChange(photos.filter((_, photoIndex) => photoIndex !== index))
+						field.onChange(
+							photos.filter((_, photoIndex) => photoIndex !== index)
+						)
 					}
 
 					return (

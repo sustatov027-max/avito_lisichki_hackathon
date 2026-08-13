@@ -2,79 +2,77 @@
 	border: none;
 	outline: none;
 	background: none;
-}
 
-.node {
-	position: relative;
-	width: 200px;
-	padding: 16px;
-	background: var(--surface);
-	box-shadow: var(--shadow-sm);
-	color: var(--text-primary);
-	cursor: pointer;
-	transition-duration: var(--duration);
+	.node {
+		position: relative;
+		display: grid;
+		row-gap: 16px;
+		width: 200px;
+		padding: 16px;
+		background: var(--surface);
+		box-shadow: var(--shadow-sm);
+		color: var(--text-primary);
+		cursor: pointer;
+		transition-duration: var(--duration);
 
-	display: grid;
-	row-gap: 16px;
+		@include hover {
+			border-color: var(--accent-color);
+			box-shadow: var(--shadow-md);
+			translate: 0 1%;
+		}
 
-	@include hover {
-		border-color: var(--accent-color);
-		box-shadow: var(--shadow-md);
-		translate: 0 1%;
+		&.isAccepted {
+			border-color: var(--success);
+		}
+
+		&.isRejected {
+			border-color: var(--danger);
+		}
+
+		.preview {
+			min-height: 112px;
+		}
+
+		.title {
+			overflow: hidden;
+			font-weight: 600;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		.user {
+			color: var(--text-secondary);
+			font-size: 14px;
+		}
+
+		.userInfo {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			justify-content: space-between;
+			width: 100%;
+			margin-top: 8px;
+		}
+
+		.userStatus {
+			display: flex;
+			align-items: center;
+			column-gap: 6px;
+			color: var(--text-secondary);
+			font-size: 14px;
+
+			&.isAccepted {
+				color: var(--success);
+			}
+
+			&.isRejected {
+				color: var(--danger);
+			}
+		}
+
+		.handle {
+			opacity: 0;
+			pointer-events: none;
+		}
 	}
-
-	&.isAccepted {
-		border-color: var(--success);
-	}
-
-	&.isRejected {
-		border-color: var(--danger);
-	}
-}
-
-.preview {
-	min-height: 112px;
-}
-
-.title {
-	overflow: hidden;
-	font-weight: 600;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
-
-.user {
-	color: var(--text-secondary);
-	font-size: 14px;
-}
-
-.userInfo {
-	margin-top: 8px;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	width: 100%;
-	flex-wrap: wrap;
-}
-
-.userStatus {
-	font-size: 14px;
-	display: flex;
-	align-items: center;
-	column-gap: 6px;
-
-	color: var(--text-secondary);
-
-	&.isAccepted {
-		color: var(--success);
-	}
-
-	&.isRejected {
-		color: var(--danger);
-	}
-}
-
-.handle {
-	opacity: 0;
-	pointer-events: none;
 }

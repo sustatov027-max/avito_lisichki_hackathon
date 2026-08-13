@@ -11,7 +11,6 @@ import 'swiper/css'
 
 const ModalSlider = (props: ModalSliderProps) => {
 	const { className, images, imageAlt, ...rest } = props
-
 	const swiperRef = useRef<SwiperInstance | null>(null)
 	const [activeIndex, setActiveIndex] = useState(0)
 

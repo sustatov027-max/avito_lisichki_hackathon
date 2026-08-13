@@ -9,11 +9,10 @@ import { getCategoryDataFromUUID } from '@entities/categories/model/categories.h
 
 import { Button, FormSection, Modal } from '@shared/ui'
 
-import { ExchangePhotos } from '../../photos/ExchangePhotos'
-
 import { useExchangeStepFormStore } from '../../../model/create-exchange-form-step.store'
 import { EXCHANGE_STEPS } from '../../../model/create-exchange-form.config'
 import styles from '../../CreateExchangeForm.module.scss'
+import { ExchangePhotos } from '../../photos/ExchangePhotos'
 
 import { ConfirmItemCard } from './ConfirmItemCard'
 
@@ -86,10 +85,7 @@ const ConfirmFormStep = (props: ExchangeFormComponentsProps) => {
 				className={styles.detailsModal}
 			>
 				{isOffered && photos.length > 0 && (
-					<section
-						className={styles.modalPhotos}
-						aria-labelledby='item-photos'
-					>
+					<section className={styles.modalPhotos} aria-labelledby='item-photos'>
 						<h3 id='item-photos'>Фотографии</h3>
 						<ExchangePhotos photos={photos} onRemove={onPhotoRemove} />
 					</section>

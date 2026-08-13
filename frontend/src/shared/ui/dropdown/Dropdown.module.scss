@@ -79,6 +79,10 @@
 	[data-side='right'] & {
 		animation: slideFromLeft var(--duration) ease-out;
 	}
+
+	@media (prefers-reduced-motion: reduce) {
+		animation: none;
+	}
 }
 
 .item,
@@ -175,11 +179,5 @@
 	from {
 		opacity: 0;
 		transform: translateX(4px) scale(0.98);
-	}
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.content {
-		animation: none;
 	}
 }
