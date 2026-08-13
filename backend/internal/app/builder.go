@@ -63,7 +63,7 @@ func New(_ context.Context) (*App, error) {
 		ReadTimeout:       30 * time.Second,
 		WriteTimeout:      0, // Отключаем WriteTimeout для передачи потоковых данных/изображений
 		IdleTimeout:       60 * time.Second,
-		MaxHeaderBytes:    1 << 20,
+		MaxHeaderBytes:    5 << 20,
 	}
 
 	app.server = server
