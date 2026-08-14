@@ -3,6 +3,9 @@
 	display: grid;
 	place-items: center;
 	width: 100%;
+	min-width: 0;
+	height: 100%;
+	min-height: 0;
 	border-radius: var(--radius-md);
 	background: var(--surface-secondary);
 	color: var(--text-secondary);
@@ -11,21 +14,29 @@
 	.swiper {
 		width: 100%;
 		height: 100%;
-		min-height: inherit;
+		min-width: 0;
+		min-height: 0;
+		max-width: 100%;
+		max-height: 100%;
 	}
 
 	.slide {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		height: auto;
-		min-height: inherit;
+		width: 100%;
+		height: 100%;
+		min-width: 0;
+		min-height: 0;
+		overflow: hidden;
 	}
 
 	.image {
 		display: block;
 		width: 100%;
 		height: 100%;
+		max-width: 100%;
+		max-height: 100%;
 		object-fit: contain;
 	}
 

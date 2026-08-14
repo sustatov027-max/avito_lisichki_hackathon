@@ -41,10 +41,13 @@
 	}
 
 	.preview {
-		min-height: 112px;
+		width: 200px;
+		height: 250px;
+		min-height: 0;
 
 		@include mobile {
-			min-height: 180px;
+			width: 100%;
+			height: 180px;
 		}
 	}
 
